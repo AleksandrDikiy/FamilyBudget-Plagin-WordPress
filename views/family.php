@@ -44,7 +44,7 @@ function fb_family_enqueue_scripts(): void {
 		return;
 	}
 
-	$plugin_url = plugin_dir_url( __FILE__ );
+	$plugin_url = FB_PLUGIN_URL;
 	$version    = '1.0.0';
 
 	wp_enqueue_style(

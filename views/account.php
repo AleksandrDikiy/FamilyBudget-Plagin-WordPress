@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Двошарова перевірка безпеки для AJAX-обробників цього модуля.
  *
- * @since  1.3.1
+ * @since  1.3.4
  * @param  string $action Ім'я nonce-дії WordPress.
  * @return void
  */
@@ -71,9 +71,9 @@ function fb_shortcode_accounts() {
     // ВИПРАВЛЕНО: Використовуємо нову функцію fb_get_all_account_type
     $add_types    = function_exists( 'fb_get_all_account_type' ) ? fb_get_all_account_type() : [];
 
-    wp_enqueue_style( 'fb-account-css', plugin_dir_url( __FILE__ ) . 'css/account.css', [], time() );
+    wp_enqueue_style( 'fb-account-css', FB_PLUGIN_URL . 'css/account.css', [], time() );
     wp_enqueue_script( 'jquery-ui-sortable' );
-    wp_enqueue_script( 'fb-account-js', plugin_dir_url( __FILE__ ) . 'js/account.js', [ 'jquery', 'jquery-ui-sortable' ], '1.0.4', true );
+    wp_enqueue_script( 'fb-account-js', FB_PLUGIN_URL . 'js/account.js', [ 'jquery', 'jquery-ui-sortable' ], '1.0.4', true );
 
     wp_localize_script( 'fb-account-js', 'fbAccountObj', [
         'ajax_url' => admin_url( 'admin-ajax.php' ),

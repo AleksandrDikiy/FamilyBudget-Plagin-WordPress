@@ -75,9 +75,9 @@ function fb_shortcode_categories_interface() {
     $add_types    = function_exists( 'fb_get_all_category_types' ) ? fb_get_all_category_types() : [];
     $param_types  = function_exists( 'fb_get_parameter_types' ) ? fb_get_parameter_types() : [];
 
-    wp_enqueue_style( 'fb-category-css', plugin_dir_url( __FILE__ ) . 'css/category.css', [], time() );
+    wp_enqueue_style( 'fb-category-css', FB_PLUGIN_URL . 'css/category.css', [], time() );
     wp_enqueue_script( 'jquery-ui-sortable' );
-    wp_enqueue_script( 'fb-category-js', plugin_dir_url( __FILE__ ) . 'js/category.js', [ 'jquery', 'jquery-ui-sortable' ], time(), true );
+    wp_enqueue_script( 'fb-category-js', FB_PLUGIN_URL . 'js/category.js', [ 'jquery', 'jquery-ui-sortable' ], time(), true );
 
     wp_localize_script( 'fb-category-js', 'fbCatObj', [
         'ajax_url' => admin_url( 'admin-ajax.php' ),

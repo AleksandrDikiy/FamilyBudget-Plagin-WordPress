@@ -32,7 +32,7 @@ function fb_home_enqueue_assets(): void {
 		return;
 	}
 
-	$base = plugin_dir_url( __FILE__ );
+	$base = FB_PLUGIN_URL;
 	$ver  = defined( 'FB_VERSION' ) ? FB_VERSION : '1.0.0';
 
 	wp_enqueue_style( 'fb-home', $base . 'css/home.css', [], $ver );

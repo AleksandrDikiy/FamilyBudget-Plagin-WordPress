@@ -72,7 +72,7 @@ function fb_amount_enqueue_scripts(): void {
         return;
     }
 
-    $plugin_url = plugin_dir_url( __FILE__ );
+    $plugin_url = FB_PLUGIN_URL;
     $version    = '1.1.1.0';
 
     // Стилі модуля.
@@ -1611,7 +1611,7 @@ function fb_render_budget_interface(): string {
                                    aria-label="<?php esc_attr_e( 'Виберіть CSV-файл для імпорту', 'family-budget' ); ?>">
                         </div>
                         <button type="button" id="fb-import-btn" class="fb-btn-import">
-                            <img src="<?php echo esc_url( plugin_dir_url( __FILE__ ) . 'img/icon-import.png' ); ?>"
+                            <img src="<?php echo esc_url( FB_PLUGIN_URL . 'img/icon-import.png' ); ?>"
                                  alt="" width="16" height="16" class="fb-btn-icon" aria-hidden="true">
                             <?php esc_html_e( 'import', 'family-budget' ); ?>
                         </button>

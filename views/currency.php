@@ -32,7 +32,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Двошарова перевірка безпеки для AJAX-обробників цього модуля.
  *
- * @since  1.3.1
+ * @since  1.3.4
  * @param  string $action Ім'я nonce-дії WordPress.
  * @return void
  */
@@ -144,14 +144,14 @@ function fb_shortcode_currency_interface() {
 
 	wp_enqueue_style(
 		'fb-currency-css',
-		plugin_dir_url( __FILE__ ) . 'css/currency.css',
+        FB_PLUGIN_URL . 'css/currency.css',
 		[],
 		'1.0.0'
 	);
 	wp_enqueue_script( 'jquery-ui-sortable' );
 	wp_enqueue_script(
 		'fb-currency-js',
-		plugin_dir_url( __FILE__ ) . 'js/currency.js',
+        FB_PLUGIN_URL . 'js/currency.js',
 		[ 'jquery', 'jquery-ui-sortable' ],
 		'1.0.0',
 		true

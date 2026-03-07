@@ -450,7 +450,7 @@ function fb_render_charts_module(): string {
             '</div>';
     }
 
-    $plugin_url = plugin_dir_url( __FILE__ );
+    $plugin_url = FB_PLUGIN_URL;
 
     wp_enqueue_style(
         'fb-charts-css',

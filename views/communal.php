@@ -7,8 +7,8 @@
  *
  * @package    FamilyBudget
  * @subpackage Communal
- * @version    1.0.27.3
- * @since      1.0.27.0
+ * @version    1.3.4.0
+ * @since      1.3.4.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -40,7 +40,7 @@ add_action( 'wp_ajax_fb_ajax_communal_get_chart_data', 'fb_ajax_communal_get_cha
  *
  * Returns 0 when the user is not logged in or has no family assignment.
  *
- * @since 1.0.27.0
+ * @since 1.3.4.0
  * @return int
  */
 function fb_communal_get_family_id(): int {
@@ -72,7 +72,7 @@ function fb_communal_get_family_id(): int {
  * Only these categories are meaningful for the communal chart (they have
  * actual meter readings recorded).
  *
- * @since 1.0.27.0
+ * @since 1.3.4.0
  *
  * @param int $family_id Family primary key.
  * @return array<object> Objects with properties Category_ID, Category_Name.
@@ -412,7 +412,7 @@ function fb_render_communal_module( array $atts = [] ): string {
 
     // ── Enqueue assets ────────────────────────────────────────────────────────
 
-    $plugin_url = plugin_dir_url( __FILE__ );
+    $plugin_url = FB_PLUGIN_URL;
 
     wp_enqueue_script(
         'chartjs',
