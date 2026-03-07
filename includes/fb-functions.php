@@ -328,3 +328,27 @@ function fb_get_family_name( int $family_id ): string|false {
     );
     return $name ?: false;
 }
+
+/**
+ * Єдина точка перевірки безпеки для AJAX-обробників.
+ *
+ * Замінює три ідентичні локальні функції: fb_accounts_verify_request(),
+ * fb_category_verify_request(), fb_currency_verify_request().
+ * Виконує двошарову перевірку: авторизацію + валідацію nonce з $_POST['security'].
+ * У разі невдачі завершує виконання через wp_send_json_error() (HTTP 403).
+ *
+ * @since  1.3.1
+ * @param  string $action Ім'я nonce-дії WordPress (наприклад, 'fb_account_nonce').
+ * @return void
+ */
+function fb_verify_ajax_request( string $action ): void {
+	if ( ! is_user_logged_in() ) {
+		wp_send_json_error( array( 'message' => __( 'Необхідна авторизація.', 'family-budget' ) ), 403 );
+	}
+
+	$nonce = isset( $_POST['security'] ) ? sanitize_key( wp_unslash( $_POST['security'] ) ) : '';
+
+	if ( ! wp_verify_nonce( $nonce, $action ) ) {
+		wp_send_json_error( array( 'message' => __( 'Помилка безпеки. Оновіть сторінку.', 'family-budget' ) ), 403 );
+	}
+}

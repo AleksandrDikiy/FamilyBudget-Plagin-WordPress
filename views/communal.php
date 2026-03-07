@@ -25,13 +25,11 @@ add_shortcode( 'fb_communal', 'fb_render_communal_module' );
 //  AJAX HOOKS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-// Load parameters for a chosen category (Filter 3)
-add_action( 'wp_ajax_fb_ajax_communal_get_params',       'fb_ajax_communal_get_params' );
-add_action( 'wp_ajax_nopriv_fb_ajax_communal_get_params','fb_ajax_communal_get_params' );
-
-// Load chart data based on all active filters
-add_action( 'wp_ajax_fb_ajax_communal_get_chart_data',       'fb_ajax_communal_get_chart_data' );
-add_action( 'wp_ajax_nopriv_fb_ajax_communal_get_chart_data','fb_ajax_communal_get_chart_data' );
+// [SEC-3] Лише авторизовані запити: wp_ajax_nopriv_* хуки видалено.
+// Усі дані комунальних платежів прив'язані до родини конкретного користувача
+// і не можуть бути публічними. Захист: check_ajax_referer() + get_current_user_id().
+add_action( 'wp_ajax_fb_ajax_communal_get_params',     'fb_ajax_communal_get_params' );
+add_action( 'wp_ajax_fb_ajax_communal_get_chart_data', 'fb_ajax_communal_get_chart_data' );
 
 // ═══════════════════════════════════════════════════════════════════════════════
 //  INTERNAL HELPERS
@@ -168,9 +166,14 @@ function fb_get_category_param( int $family_id, int $category_id ): array {
  * @return void  Terminates with wp_send_json_success / wp_send_json_error.
  */
 function fb_ajax_communal_get_params(): void {
-    check_ajax_referer( 'fb_communal_nonce', 'nonce' );
+	// [SEC-3] Явна перевірка авторизації після видалення nopriv-хука.
+	if ( ! is_user_logged_in() ) {
+		wp_send_json_error( array( 'message' => __( 'Необхідна авторизація.', 'family-budget' ) ), 401 );
+	}
 
-    $family_id   = fb_communal_get_family_id();
+	check_ajax_referer( 'fb_communal_nonce', 'nonce' );
+
+	$family_id   = fb_communal_get_family_id();
     $category_id = isset( $_POST['category_id'] ) ? absint( $_POST['category_id'] ) : 0;
 
     if ( ! $family_id || ! $category_id ) {
@@ -204,6 +207,11 @@ function fb_ajax_communal_get_params(): void {
  * @return void  Terminates with wp_send_json_success / wp_send_json_error.
  */
 function fb_ajax_communal_get_chart_data(): void {
+	// [SEC-3] Явна перевірка авторизації після видалення nopriv-хука.
+	if ( ! is_user_logged_in() ) {
+		wp_send_json_error( array( 'message' => __( 'Необхідна авторизація.', 'family-budget' ) ), 401 );
+	}
+
     check_ajax_referer( 'fb_communal_nonce', 'nonce' );
 
     // ── 1. Collect & sanitise inputs ─────────────────────────────────────────

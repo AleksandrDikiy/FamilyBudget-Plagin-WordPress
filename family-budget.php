@@ -3,7 +3,7 @@
  * Plugin Name: Family Budget
  * Plugin URI: https://fbudget.pp.ua/
  * Description: Професійна система керування сімейними фінансами, інтеграцією курсів НБУ, аналітичними графіками та універсальною AJAX-системою. Повна підтримка мультивалютності та динамічних параметрів.
- * Version: 1.3.0.1
+ * Version: 1.3.1
  * Author: Alex Wild
  * Author URI: https://wildwind.org.ua/
  * License: GPL v2 or later
@@ -13,7 +13,7 @@
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * @package FamilyBudget
- * @version 1.3.0.1
+ * @version    1.3.1
  * @since 1.0.0
  */
 
@@ -34,14 +34,25 @@ $myUpdateChecker = PucFactory::buildUpdateChecker(
 
 // Вказуємо гілку, з якої брати оновлення (зазвичай main)
 $myUpdateChecker->setBranch('main');
-// (ОПЦІОНАЛЬНО, АЛЕ БАЖАНО): Авторизація для GitHub API
-// GitHub має ліміт на 60 безкоштовних запитів на годину.
-// Щоб плагін гарантовано бачив оновлення, розкоментуй рядок нижче
-// та встав свій Personal Access Token (PAT), який ти використовував для термінала:
-$myUpdateChecker->setAuthentication('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');
+
+/*
+ * АВТОРИЗАЦІЯ ДЛЯ GITHUB API (ОПЦІОНАЛЬНО, АЛЕ БАЖАНО)
+ * -------------------------------------------------------
+ * GitHub має ліміт на 60 анонімних запитів на годину.
+ * Щоб плагін гарантовано бачив оновлення — визначте константу
+ * FB_GITHUB_TOKEN у файлі wp-config.php:
+ *
+ *   define( 'FB_GITHUB_TOKEN', 'your_personal_access_token_here' );
+ *
+ * ⚠️  НІКОЛИ не вставляйте токен безпосередньо в код плагіна!
+ *     Токен у публічному репозиторії буде автоматично анульований GitHub.
+ */
+if ( defined( 'FB_GITHUB_TOKEN' ) && '' !== FB_GITHUB_TOKEN ) {
+	$myUpdateChecker->setAuthentication( FB_GITHUB_TOKEN );
+}
 
 // Константи плагіна
-define( 'FB_VERSION', '1.3.0.1' );
+define( 'FB_VERSION', '1.3.1' );
 define( 'FB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FB_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'FB_PLUGIN_FILE', __FILE__ );
@@ -49,27 +60,35 @@ define( 'FB_PLUGIN_FILE', __FILE__ );
 /**
  * ПІДКЛЮЧЕННЯ МОДУЛІВ ТА ЛОГІКИ
  *
+ * Структура:
+ *  - includes/ — хелпери, класи та setup (без UI).
+ *  - views/    — модулі-шорткоди з бізнес-логікою та HTML.
+ *
  * Безпечне завантаження: відсутній файл не крашить весь плагін,
  * а лише логується в debug.log через error_log().
  */
 $fb_modules = [
-	'db-setup.php',
-	'class-fb-crud.php',
-	'class-fb-currency-rates.php',
-	'class-fb-import.php',
-	'family.php',
-	'currency.php',
-	'account.php',
-	'category.php',
-	'amount.php',
-	'category-params.php',
-	'category-type.php',
-	'amount-type.php',
-	'account-type.php',
-	'parameter-type.php',
-	'fb-charts.php',
-	'communal.php',
-	'home.php',
+	// Спочатку завантажуємо includes/ — усе без UI
+	'includes/fb-functions.php',           // Допоміжні функції — ПЕРШИМИ
+	'includes/db-setup.php',
+	'includes/class-fb-crud.php',
+	'includes/class-fb-currency-rates.php',
+	'includes/class-fb-import.php',
+
+	// Потім views/ — модулі з шорткодами та бізнес-логікою
+	'views/family.php',
+	'views/currency.php',
+	'views/account.php',
+	'views/category.php',
+	'views/amount.php',
+	'views/category-params.php',
+	'views/category-type.php',
+	'views/amount-type.php',
+	'views/account-type.php',
+	'views/parameter-type.php',
+	'views/fb-charts.php',
+	'views/communal.php',
+	'views/home.php',
 ];
 
 foreach ( $fb_modules as $fb_module ) {
@@ -154,227 +173,143 @@ add_shortcode( 'fb_home', 'fb_shortcode_home_interface' );
 /**
  * МЕНЮ АДМІНІСТРАТОРА
  */
-add_action( 'admin_menu', function() {
-    $capability = 'manage_options';
+/**
+ * Відображає сторінку адміністратора Family Budget з документацією по шорткодах
+ * та системною інформацією.
+ *
+ * Функція винесена на рівень файлу (не всередину хука) відповідно до WPCS:
+ * визначення функцій всередині колбеків є антипатерном.
+ *
+ * @since  1.0.0
+ * @return void
+ */
+function fb_render_admin_page(): void {
+	?>
+	<div class="wrap">
+		<h1>
+			<span class="dashicons dashicons-chart-line" style="font-size:32px;vertical-align:middle;"></span>
+			&nbsp;&nbsp;FamilyBudget <?php echo esc_html( FB_VERSION ); ?>
+		</h1>
+		<p class="description">
+			<?php esc_html_e( 'Професійна система керування сімейними фінансами з підтримкою мультивалютності та інтеграцією з НБУ.', 'family-budget' ); ?>
+		</p>
+		<hr>
+		<h2><?php esc_html_e( '📋 Повний список шорткодів', 'family-budget' ); ?></h2>
+		<p><?php esc_html_e( 'Використовуйте ці шорткоди на сторінках WordPress для відображення функціоналу плагіна:', 'family-budget' ); ?></p>
+		<table class="widefat" style="max-width:1000px;margin-top:20px;">
+			<thead>
+				<tr>
+					<th style="width:25%;"><?php esc_html_e( 'Шорткод', 'family-budget' ); ?></th>
+					<th style="width:50%;"><?php esc_html_e( 'Функціонал', 'family-budget' ); ?></th>
+					<th style="width:25%;"><?php esc_html_e( 'Доступ', 'family-budget' ); ?></th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php
+				$fb_shortcodes = array(
+					'fb_budget'     => array( __( 'Основний інтерфейс бюджету: баланс, транзакції, аналітика', 'family-budget' ), 'auth' ),
+					'fb_family'     => array( __( 'Керування родинами: створення, учасники, AJAX редагування', 'family-budget' ), 'auth' ),
+					'fb_currency'   => array( __( 'Валюти: додавання, основна валюта (★), конвертація НБУ', 'family-budget' ), 'auth' ),
+					'fb_accounts'   => array( __( 'Рахунки: Готівка, Картки, Депозити. Сортування ▲▼', 'family-budget' ), 'auth' ),
+					'fb_categories' => array( __( 'Категорії доходів/витрат. Сортування ▲▼, AJAX редагування', 'family-budget' ), 'auth' ),
+					'fb_analytics'  => array( __( 'Аналітика витрат та доходів по категоріях', 'family-budget' ), 'auth' ),
+					'fb_charts'     => array( __( 'Графіки фінансових показників', 'family-budget' ), 'auth' ),
+				);
+				foreach ( $fb_shortcodes as $sc => $info ) :
+					?>
+					<tr>
+						<td><code>[<?php echo esc_html( $sc ); ?>]</code></td>
+						<td><?php echo esc_html( $info[0] ); ?></td>
+						<td><?php esc_html_e( 'Авторизовані користувачі', 'family-budget' ); ?></td>
+					</tr>
+				<?php endforeach; ?>
+				<tr style="background:#f0f6fb;">
+					<td colspan="3" style="padding:10px;">
+						<strong><?php esc_html_e( '🔧 Системні довідники (тільки адміністратори)', 'family-budget' ); ?></strong>
+					</td>
+				</tr>
+				<?php
+				$fb_admin_sc = array(
+					'fb_category_type'  => __( 'Типи категорій — Витрати, Доходи', 'family-budget' ),
+					'fb_amount_type'    => __( 'Типи операцій — Витрата, Переказ, Дохід', 'family-budget' ),
+					'fb_account_type'   => __( 'Типи рахунків — Готівка, Картка, Депозит', 'family-budget' ),
+					'fb_parameter_type' => __( 'Типи параметрів — Число, Текст, Дата', 'family-budget' ),
+				);
+				foreach ( $fb_admin_sc as $sc => $desc ) :
+					?>
+					<tr>
+						<td><code>[<?php echo esc_html( $sc ); ?>]</code></td>
+						<td><?php echo esc_html( $desc ); ?></td>
+						<td><span style="color:#dc3545;"><strong>Admin Only</strong></span></td>
+					</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+		<hr style="margin-top:40px;">
+		<h2><?php esc_html_e( '⚙️ Системна інформація', 'family-budget' ); ?></h2>
+		<table class="form-table">
+			<tr>
+				<th scope="row"><?php esc_html_e( 'Версія плагіна:', 'family-budget' ); ?></th>
+				<td><code><?php echo esc_html( FB_VERSION ); ?></code></td>
+			</tr>
+			<tr>
+				<th scope="row"><?php esc_html_e( 'Версія WordPress:', 'family-budget' ); ?></th>
+				<td><code><?php echo esc_html( get_bloginfo( 'version' ) ); ?></code></td>
+			</tr>
+			<tr>
+				<th scope="row"><?php esc_html_e( 'Версія PHP:', 'family-budget' ); ?></th>
+				<td><code><?php echo esc_html( phpversion() ); ?></code></td>
+			</tr>
+			<tr>
+				<th scope="row"><?php esc_html_e( 'Директорія плагіна:', 'family-budget' ); ?></th>
+				<td><code><?php echo esc_html( FB_PLUGIN_DIR ); ?></code></td>
+			</tr>
+	ot</table>
+	</div>
+	<?php
+}
 
-    // Головний пункт меню тепер веде на Родини
-    add_menu_page( 'Family Budget'
-        , 'Family Budget'
-        , $capability
-        , 'fb_family'
-        /*, function(){ echo '<div class="wrap">'.do_shortcode('[fb_family]').'</div>'; }*/
-        , 'fb_render_admin_page'            // Функція відображення
-        , 'dashicons-chart-line'
-        , 30 );
+/**
+ * Реєструє пункти меню адміністратора Family Budget.
+ *
+ * Додає головний пункт та підменю для системних довідників.
+ * Підменю відображають модулі через do_shortcode().
+ *
+ * @since  1.0.0
+ * @return void
+ */
+function fb_register_admin_menu(): void {
+	$capability = 'manage_options';
 
-    /**
-     * Відображає сторінку адміністратора з документацією по шорткодам
-     *
-     * @since 1.0.0
-     * @return void
-     */
-    function fb_render_admin_page() {
-        ?>
-        <div class="wrap">
-            <h1>
-                <span class="dashicons dashicons-chart-line" style="font-size: 32px; vertical-align: middle;"></span>
-                &nbsp;&nbsp;FamilyBudget <?php echo esc_html( FB_VERSION ); ?>
-            </h1>
+	add_menu_page(
+		'Family Budget',
+		'Family Budget',
+		$capability,
+		'fb_family',
+		'fb_render_admin_page',
+		'dashicons-chart-line',
+		30
+	);
 
-            <p class="description">
-                Професійна система керування сімейними фінансами з підтримкою мультивалютності та інтеграцією з НБУ.
-            </p>
+	$subpages = array(
+		'fb_account_type'   => __( 'Типи рахунків', 'family-budget' ),
+		'fb_category_type'  => __( 'Типи категорій', 'family-budget' ),
+		'fb_amount_type'    => __( 'Типи операцій', 'family-budget' ),
+		'fb_parameter_type' => __( 'Типи параметрів', 'family-budget' ),
+	);
 
-            <hr>
+	foreach ( $subpages as $slug => $title ) {
+		add_submenu_page(
+			'fb_family',
+			$title,
+			$title,
+			$capability,
+			$slug,
+			static function () use ( $slug ) {
+				echo '<div class="wrap">' . do_shortcode( '[' . esc_attr( $slug ) . ']' ) . '</div>';
+			}
+		);
+	}
+}
 
-            <h2>📋 Повний список шорткодів</h2>
-            <p>Використовуйте ці шорткоди на сторінках WordPress для відображення функціоналу плагіна:</p>
-
-            <table class="widefat" style="max-width: 1000px; margin-top: 20px;">
-                <thead>
-                <tr>
-                    <th style="width: 25%;">Шорткод</th>
-                    <th style="width: 50%;">Функціонал</th>
-                    <th style="width: 25%;">Доступ</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td><code>[fb_budget]</code></td>
-                    <td>
-                        <strong>Основний інтерфейс бюджету</strong><br>
-                        • Баланс з конвертацією за курсом НБУ<br>
-                        • Жовта форма додавання транзакцій<br>
-                        • Історія останніх 20 записів<br>
-                        • Графік аналітики витрат
-                    </td>
-                    <td>Авторизовані користувачі</td>
-                </tr>
-
-                <tr>
-                    <td><code>[fb_family]</code></td>
-                    <td>
-                        <strong>Керування родинами</strong><br>
-                        • Створення нових родин<br>
-                        • Додавання користувачів до родини<br>
-                        • AJAX редагування назв<br>
-                        • Видалення та архівування
-                    </td>
-                    <td>Авторизовані користувачі</td>
-                </tr>
-
-                <tr>
-                    <td><code>[fb_currency]</code></td>
-                    <td>
-                        <strong>Валюти</strong><br>
-                        • Додавання валют (USD, EUR, ₴ тощо)<br>
-                        • Встановлення основної валюти (★)<br>
-                        • Автоматична конвертація за НБУ<br>
-                        • Мультивалютний баланс
-                    </td>
-                    <td>Авторизовані користувачі</td>
-                </tr>
-
-                <tr>
-                    <td><code>[fb_accounts]</code></td>
-                    <td>
-                        <strong>Рахунки</strong><br>
-                        • Готівка, Картки, Депозити<br>
-                        • ▲▼ Сортування порядку<br>
-                        • AJAX редагування назв<br>
-                        • Прив'язка до типів рахунків
-                    </td>
-                    <td>Авторизовані користувачі</td>
-                </tr>
-
-                <tr>
-                    <td><code>[fb_categories]</code></td>
-                    <td>
-                        <strong>Категорії доходів/витрат</strong><br>
-                        • Витрати (Їжа, Транспорт, тощо)<br>
-                        • Доходи (Зарплата, Бонуси)<br>
-                        • ▲▼ Сортування порядку<br>
-                        • AJAX редагування
-                    </td>
-                    <td>Авторизовані користувачі</td>
-                </tr>
-
-                <tr style="background: #f0f6fb;">
-                    <td colspan="3" style="padding: 10px;">
-                        <strong>🔧 Системні довідники (тільки для адміністраторів)</strong>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td><code>[fb_dict_category_type]</code></td>
-                    <td>
-                        <strong>Типи категорій</strong><br>
-                        Базові типи: Витрати, Доходи
-                    </td>
-                    <td>
-                        <span style="color: #dc3545;">
-                            <strong>Admin Only</strong>
-                        </span>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td><code>[fb_dict_amount_type]</code></td>
-                    <td>
-                        <strong>Типи транзакцій</strong><br>
-                        Базові типи: Витрата, Переказ, Дохід
-                    </td>
-                    <td>
-                        <span style="color: #dc3545;">
-                            <strong>Admin Only</strong>
-                        </span>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td><code>[fb_dict_account_type]</code></td>
-                    <td>
-                        <strong>Типи рахунків</strong><br>
-                        Базові типи: Готівка, Картка, Депозит
-                    </td>
-                    <td>
-                        <span style="color: #dc3545;">
-                            <strong>Admin Only</strong>
-                        </span>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td><code>[fb_dict_param_type]</code></td>
-                    <td>
-                        <strong>Типи параметрів</strong><br>
-                        Базові типи: число, строка, дата
-                    </td>
-                    <td>
-                        <span style="color: #dc3545;">
-                            <strong>Admin Only</strong>
-                        </span>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-
-            <hr style="margin-top: 40px;">
-
-            <h2>⚙️ Системна інформація</h2>
-            <table class="form-table">
-                <tr>
-                    <th scope="row">Версія плагіна:</th>
-                    <td><code><?php echo esc_html( FB_VERSION ); ?></code></td>
-                </tr>
-                <tr>
-                    <th scope="row">Версія WordPress:</th>
-                    <td><code><?php echo esc_html( get_bloginfo( 'version' ) ); ?></code></td>
-                </tr>
-                <tr>
-                    <th scope="row">Версія PHP:</th>
-                    <td><code><?php echo esc_html( phpversion() ); ?></code></td>
-                </tr>
-                <tr>
-                    <th scope="row">Директорія плагіна:</th>
-                    <td><code><?php echo esc_html( FB_PLUGIN_DIR ); ?></code></td>
-                </tr>
-            </table>
-
-            <hr style="margin-top: 40px;">
-
-            <h2>📚 Документація</h2>
-            <p>
-                <strong>Початок роботи:</strong>
-            </p>
-            <ol>
-                <li>Створіть сторінки в WordPress для кожного модуля (Бюджет, Родина, Валюти, Категорії, Рахунки)</li>
-                <li>Додайте відповідні шорткоди на ці сторінки</li>
-                <li>Створіть родину через інтерфейс <code>[fb_family]</code></li>
-                <li>Додайте валюти через <code>[fb_currency]</code></li>
-                <li>Налаштуйте рахунки <code>[fb_accounts]</code> та категорії <code>[fb_categories]</code></li>
-                <li>Почніть використовувати форму бюджету!</li>
-            </ol>
-
-            <p>
-                <strong>Оновлення курсів НБУ:</strong><br>
-                Курси валют автоматично додаються при додаванні нової транзакції через WordPress Transients API.
-                Для примусового оновлення очистіть кеш WordPress.
-            </p>
-        </div>
-        <?php
-    }
-
-    $subpages = array(
-        'fb_account_type'   => 'Типи рахунків',
-        'fb_category_type'  => 'Типи категорій',
-        'fb_amount_type'    => 'Типи операцій',
-        'fb_parameter_type' => 'Типи параметрів'
-    );
-
-    foreach ( $subpages as $slug => $title ) {
-        add_submenu_page( 'fb_family', $title, $title, $capability, $slug, function() use ($slug) {
-            echo '<div class="wrap">'.do_shortcode('[' . $slug . ']').'</div>';
-        } );
-    }
-} );
+add_action( 'admin_menu', 'fb_register_admin_menu' );

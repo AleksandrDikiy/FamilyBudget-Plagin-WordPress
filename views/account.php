@@ -9,28 +9,14 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Універсальний помічник для витягування даних з об'єктів або масивів (ARRAY_A).
- * Вирішує проблему порожніх списків, якщо ключі відрізняються.
+ * Двошарова перевірка безпеки для AJAX-обробників цього модуля.
+ *
+ * @since  1.3.1
+ * @param  string $action Ім'я nonce-дії WordPress.
+ * @return void
  */
-/*
-function fb_extract_value( $item, $keys ) {
-    foreach ( $keys as $k ) {
-        if ( is_array( $item ) && array_key_exists( $k, $item ) ) return $item[ $k ];
-        if ( is_object( $item ) && property_exists( $item, $k ) ) return $item->$k;
-    }
-    return is_array($item) ? 'Ключ не знайдено' : '';
-}*/
-
-/**
- * Двошарова перевірка безпеки: авторизація + nonce
- */
-function fb_accounts_verify_request( $action = 'fb_account_nonce' ) {
-    if ( ! is_user_logged_in() ) {
-        wp_send_json_error( [ 'message' => 'Неавторизований доступ.' ], 403 );
-    }
-    if ( ! isset( $_POST['security'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['security'] ) ), $action ) ) {
-        wp_send_json_error( [ 'message' => 'Помилка безпеки. Оновіть сторінку.' ], 403 );
-    }
+function fb_accounts_verify_request( string $action = 'fb_account_nonce' ): void {
+	fb_verify_ajax_request( $action );
 }
 
 /**

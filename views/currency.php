@@ -29,16 +29,15 @@ defined( 'ABSPATH' ) || exit;
  * @param string $action Ім'я дії для перевірки nonce. За замовчуванням 'fb_currency_nonce'.
  * @return void
  */
-function fb_currency_verify_request( $action = 'fb_currency_nonce' ) {
-	if ( ! is_user_logged_in() ) {
-		wp_send_json_error( [ 'message' => 'Неавторизований доступ.' ], 403 );
-	}
-
-	$nonce = isset( $_POST['security'] ) ? sanitize_key( wp_unslash( $_POST['security'] ) ) : '';
-
-	if ( ! wp_verify_nonce( $nonce, $action ) ) {
-		wp_send_json_error( [ 'message' => 'Помилка безпеки. Оновіть сторінку.' ], 403 );
-	}
+/**
+ * Двошарова перевірка безпеки для AJAX-обробників цього модуля.
+ *
+ * @since  1.3.1
+ * @param  string $action Ім'я nonce-дії WordPress.
+ * @return void
+ */
+function fb_currency_verify_request( string $action = 'fb_currency_nonce' ): void {
+	fb_verify_ajax_request( $action );
 }
 
 /**

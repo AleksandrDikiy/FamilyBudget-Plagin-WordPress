@@ -37,8 +37,8 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Захист від прямого доступу
 }
-// Підключаємо глобальні допоміжні функції (fb_get_families, fb_user_has_family_access).
-require_once plugin_dir_path( __FILE__ ) . 'fb_function.php';
+// Допоміжні функції (fb_get_families, fb_user_has_family_access тощо) завантажуються
+// централізовано через family-budget.php як перший модуль: fb_function.php.
 
 // ============================================================================
 // БЛОК 1: РЕЄСТРАЦІЯ ШОРТКОДУ
