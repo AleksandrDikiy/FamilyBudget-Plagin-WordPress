@@ -22,8 +22,26 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+// Підключаємо бібліотеку автоматичних оновлень
+require 'plugin-update-checker/plugin-update-checker.php';
+use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
+
+$myUpdateChecker = PucFactory::buildUpdateChecker(
+    'https://github.com/AleksandrDikiy/FamilyBudget-Plagin-WordPress/', // Посилання на твій репозиторій
+    __FILE__, // Вказує на цей головний файл плагіна
+    'family-budget' // Унікальний slug твого плагіна
+);
+
+// Вказуємо гілку, з якої брати оновлення (зазвичай main)
+$myUpdateChecker->setBranch('main');
+// (ОПЦІОНАЛЬНО, АЛЕ БАЖАНО): Авторизація для GitHub API
+// GitHub має ліміт на 60 безкоштовних запитів на годину.
+// Щоб плагін гарантовано бачив оновлення, розкоментуй рядок нижче
+// та встав свій Personal Access Token (PAT), який ти використовував для термінала:
+$myUpdateChecker->setAuthentication('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');
+
 // Константи плагіна
-define( 'FB_VERSION', '1.1.0.0' );
+define( 'FB_VERSION', '1.3.0.1' );
 define( 'FB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FB_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'FB_PLUGIN_FILE', __FILE__ );
