@@ -3,7 +3,7 @@
  * Plugin Name: Family Budget
  * Plugin URI: https://fbudget.pp.ua/
  * Description: Професійна система керування сімейними фінансами, інтеграцією курсів НБУ, аналітичними графіками та універсальною AJAX-системою. Повна підтримка мультивалютності та динамічних параметрів.
- * Version: 1.3.2
+ * Version: 1.3.3
  * Author: Alex Wild
  * Author URI: https://wildwind.org.ua/
  * License: GPL v2 or later
@@ -13,7 +13,7 @@
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * @package FamilyBudget
- * @version    1.3.2
+ * @version    1.3.3
  * @since 1.0.0
  */
 
@@ -23,13 +23,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Підключаємо бібліотеку автоматичних оновлень
-require 'plugin-update-checker/plugin-update-checker.php';
+require_once __DIR__ . '/plugin-update-checker/plugin-update-checker.php';
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
 $myUpdateChecker = PucFactory::buildUpdateChecker(
     'https://github.com/AleksandrDikiy/FamilyBudget-Plagin-WordPress/', // Посилання на твій репозиторій
     __FILE__, // Вказує на цей головний файл плагіна
-    'family-budget' // Унікальний slug твого плагіна
+    'FamilyBudget' // Унікальний slug твого плагіна ВАЖЛИВО: Точна назва папки плагіна на сервері!
 );
 
 // Вказуємо гілку, з якої брати оновлення (зазвичай main)
@@ -52,7 +52,7 @@ if ( defined( 'FB_GITHUB_TOKEN' ) && '' !== FB_GITHUB_TOKEN ) {
 }
 
 // Константи плагіна
-define( 'FB_VERSION', '1.3.2' );
+define( 'FB_VERSION', '1.3.3' );
 define( 'FB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FB_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'FB_PLUGIN_FILE', __FILE__ );
