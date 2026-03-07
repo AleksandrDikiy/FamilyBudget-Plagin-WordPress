@@ -3,7 +3,7 @@
  * Plugin Name: Family Budget
  * Plugin URI: https://fbudget.pp.ua/
  * Description: Професійна система керування сімейними фінансами, інтеграцією курсів НБУ, аналітичними графіками та універсальною AJAX-системою. Повна підтримка мультивалютності та динамічних параметрів.
- * Version: 1.3.0.0 stable
+ * Version: 1.3.0.1
  * Author: Alex Wild
  * Author URI: https://wildwind.org.ua/
  * License: GPL v2 or later
@@ -13,7 +13,7 @@
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * @package FamilyBudget
- * @version 1.3.0.0
+ * @version 1.3.0.1
  * @since 1.0.0
  */
 
