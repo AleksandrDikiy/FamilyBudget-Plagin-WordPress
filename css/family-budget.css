@@ -1,0 +1,878 @@
+/**
+ * Family Budget Plugin Styles
+ * @package FamilyBudget
+ * @version 1.0.25.0
+ */
+
+/* === ГЛОБАЛЬНІ СТИЛІ === */
+body.fb-page { background: #001a33; color: white; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+.fb-container { max-width: 1400px; margin: 20px auto; padding: 20px; background: rgba(255,255,255,0.03); border-radius: 8px; }
+.fb-card { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 8px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
+
+/* === НАВІГАЦІЯ === */
+.fb-header { display: flex; justify-content: center; background: rgba(0,0,0,0.6); padding: 12px; border-bottom: 1px solid #007bff; position: sticky; top: 0; z-index: 1000; }
+.fb-menu { display: flex; list-style: none; padding: 0; margin: 0; }
+.fb-menu-item { position: relative; margin: 0 15px; }
+.fb-menu-item > a { color: #fff; text-decoration: none; font-weight: 600; font-size: 14px; transition: color 0.3s; }
+.fb-menu-item > a:hover { color: #007bff; }
+.fb-submenu { display: none; position: absolute; background: #000a12; border: 1px solid #007bff; min-width: 220px; z-index: 1000; border-radius: 4px; }
+.fb-menu-item:hover .fb-submenu { display: block; }
+.fb-submenu a { padding: 10px 15px; display: block; border-bottom: 1px solid #222; font-size: 13px; color: #fff; text-decoration: none; }
+.fb-submenu a:hover { background: #007bff; }
+
+/* === BUDGET LAYOUT === */
+.fb-budget-container { display: grid; grid-template-columns: 1fr; gap: 20px; padding: 20px; max-width: 1200px; margin: 0 auto; }
+
+/* === ФОРМИ === */
+.fb-form-row { display: flex; gap: 10px; margin-bottom: 12px; }
+.fb-form-control { flex: 1; height: 38px; padding: 8px 12px; border: 2px solid rgba(0,0,0,0.1); border-radius: 6px; font-size: 14px; background: white; color: #333; transition: all 0.2s; }
+.fb-form-control:focus { outline: none; border-color: #2c3e50; box-shadow: 0 0 0 3px rgba(44,62,80,0.1); }
+.fb-form-control.error { border-color: #dc3545; background: #fff5f5; }
+
+/* === КНОПКИ === */
+.fb-btn-save, .fb-btn-submit { background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white; border: none; padding: 10px 18px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.fb-btn-submit:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(44,62,80,0.3); }
+.fb-btn-cancel { background: #6c757d; color: white; border: none; padding: 10px 18px; border-radius: 6px; font-size: 14px; cursor: pointer; }
+.fb-btn-cancel:hover { background: #5a6268; }
+.fb-edit-btn { background: none; border: none; cursor: pointer; font-size: 18px; padding: 4px 8px; }
+.fb-edit-btn:hover { opacity: 0.7; }
+
+/* === ТАБЛИЦІ === */
+.fb-table { width: 100%; border-collapse: collapse; background: #fff; color: #333; font-size: 13px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+.fb-table th { background: #f8f9fa; padding: 12px 10px; text-align: left; border-bottom: 2px solid #dee2e6; color: #555; text-transform: uppercase; font-size: 11px; font-weight: 700; }
+.fb-table td { padding: 10px; border-bottom: 1px solid #eee; }
+.fb-table tbody tr:hover { background: #f8f9fa; }
+
+/* === МОДАЛЬНЕ ВІКНО - КРИТИЧНЕ ВИПРАВЛЕННЯ v1.0.25.0 === */
+.fb-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    /* Flexbox centering */
+    align-items: center;
+    justify-content: center;
+}
+
+.fb-modal.fb-modal-show {
+    display: flex !important;
+}
+
+.fb-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1;
+}
+
+.fb-modal-box {
+    position: relative;
+    background: #fff;
+    padding: 25px;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 10px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    z-index: 2;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: fbModalSlideIn 0.3s ease;
+}
+
+@keyframes fbModalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fb-modal-title {
+    margin: 0 0 20px 0;
+    color: #333;
+    font-size: 18px;
+}
+
+.fb-modal-field {
+    margin-bottom: 15px;
+}
+
+.fb-modal-field label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 12px;
+    color: #666;
+    font-weight: 600;
+}
+
+.fb-modal-field .fb-form-control {
+    width: 100%;
+}
+
+.fb-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* === BALANCE WIDGET === */
+.fb-balance-widget {
+    text-align: center;
+    padding: 15px;
+}
+
+.fb-balance-value {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.fb-balance-updated {
+    font-size: 10px;
+    color: #999;
+    margin-bottom: 10px;
+}
+
+.fb-balance-breakdown {
+    margin-top: 10px;
+    padding: 8px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 4px;
+    font-size: 11px;
+}
+
+.fb-balance-item {
+    margin-bottom: 4px;
+}
+
+.fb-balance-income strong { color: #28a745; }
+.fb-balance-expense strong { color: #dc3545; }
+.fb-balance-transfer strong { color: #007bff; }
+
+/* === SPINNER === */
+.fb-spinner { width: 40px; height: 40px; margin: 0 auto; border: 4px solid rgba(255,255,255,0.1); border-left-color: #007bff; border-radius: 50%; animation: fb-spin 0.8s linear infinite; }
+@keyframes fb-spin { to { transform: rotate(360deg); } }
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+    .fb-modal-box {
+        width: 95%;
+        padding: 20px;
+    }
+
+    .fb-form-row {
+        flex-direction: column;
+    }
+
+    .fb-modal-actions {
+        flex-direction: column;
+    }
+
+    .fb-modal-actions button {
+        width: 100%;
+    }
+}
+
+/**
+ * Additional Styles for Amount Module
+ * Extract from amount.php v1.0.21.0 and add to family-budget.css
+ *
+ * @package FamilyBudget
+ * @version 1.0.26.0
+ */
+
+/* ================================================
+   BUDGET LAYOUT - Updated for v1.0.26.0
+   ================================================ */
+
+.fb-budget-wrapper {
+    max-width: 1400px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+.fb-budget-container {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.fb-budget-sidebar {
+    min-width: 0;
+}
+
+.fb-budget-main {
+    min-width: 0;
+}
+
+/* ================================================
+   NOTICES / ALERTS
+   ================================================ */
+
+.fb-notice {
+    padding: 12px 20px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.fb-notice-success {
+    background: #d4edda;
+    color: #155724;
+    border-left: 4px solid #28a745;
+}
+
+.fb-notice-error {
+    background: #f8d7da;
+    color: #721c24;
+    border-left: 4px solid #dc3545;
+}
+
+.fb-notice-info {
+    background: #d1ecf1;
+    color: #0c5460;
+    border-left: 4px solid #17a2b8;
+}
+
+/* ================================================
+   FORM CARD - Transaction Input Form
+   ================================================ */
+
+.fb-form-card {
+    background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(241, 196, 15, 0.3);
+    margin-bottom: 20px;
+}
+
+.fb-transaction-form {
+    /* Form specific styles */
+}
+
+.fb-note-input {
+    flex: 2;
+}
+
+.fb-params-container {
+    display: none;
+    margin: 10px 0;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.fb-param-input {
+    width: 100%;
+    margin-bottom: 8px;
+    padding: 8px 12px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* ================================================
+   IMPORT SECTION
+   ================================================ */
+
+.fb-import-section {
+    background: rgba(0, 123, 255, 0.05);
+    padding: 15px;
+    border-radius: 6px;
+    border: 2px dashed rgba(0, 123, 255, 0.3);
+    margin-bottom: 20px;
+}
+
+.fb-import-section h4 {
+    margin: 0 0 10px 0;
+    color: #007bff;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.fb-import-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.fb-file-input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #007bff;
+    border-radius: 4px;
+    background: white;
+    font-size: 13px;
+}
+
+.fb-btn-import {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.fb-btn-import:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+/* ================================================
+   TABLE WRAPPER
+   ================================================ */
+
+.fb-table-wrapper {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Transaction row types */
+.fb-transaction-expense {
+    background: linear-gradient(to right, rgba(220, 53, 69, 0.05) 0%, white 100%);
+}
+
+.fb-transaction-income {
+    background: linear-gradient(to right, rgba(40, 167, 69, 0.05) 0%, white 100%);
+}
+
+.fb-transaction-transfer {
+    background: linear-gradient(to right, rgba(0, 123, 255, 0.05) 0%, white 100%);
+}
+
+/* Table columns */
+.fb-date-col {
+    width: 80px;
+}
+
+.fb-amount-col {
+    text-align: right;
+    min-width: 120px;
+}
+
+.fb-actions-col {
+    width: 80px;
+    text-align: center;
+}
+
+.fb-type-badge {
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+}
+
+.fb-empty-state {
+    text-align: center;
+    padding: 40px !important;
+    color: #999;
+    font-style: italic;
+}
+
+/* Action buttons in table */
+.fb-delete-btn {
+    color: #dc3545;
+    text-decoration: none;
+    font-size: 18px;
+    margin-left: 8px;
+    display: inline-block;
+    transition: opacity 0.2s;
+}
+
+.fb-delete-btn:hover {
+    opacity: 0.7;
+}
+
+/* ================================================
+   PAGINATION
+   ================================================ */
+
+.fb-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+}
+
+.fb-page-btn {
+    padding: 8px 16px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+}
+
+.fb-page-btn:hover:not(:disabled) {
+    background: #0056b3;
+    transform: translateY(-1px);
+}
+
+.fb-page-btn:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.fb-page-info {
+    font-size: 13px;
+    color: #666;
+    font-weight: 500;
+}
+
+/* ================================================
+   MODAL - Enhanced for v1.0.26.0
+   ================================================ */
+
+.fb-modal-content {
+    position: relative;
+    background: #fff;
+    padding: 30px;
+    width: 90%;
+    max-width: 550px;
+    border-radius: 10px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    z-index: 2;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: fbModalSlideIn 0.3s ease;
+}
+
+.fb-edit-form {
+    /* Form specific styles */
+}
+
+.fb-form-field {
+    margin-bottom: 15px;
+}
+
+.fb-form-field label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    color: #495057;
+    font-weight: 600;
+}
+
+.fb-form-field .fb-form-control {
+    width: 100%;
+}
+
+/* ================================================
+   BALANCE WIDGET - Enhanced
+   ================================================ */
+
+.fb-balance-container {
+    min-height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fb-balance-income {
+    margin-bottom: 6px;
+    font-size: 12px;
+}
+
+.fb-balance-expense {
+    margin-bottom: 6px;
+    font-size: 12px;
+}
+
+.fb-balance-transfer {
+    font-size: 12px;
+}
+
+/* ================================================
+   RESPONSIVE - Mobile Optimizations
+   ================================================ */
+
+@media (max-width: 992px) {
+    .fb-budget-container {
+        grid-template-columns: 1fr;
+    }
+
+    .fb-budget-sidebar {
+        order: 2;
+    }
+
+    .fb-budget-main {
+        order: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .fb-import-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .fb-btn-import {
+        width: 100%;
+    }
+
+    .fb-table {
+        font-size: 12px;
+    }
+
+    .fb-table th,
+    .fb-table td {
+        padding: 8px 6px;
+    }
+
+    .fb-pagination {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .fb-page-btn {
+        flex: 1;
+        min-width: 100px;
+    }
+
+    .fb-page-info {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .fb-budget-wrapper {
+        padding: 10px;
+    }
+
+    .fb-form-card {
+        padding: 15px;
+    }
+
+    .fb-modal-content {
+        padding: 20px;
+    }
+}
+
+/* ================================================
+   ACCESSIBILITY IMPROVEMENTS
+   ================================================ */
+
+.fb-edit-btn:focus,
+.fb-delete-btn:focus,
+.fb-page-btn:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+}
+
+/* Screen reader only text */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* ================================================
+   ANALYTICS MODULE v1.0.26.4
+   Ultra-Compact Layout with Minimal Spacing
+   ================================================ */
+
+.fb-analytics-module {
+    background: #001a33;
+    color: white;
+    padding: 0;
+    overflow: hidden;
+    margin: 0 0 10px 0;
+}
+
+.fb-analytics-card {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 6px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 0;
+    border-radius: 4px;
+}
+
+/* ================================================
+   MODULE TITLE - Compact
+   ================================================ */
+
+.fb-analytics-title {
+    margin: 0 0 4px 0;
+    font-size: 14px;
+    line-height: 1;
+    color: white;
+    font-weight: 600;
+    padding: 0;
+}
+
+/* ================================================
+   FILTERS - Single Row Compact Layout
+   ================================================ */
+
+.fb-analytics-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0 0 3px 0;
+    padding: 0;
+    line-height: 1;
+}
+
+.fb-filter-group {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    margin: 0;
+    padding: 0;
+}
+
+.fb-filter-label {
+    font-size: 10px;
+    color: #aaa;
+    white-space: nowrap;
+    margin: 0;
+    padding: 0;
+    font-weight: 500;
+}
+
+.fb-filter-input {
+    height: 24px;
+    padding: 0 4px;
+    background: #fff;
+    color: #000;
+    border-radius: 3px;
+    border: none;
+    font-size: 11px;
+    transition: all 0.2s ease;
+    margin: 0;
+}
+
+.fb-filter-input:focus {
+    outline: 1px solid #1a73e8;
+    outline-offset: 1px;
+}
+
+.fb-filter-date {
+    width: 110px;
+}
+
+.fb-filter-select {
+    min-width: 90px;
+    cursor: pointer;
+}
+
+/* ================================================
+   CHART CONTAINER - Tight Integration
+   ================================================ */
+
+.fb-analytics-chart-container {
+    position: relative;
+    height: 240px; /* Зменшено з 320px */
+    width: 100%;
+    margin: 1px 0 0 0;
+    padding: 0;
+}
+
+#fbAnalyticsChart {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* ================================================
+   TOTAL SUM DISPLAY - Compact
+   ================================================ */
+
+.fb-analytics-total {
+    text-align: right;
+    font-size: 10px;
+    color: #007bff;
+    margin: -6px 0 0 0;
+    padding: 2px 6px;
+    font-weight: bold;
+    position: relative;
+    z-index: 10;
+}
+
+.fb-analytics-total strong {
+    color: #1a73e8;
+    font-size: 11px;
+}
+
+.fb-analytics-total em {
+    color: #999;
+    font-style: italic;
+}
+
+
+/* ================================================
+   RESPONSIVE - Mobile Optimizations
+   ================================================ */
+
+@media (max-width: 768px) {
+    .fb-analytics-filters {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 4px;
+    }
+
+    .fb-filter-group {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .fb-filter-input {
+        height: 22px;
+        font-size: 10px;
+    }
+
+    .fb-filter-date,
+    .fb-filter-select {
+        width: 100px;
+        min-width: auto;
+    }
+
+    .fb-analytics-chart-container {
+        height: 180px;
+        margin-top: 4px;
+    }
+}
+
+@media (max-width: 480px) {
+    .fb-analytics-module {
+        padding: 1px;
+    }
+
+    .fb-analytics-card {
+        padding: 4px 6px;
+    }
+
+    .fb-analytics-title {
+        font-size: 13px;
+        margin-bottom: 3px;
+    }
+
+    .fb-analytics-chart-container {
+        height: 160px;
+    }
+
+    .fb-filter-label {
+        font-size: 6px;
+    }
+
+    .fb-filter-input {
+        font-size: 11px;
+        height: 26px;
+    }
+}
+
+/* ================================================
+   ACCESSIBILITY ENHANCEMENTS
+   ================================================ */
+
+.fb-filter-input:focus-visible {
+    outline: 2px solid #1a73e8;
+    outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .fb-analytics-card {
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .fb-filter-input {
+        border: 1px solid #000;
+    }
+
+    .fb-filter-label {
+        color: #fff;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .fb-filter-input {
+        transition: none;
+    }
+}
+
+/* Dark mode support (if theme provides it) */
+@media (prefers-color-scheme: dark) {
+    .fb-analytics-module {
+        background: #000a12;
+    }
+}
+
+/* ===== редагування параметрів категорії - 14.02.2026 ===== */
+
+/* Filter Row */
+.fb-filter-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    padding: 15px;
+    background: rgba(0, 123, 255, 0.05);
+    border-radius: 6px;
+}
+
+.fb-filter-control {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.fb-filter-control:focus {
+    outline: 2px solid #007bff;
+}
+
+/* Parameters Button */
+.fb-edit-params-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 4px 8px;
+    margin-left: 4px;
+}
+
+.fb-edit-params-btn:hover {
+    opacity: 0.7;
+}
+
+@media (max-width: 768px) {
+    .fb-filter-row {
+        flex-direction: column;
+    }
+}

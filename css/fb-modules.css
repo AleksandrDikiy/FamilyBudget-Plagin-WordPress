@@ -1,0 +1,314 @@
+/**
+ * Спільні стилі модулів: Валюти / Рахунки / Категорії.
+ * Файл підключається у fb_enqueue_*_assets() кожного модуля.
+ *
+ * ПРОБЛЕМА яку вирішуємо:
+ *   WordPress/теми застосовують button { display:block } або
+ *   td > * { display:block } — кнопки стають вертикальними.
+ *
+ * РІШЕННЯ:
+ *   1. Явний flex на .fb-actions-wrap (wrapper у <td>).
+ *   2. Скидання display:block на button у нашому контексті.
+ *   3. Висока специфічність (module-id > td > .class) щоб перебити тему.
+ *
+ * @package FamilyBudget
+ */
+
+/* ── СКИДАННЯ ТЕМИ ──────────────────────────────── */
+
+/* Скидаємо будь-який display:block що тема навішує на button */
+#fb-currency-module button,
+#fb-accounts-module  button,
+#fb-categories-module button {
+    display:    inline-flex !important;
+    box-sizing: border-box;
+}
+
+/* ── ОБГОРТКА КНОПОК ДІЙ ───────────────────────── */
+
+/*
+ * .fb-actions-wrap — span що обгортає кнопки в колонці ДІЇ.
+ * currency.php: клас .fb-actions-view (вже є)
+ * account.php / category.php: додаємо .fb-actions-wrap через патч PHP
+ */
+#fb-currency-module  td.fb-col-actions .fb-actions-view,
+#fb-currency-module  td.fb-col-actions .fb-actions-edit,
+#fb-accounts-module  td.fb-col-actions .fb-actions-wrap,
+#fb-categories-module td.fb-col-actions .fb-actions-wrap {
+    display:     inline-flex !important;
+    flex-flow:   row nowrap !important;
+    align-items: center !important;
+    gap:         4px !important;
+}
+
+/* ── КОМІРКА ДІЙ ────────────────────────────────── */
+
+#fb-currency-module  td.fb-col-actions,
+#fb-accounts-module  td.fb-col-actions,
+#fb-categories-module td.fb-col-actions {
+    white-space: nowrap;
+    text-align:  right;
+    vertical-align: middle;
+}
+
+/* ── ІКОНКИ-КНОПКИ ──────────────────────────────── */
+
+#fb-currency-module  .fb-btn-icon,
+#fb-accounts-module  .fb-btn-icon,
+#fb-categories-module .fb-btn-icon {
+    display:         inline-flex !important;
+    align-items:     center !important;
+    justify-content: center !important;
+    width:           30px !important;
+    height:          30px !important;
+    padding:         0 !important;
+    margin:          0 !important;
+    background:      transparent !important;
+    border:          1px solid transparent !important;
+    border-radius:   6px !important;
+    cursor:          pointer !important;
+    font-size:       16px !important;
+    line-height:     1 !important;
+    float:           none !important;
+    flex-shrink:     0 !important;
+    transition:      background .15s ease !important;
+}
+
+#fb-currency-module  .fb-btn-icon:hover,
+#fb-accounts-module  .fb-btn-icon:hover,
+#fb-categories-module .fb-btn-icon:hover {
+    background:   rgba(0,0,0,.07) !important;
+    border-color: rgba(0,0,0,.12) !important;
+}
+
+/* Зірочка активна */
+.fb-btn-star.fb-star-active { color: #f0a500 !important; }
+
+/* ── КНОПКИ ПЕРЕМІЩЕННЯ ▲▼ ─────────────────────── */
+
+#fb-accounts-module  .fb-move-wrap,
+#fb-categories-module .fb-move-wrap {
+    display:        inline-flex !important;
+    flex-direction: column !important;
+    align-items:    center !important;
+    gap:            2px !important;
+}
+
+#fb-accounts-module  .fb-move-btn,
+#fb-categories-module .fb-move-btn {
+    display:         inline-flex !important;
+    align-items:     center !important;
+    justify-content: center !important;
+    width:           22px !important;
+    height:          16px !important;
+    padding:         0 !important;
+    margin:          0 !important;
+    font-size:       10px !important;
+    line-height:     1 !important;
+    background:      #f0f0f0 !important;
+    border:          1px solid #ccc !important;
+    border-radius:   3px !important;
+    cursor:          pointer !important;
+    float:           none !important;
+}
+
+#fb-accounts-module  .fb-move-btn:hover,
+#fb-categories-module .fb-move-btn:hover {
+    background: #e0e0e0 !important;
+}
+
+/* ── ADD-BAR ────────────────────────────────────── */
+
+.fb-add-bar {
+    display:     flex !important;
+    flex-flow:   row nowrap !important;
+    align-items: center !important;
+    gap:         8px !important;
+    padding:     10px 12px !important;
+    background:  #f8f9fa !important;
+    border:      1px solid #dee2e6 !important;
+    border-radius: 6px !important;
+    margin-bottom: 0 !important;
+}
+
+.fb-add-bar .fb-input  { flex: 1 1 auto !important; min-width: 0 !important; }
+.fb-add-bar .fb-select { flex: 0 0 auto !important; }
+
+/* ── FILTER-BAR ─────────────────────────────────── */
+
+.fb-filter-bar {
+    display:     flex !important;
+    flex-flow:   row nowrap !important;
+    align-items: center !important;
+    gap:         8px !important;
+    padding:     6px 12px !important;
+    background:  #f1f3f5 !important;
+    border:      1px solid #dee2e6 !important;
+    border-top:  none !important;
+    margin-bottom: 0 !important;
+}
+
+/* ── ТАБЛИЦЯ ────────────────────────────────────── */
+
+.fb-table-wrap { position: relative; overflow-x: auto; }
+
+.fb-table {
+    width:           100% !important;
+    border-collapse: collapse !important;
+    font-size:       14px !important;
+    table-layout:    auto !important;
+}
+
+.fb-table thead tr {
+    background:  #2c3e50 !important;
+    color:       #fff !important;
+}
+
+.fb-table thead th {
+    padding:     10px 12px !important;
+    font-weight: 600 !important;
+    font-size:   12px !important;
+    letter-spacing: .5px !important;
+    text-align:  left !important;
+    border:      none !important;
+    white-space: nowrap !important;
+}
+
+.fb-table tbody tr {
+    border-bottom: 1px solid #e9ecef !important;
+    transition:    background .12s !important;
+}
+
+.fb-table tbody tr:hover { background: #f8f9fa !important; }
+
+.fb-table tbody td {
+    padding:        9px 12px !important;
+    vertical-align: middle !important;
+    border:         none !important;
+}
+
+/* ── СПІНЕР ─────────────────────────────────────── */
+
+/* ── СПІНЕР ЗАВАНТАЖЕННЯ ────────────────────────────
+ *
+ * За замовчуванням — display:none (без !important).
+ * Це дозволяє inline style="display:none;" у PHP спрацювати.
+ * Також pointer-events:none гарантує що overlay НІКОЛИ не
+ * перехоплює кліки навіть якщо display якось стає видимим.
+ * Анімація вимкнена поки спінер не активний (економія CPU).
+ *
+ * JS керує через: $s.css('display','flex').addClass('is-visible')
+ * та $s.css('display','none').removeClass('is-visible')
+ * ─────────────────────────────────────────────────── */
+.fb-spinner-overlay {
+    display:         none;
+    pointer-events:  none;
+    position:        absolute;
+    inset:           0;
+    background:      rgba(255, 255, 255, .65);
+    align-items:     center;
+    justify-content: center;
+    z-index:         10;
+}
+
+/* JS додає .is-visible — тут flex та pointer-events безпечні */
+.fb-spinner-overlay.is-visible {
+    display:        flex          !important;
+    pointer-events: auto         !important;
+}
+
+.fb-spinner-circle {
+    width:         32px;
+    height:        32px;
+    border:        3px solid #e0e0e0;
+    border-top-color: #4f6bf4;
+    border-radius: 50%;
+    animation:     none; /* стоп поки не видимий */
+}
+
+.fb-spinner-overlay.is-visible .fb-spinner-circle {
+    animation: fb-spin .7s linear infinite; /* лише коли активний */
+}
+
+@keyframes fb-spin { to { transform: rotate(360deg); } }
+
+/* ── BADGE (категорії) ──────────────────────────── */
+
+.fb-params-badge {
+    display:         inline-flex !important;
+    align-items:     center !important;
+    justify-content: center !important;
+    min-width:       24px !important;
+    height:          24px !important;
+    padding:         0 6px !important;
+    background:      #4f6bf4 !important;
+    color:           #fff !important;
+    border-radius:   12px !important;
+    font-size:       12px !important;
+    font-weight:     700 !important;
+    line-height:     1 !important;
+}
+
+.fb-type-badge {
+    display:       inline-flex !important;
+    align-items:   center !important;
+    padding:       3px 10px !important;
+    border-radius: 20px !important;
+    font-size:     11px !important;
+    font-weight:   700 !important;
+    letter-spacing: .5px !important;
+    text-transform: uppercase !important;
+}
+
+/* ── INLINE-РЕДАГУВАННЯ ─────────────────────────── */
+
+.fb-edit-mode,
+.fb-account-name-edit { display: none; }
+
+.fb-edit-mode input,
+.fb-account-name-edit input {
+    max-width:    180px !important;
+    height:       30px !important;
+    padding:      0 8px !important;
+    font-size:    13px !important;
+    border:       1px solid #4f6bf4 !important;
+    border-radius: 4px !important;
+    outline:      none !important;
+}
+
+/* ── КНОПКИ ФОРМ ────────────────────────────────── */
+
+.fb-btn-primary {
+    display:         inline-flex !important;
+    align-items:     center !important;
+    justify-content: center !important;
+    height:          36px !important;
+    padding:         0 16px !important;
+    background:      #2c3e50 !important;
+    color:           #fff !important;
+    font-size:       14px !important;
+    font-weight:     600 !important;
+    border:          none !important;
+    border-radius:   5px !important;
+    cursor:          pointer !important;
+    white-space:     nowrap !important;
+    flex-shrink:     0 !important;
+    transition:      background .15s !important;
+}
+
+.fb-btn-primary:hover { background: #34495e !important; }
+
+.fb-select,
+.fb-input {
+    height:        36px !important;
+    padding:       0 10px !important;
+    font-size:     14px !important;
+    border:        1px solid #ced4da !important;
+    border-radius: 5px !important;
+    background:    #fff !important;
+    box-sizing:    border-box !important;
+    outline:       none !important;
+}
+
+.fb-select:focus,
+.fb-input:focus { border-color: #4f6bf4 !important; }

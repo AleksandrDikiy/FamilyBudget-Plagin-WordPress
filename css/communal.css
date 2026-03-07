@@ -1,0 +1,349 @@
+/**
+ * communal.css – Styles for the Family Budget Communal Services module.
+ *
+ * Scoping strategy: every rule is prefixed with .fb-communal-wrapper
+ * so there is zero risk of leaking into or inheriting from the parent theme
+ * or other plugin components.
+ *
+ * Layout: two-column flex (filters left, chart right).
+ * The wrapper is 100 % wide and capped at 500 px height.
+ *
+ * @package    FamilyBudget
+ * @subpackage Communal
+ * @version    1.0.27.3
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   RESET: neutralise anything the theme might force on our elements
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.fb-communal-wrapper,
+.fb-communal-wrapper *,
+.fb-communal-wrapper *::before,
+.fb-communal-wrapper *::after {
+    box-sizing: border-box;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   ROOT WRAPPER
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.fb-communal-wrapper {
+    width      : 100%;
+    max-height : 500px;
+    display    : flex;
+    flex-direction : row;
+    gap        : 0;
+    background : #ffffff;
+    border     : 1px solid #e5e7eb;
+    border-radius : 8px;
+    overflow   : hidden;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size  : 13px;
+    color      : #374151;
+    line-height: 1.4;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   LEFT COLUMN – Filters panel
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.fb-communal-filters {
+    width       : 220px;
+    min-width   : 200px;
+    max-width   : 240px;
+    flex-shrink : 0;
+    background  : #f9fafb;
+    border-right: 1px solid #e5e7eb;
+    padding     : 16px 14px;
+    overflow-y  : auto;
+    display     : flex;
+    flex-direction: column;
+    gap         : 12px;
+}
+
+/* Scrollbar styling for the filters pane */
+.fb-communal-filters::-webkit-scrollbar { width: 4px; }
+.fb-communal-filters::-webkit-scrollbar-track { background: transparent; }
+.fb-communal-filters::-webkit-scrollbar-thumb {
+    background   : #d1d5db;
+    border-radius: 2px;
+}
+
+/* Section heading */
+.fb-communal-filters__heading {
+    margin      : 0 0 4px;
+    padding     : 0;
+    font-size   : 13px;
+    font-weight : 600;
+    color       : #111827;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    border-bottom : 1px solid #e5e7eb;
+    padding-bottom: 8px;
+}
+
+/* ── Individual filter field wrapper ──────────────────────────────────────── */
+
+.fb-communal-field {
+    display       : flex;
+    flex-direction: column;
+    gap           : 4px;
+}
+
+.fb-communal-field--inline {
+    flex-direction: row;
+    align-items   : center;
+}
+
+/* ── Label ────────────────────────────────────────────────────────────────── */
+
+.fb-communal-label {
+    font-size  : 11px;
+    font-weight: 600;
+    color      : #6b7280;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin     : 0;
+}
+
+/* ── Select (single & multi) ─────────────────────────────────────────────── */
+
+.fb-communal-select {
+    width           : 100%;
+    padding         : 5px 8px;
+    background      : #ffffff;
+    border          : 1px solid #d1d5db;
+    border-radius   : 5px;
+    font-size       : 12px;
+    color           : #374151;
+    outline         : none;
+    transition      : border-color .15s ease;
+    appearance      : auto;
+}
+
+.fb-communal-select:focus {
+    border-color: #3b82f6;
+    box-shadow  : 0 0 0 3px rgba(59,130,246,.15);
+}
+
+.fb-communal-select--multi {
+    min-height : 70px;
+    resize     : none;
+}
+
+/* Hint text under multiselects */
+.fb-communal-hint {
+    font-size  : 10px;
+    color      : #9ca3af;
+    line-height: 1.3;
+}
+
+/* ── Toggle (By Months checkbox) ─────────────────────────────────────────── */
+
+.fb-communal-toggle {
+    display    : flex;
+    align-items: center;
+    gap        : 8px;
+    cursor     : pointer;
+    user-select: none;
+}
+
+.fb-communal-toggle__input {
+    /* Hidden – replaced by custom track/thumb */
+    position: absolute;
+    opacity : 0;
+    width   : 0;
+    height  : 0;
+}
+
+.fb-communal-toggle__track {
+    position     : relative;
+    display      : inline-flex;
+    align-items  : center;
+    width        : 34px;
+    height       : 18px;
+    background   : #d1d5db;
+    border-radius: 9px;
+    transition   : background .2s ease;
+    flex-shrink  : 0;
+}
+
+.fb-communal-toggle__thumb {
+    position     : absolute;
+    left         : 2px;
+    width        : 14px;
+    height       : 14px;
+    background   : #ffffff;
+    border-radius: 50%;
+    box-shadow   : 0 1px 3px rgba(0,0,0,.25);
+    transition   : transform .2s ease;
+}
+
+/* Checked state */
+.fb-communal-toggle__input:checked ~ .fb-communal-toggle__track {
+    background: #3b82f6;
+}
+.fb-communal-toggle__input:checked ~ .fb-communal-toggle__track .fb-communal-toggle__thumb {
+    transform: translateX(16px);
+}
+
+/* Focus ring for accessibility */
+.fb-communal-toggle__input:focus-visible ~ .fb-communal-toggle__track {
+    box-shadow: 0 0 0 3px rgba(59,130,246,.3);
+}
+
+.fb-communal-toggle__text {
+    font-size  : 12px;
+    font-weight: 500;
+    color      : #374151;
+}
+
+/* ── Apply button ─────────────────────────────────────────────────────────── */
+
+.fb-communal-btn {
+    width          : 100%;
+    padding        : 7px 12px;
+    margin-top     : auto;          /* push to bottom of flex column */
+    background     : #3b82f6;
+    color          : #ffffff;
+    border         : none;
+    border-radius  : 5px;
+    font-size      : 12px;
+    font-weight    : 600;
+    cursor         : pointer;
+    transition     : background .15s ease, transform .1s ease;
+    letter-spacing : .02em;
+}
+
+.fb-communal-btn:hover {
+    background: #2563eb;
+}
+
+.fb-communal-btn:active {
+    background: #1d4ed8;
+    transform : scale(.98);
+}
+
+.fb-communal-btn:focus-visible {
+    outline   : none;
+    box-shadow: 0 0 0 3px rgba(59,130,246,.35);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   RIGHT COLUMN – Chart area
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.fb-communal-chart-section {
+    flex       : 1 1 0;
+    min-width  : 0;              /* prevent flex overflow */
+    display    : flex;
+    flex-direction: column;
+    padding    : 14px 16px 12px;
+    overflow   : hidden;
+}
+
+/* ── Header row (title + spinner) ────────────────────────────────────────── */
+
+.fb-communal-chart-header {
+    display    : flex;
+    align-items: center;
+    gap        : 10px;
+    margin-bottom: 8px;
+    flex-shrink: 0;
+}
+
+.fb-communal-chart-title {
+    margin    : 0;
+    padding   : 0;
+    font-size : 14px;
+    font-weight: 600;
+    color     : #111827;
+    white-space: nowrap;
+    overflow  : hidden;
+    text-overflow: ellipsis;
+}
+
+/* ── Spinner ─────────────────────────────────────────────────────────────── */
+
+.fb-communal-spinner {
+    display      : inline-block;
+    width        : 16px;
+    height       : 16px;
+    border       : 2px solid #e5e7eb;
+    border-top   : 2px solid #3b82f6;
+    border-radius: 50%;
+    animation    : fb-communal-spin .65s linear infinite;
+    flex-shrink  : 0;
+}
+
+@keyframes fb-communal-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ── Canvas container (fills remaining height) ───────────────────────────── */
+
+.fb-communal-canvas-wrap {
+    flex     : 1 1 0;
+    min-height: 0;
+    position : relative;
+}
+
+.fb-communal-canvas-wrap canvas {
+    display : block;
+    width   : 100% !important;
+    height  : 100% !important;
+}
+
+/* ── No-data / error message ─────────────────────────────────────────────── */
+
+.fb-communal-message {
+    flex-shrink  : 0;
+    margin       : 0;
+    padding      : 12px;
+    background   : #fef3c7;
+    border       : 1px solid #f59e0b;
+    border-radius: 5px;
+    font-size    : 12px;
+    color        : #92400e;
+    text-align   : center;
+}
+
+/* ── Shortcode-level error (user not logged in) ──────────────────────────── */
+
+.fb-communal-error {
+    padding      : 12px 16px;
+    background   : #fee2e2;
+    border       : 1px solid #f87171;
+    border-radius: 6px;
+    color        : #991b1b;
+    font-size    : 13px;
+    margin       : 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   RESPONSIVE: stack columns on narrow screens (< 600 px)
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+@media ( max-width: 599px ) {
+
+    .fb-communal-wrapper {
+        flex-direction : column;
+        max-height     : none;       /* allow natural height when stacked */
+    }
+
+    .fb-communal-filters {
+        width    : 100%;
+        max-width: 100%;
+        border-right : none;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .fb-communal-select--multi {
+        min-height: 55px;
+    }
+
+    .fb-communal-canvas-wrap {
+        height: 260px;          /* fixed height when stacked – no flex magic */
+    }
+}

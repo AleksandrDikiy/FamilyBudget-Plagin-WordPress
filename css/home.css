@@ -1,0 +1,181 @@
+/**
+ * Стилі модуля "Головна" — Family Budget Plugin.
+ *
+ * Файл містить:
+ *  1. Резервні скидання для браузерів без підтримки :has() (inline PHP CSS).
+ *  2. Стани :focus, .is-invalid, :hover, @media.
+ *
+ * Базова структура та ізоляція — inline-атрибути (home.php) + JS (home.js).
+ *
+ * @package FamilyBudget
+ */
+
+/* =============================================================================
+ * РЕЗЕРВНЕ СКИДАННЯ (для браузерів без :has())
+ * Специфічність підвищена через #fb-home-wrap
+ * ========================================================================== */
+
+#fb-home-wrap {
+	display:        block !important;
+	float:          none !important;
+	clear:          both !important;
+	width:          100% !important;
+	max-width:      600px !important;
+	margin-left:    auto !important;
+	margin-right:   auto !important;
+	column-count:   1 !important;
+	columns:        auto !important;
+	text-align:     left !important;
+	letter-spacing: normal !important;
+	word-spacing:   normal !important;
+}
+
+#fb-home-wrap h2,
+#fb-home-wrap p,
+#fb-home-wrap form,
+#fb-home-wrap form > div {
+	display:               block !important;
+	float:                 none !important;
+	clear:                 both !important;
+	width:                 100% !important;
+	grid-template-columns: unset !important;
+	column-count:          1 !important;
+}
+
+#fb-home-wrap label {
+	display:    block !important;
+	float:      none !important;
+	clear:      both !important;
+	width:      100% !important;
+	text-align: left !important;
+}
+
+#fb-home-wrap input[type="text"].fb-inp {
+	display: block !important;
+	float:   none !important;
+	clear:   both !important;
+	width:   100% !important;
+}
+
+/* Виняток: flex-рядок валюти */
+#fb-home-wrap .fb-cur-row {
+	display:     flex !important;
+	flex-flow:   row nowrap !important;
+	align-items: stretch !important;
+	gap:         8px !important;
+	width:       100% !important;
+	float:       none !important;
+	clear:       both !important;
+}
+
+#fb-home-wrap .fb-cur-row input[type="text"].fb-inp {
+	flex:    1 1 auto !important;
+	width:   auto !important;
+	clear:   none !important;
+	display: block !important;
+}
+
+#fb-home-wrap .fb-cur-row .fb-inp-code {
+	flex:      0 0 74px !important;
+	width:     74px !important;
+	min-width: 74px !important;
+	max-width: 74px !important;
+}
+
+#fb-home-wrap .fb-cur-row .fb-inp-sym {
+	flex:      0 0 52px !important;
+	width:     52px !important;
+	min-width: 52px !important;
+	max-width: 52px !important;
+}
+
+/* =============================================================================
+ * FOCUS
+ * ========================================================================== */
+
+#fb-home-wrap input.fb-inp:focus {
+	border-color: #4f6bf4 !important;
+	box-shadow:   0 0 0 3px rgba( 79, 107, 244, .18 ) !important;
+	background:   #fff !important;
+	outline:      none !important;
+}
+
+/* =============================================================================
+ * INVALID
+ * ========================================================================== */
+
+#fb-home-wrap input.fb-inp.is-invalid {
+	border-color: #e53e3e !important;
+	background:   #fff5f5 !important;
+}
+
+#fb-home-wrap input.fb-inp.is-invalid:focus {
+	box-shadow: 0 0 0 3px rgba( 229, 62, 62, .18 ) !important;
+}
+
+/* =============================================================================
+ * ПОВІДОМЛЕННЯ
+ * ========================================================================== */
+
+#fb-notice.err {
+	display:       block !important;
+	background:    #fff5f5;
+	border:        1px solid #feb2b2;
+	border-radius: 7px;
+	color:         #c53030;
+	padding:       9px 14px;
+	margin:        0 0 16px;
+	font-size:     14px;
+	line-height:   1.5;
+	letter-spacing: normal;
+	word-spacing:   normal;
+}
+
+#fb-notice.ok {
+	display:       block !important;
+	background:    #f0fff4;
+	border:        1px solid #9ae6b4;
+	border-radius: 7px;
+	color:         #276749;
+	padding:       9px 14px;
+	margin:        0 0 16px;
+	font-size:     14px;
+	line-height:   1.5;
+	letter-spacing: normal;
+	word-spacing:   normal;
+}
+
+/* =============================================================================
+ * КНОПКА
+ * ========================================================================== */
+
+#fb-save:hover:not( :disabled ) {
+	background: #3b56e8 !important;
+}
+
+#fb-save:active:not( :disabled ) {
+	transform: translateY( 1px );
+}
+
+#fb-save:disabled {
+	opacity: .65 !important;
+	cursor:  not-allowed !important;
+}
+
+/* =============================================================================
+ * АДАПТИВНІСТЬ
+ * ========================================================================== */
+
+@media ( max-width: 480px ) {
+	#fb-home-wrap .fb-cur-row {
+		flex-wrap: wrap !important;
+	}
+
+	#fb-home-wrap .fb-cur-row .fb-inp-code,
+	#fb-home-wrap .fb-cur-row .fb-inp-sym {
+		flex:      1 1 calc( 50% - 4px ) !important;
+		width:     auto !important;
+		min-width: 0 !important;
+		max-width: none !important;
+	}
+}

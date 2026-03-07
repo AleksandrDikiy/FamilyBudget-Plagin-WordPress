@@ -1,0 +1,668 @@
+/**
+ * Family Budget — Модуль «Баланс» (amount.css)
+ *
+ * Стилі для сторінки управління бюджетними транзакціями.
+ * Принципи: компактність, мінімальні відступи, щільна інтеграція
+ * блоків фільтрів з таблицею.
+ *
+ * Структура:
+ *  1. CSS-змінні
+ *  2. Загальний макет (wrapper, container, sidebar, main)
+ *  3. Блок імпорту
+ *  4. Форма додавання транзакції
+ *  5. Блок балансу
+ *  6. Фільтри таблиці
+ *  7. Таблиця транзакцій
+ *  8. Пагінація
+ *  9. Модальні вікна
+ * 10. Системні повідомлення (notices)
+ * 11. Допоміжні елементи (spinner, badges)
+ * 12. Адаптивний дизайн
+ *
+ * @package    FamilyBudget
+ * @subpackage Assets/CSS
+ * @version    1.1.1.0
+ */
+
+/* ============================================================================
+   1. CSS-ЗМІННІ
+   ============================================================================ */
+
+:root {
+	--fb-primary:       #1a6dc1;
+	--fb-primary-dark:  #155aa0;
+	--fb-accent:        #f0a500;
+	--fb-accent-dark:   #d48f00;
+	--fb-income:        #28a745;
+	--fb-expense:       #dc3545;
+	--fb-transfer:      #007bff;
+	--fb-bg-sidebar:    linear-gradient(160deg, #1a3a6c 0%, #0f2245 100%);
+	--fb-bg-form:       #f7a81a;
+	--fb-bg-form-dark:  #e09600;
+	--fb-bg-main:       #f9f9f9;
+	--fb-border:        #dee2e6;
+	--fb-radius:        6px;
+	--fb-radius-sm:     4px;
+	--fb-shadow:        0 2px 8px rgba(0, 0, 0, .12);
+	--fb-ctrl-h:        34px;
+	--fb-gap-xs:        4px;
+	--fb-gap-sm:        6px;
+	--fb-gap:           10px;
+	--fb-gap-md:        14px;
+}
+
+/* ============================================================================
+   2. МАКЕТ — wrapper, container, sidebar, main
+   ============================================================================ */
+
+.fb-budget-wrapper {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.fb-budget-container {
+	display:               grid;
+	grid-template-columns: 260px 1fr;
+	gap:                   var(--fb-gap-md);
+	align-items:           start;
+}
+
+/* Ліва колонка (sidebar) */
+.fb-budget-sidebar {
+	display:        flex;
+	flex-direction: column;
+	gap:            var(--fb-gap-sm);
+}
+
+/* Права частина (main) */
+.fb-budget-main {
+	display:        flex;
+	flex-direction: column;
+	gap:            0;          /* фільтри та таблиця стикаються впритул */
+	min-width:      0;
+}
+
+/* ============================================================================
+   3. БЛОК ІМПОРТУ ТРАНЗАКЦІЙ
+   ============================================================================ */
+
+.fb-import-section {
+	background:    rgba(255, 255, 255, .08);
+	border:        1px solid rgba(255, 255, 255, .18);
+	border-radius: var(--fb-radius);
+	padding:       var(--fb-gap-sm) var(--fb-gap);
+}
+
+.fb-import-label {
+	margin:      0 0 var(--fb-gap-xs);
+	font-size:   11px;
+	font-weight: 600;
+	color:       #a8c4e8;
+	text-transform: uppercase;
+	letter-spacing: .04em;
+}
+
+.fb-import-form {
+	margin: 0;
+}
+
+.fb-import-row {
+	display: block; /* file input займає весь рядок */
+}
+
+/* Стандартний file input */
+.fb-file-input {
+	display:       block;
+	width:         100%;
+	font-size:     12px;
+	color:         #e0e8f4;
+	background:    rgba(255, 255, 255, .1);
+	border:        1px solid rgba(255, 255, 255, .25);
+	border-radius: var(--fb-radius-sm);
+	padding:       4px 6px;
+	cursor:        pointer;
+	box-sizing:    border-box;
+	margin-bottom: var(--fb-gap-sm);
+}
+
+.fb-file-input::file-selector-button {
+	background:    #fff;
+	border:        none;
+	border-radius: var(--fb-radius-sm);
+	padding:       3px 8px;
+	font-size:     12px;
+	cursor:        pointer;
+	margin-right:  var(--fb-gap-xs);
+}
+
+/* Кнопка «Impортувати» — повна ширина, іконка + текст */
+.fb-btn-import {
+	display:         flex;
+	align-items:     center;
+	justify-content: center;
+	gap:             6px;
+	width:           100%;
+	height:          var(--fb-ctrl-h);
+	padding:         0 14px;
+	background:      var(--fb-primary);
+	color:           #fff;
+	border:          none;
+	border-radius:   var(--fb-radius-sm);
+	font-size:       13px;
+	font-weight:     600;
+	cursor:          pointer;
+	white-space:     nowrap;
+	transition:      background .2s;
+	box-sizing:      border-box;
+}
+
+.fb-btn-import:hover {
+	background: var(--fb-primary-dark);
+}
+
+/* Іконка всередині кнопки */
+.fb-btn-icon {
+	display:        block;
+	flex-shrink:    0;
+	width:          16px;
+	height:         16px;
+	object-fit:     contain;
+	pointer-events: none;
+}
+
+/* ============================================================================
+   4. ФОРМА ДОДАВАННЯ ТРАНЗАКЦІЇ
+   ============================================================================ */
+
+.fb-form-card {
+	background:    var(--fb-bg-form);
+	border-radius: var(--fb-radius);
+	padding:       var(--fb-gap) var(--fb-gap);
+}
+
+.fb-transaction-form {
+	display:        flex;
+	flex-direction: column;
+	gap:            var(--fb-gap-sm);
+}
+
+/* Усі контроли форми */
+.fb-form-control {
+	width:         100%;
+	height:        var(--fb-ctrl-h);
+	padding:       0 8px;
+	font-size:     13px;
+	color:         #1a1a1a;
+	background:    #fff;
+	border:        1px solid rgba(0, 0, 0, .18);
+	border-radius: var(--fb-radius-sm);
+	box-sizing:    border-box;
+	transition:    border-color .15s, box-shadow .15s;
+	appearance:    auto;
+}
+
+.fb-form-control:focus {
+	outline:      none;
+	border-color: var(--fb-primary);
+	box-shadow:   0 0 0 2px rgba(26, 109, 193, .2);
+}
+
+/* Рядок із сумою + валютою + кнопкою (inline) */
+.fb-form-row-inline {
+	display:     flex;
+	gap:         var(--fb-gap-sm);
+	align-items: center;
+}
+
+/* Поле суми — займає весь вільний простір */
+.fb-amount-input {
+	flex:      1;
+	min-width: 0;
+}
+
+/* Дропдаун валюти — компактний, фіксована ширина */
+.fb-currency-select {
+	flex:        0 0 68px;
+	width:       68px;
+	padding-right: 4px;
+	text-align:  center;
+}
+
+/* Кнопка збереження у формі */
+.fb-btn-submit {
+	flex-shrink:   0;
+	height:        var(--fb-ctrl-h);
+	padding:       0 14px;
+	background:    #2c3e50;
+	color:         #fff;
+	border:        none;
+	border-radius: var(--fb-radius-sm);
+	font-size:     13px;
+	font-weight:   600;
+	cursor:        pointer;
+	white-space:   nowrap;
+	transition:    background .2s, opacity .2s;
+}
+
+.fb-btn-submit:hover {
+	background: #1a252f;
+}
+
+.fb-btn-submit:disabled {
+	opacity: .55;
+	cursor:  not-allowed;
+}
+/* Кнопка «Зберегти» на повну ширину у формі sidebar */
+.fb-btn-full {
+	width: 100%;
+	justify-content: center;
+}
+
+/* Контейнер динамічних параметрів категорії */
+.fb-params-container {
+	display:        flex;
+	flex-direction: column;
+	gap:            var(--fb-gap-xs);
+}
+
+.fb-param-input {
+	width:         100%;
+	height:        var(--fb-ctrl-h);
+	padding:       0 8px;
+	font-size:     12px;
+	border:        1px solid rgba(0, 0, 0, .18);
+	border-radius: var(--fb-radius-sm);
+	box-sizing:    border-box;
+}
+
+/* ============================================================================
+   5. БЛОК БАЛАНСУ
+   ============================================================================ */
+
+.fb-card,
+.fb-balance-card {
+	background:    var(--fb-bg-sidebar);
+	color:         #fff;
+	border-radius: var(--fb-radius);
+	padding:       var(--fb-gap) var(--fb-gap);
+}
+
+.fb-card h4,
+.fb-balance-card h4 {
+	margin:      0 0 var(--fb-gap-sm);
+	font-size:   13px;
+	font-weight: 700;
+	color:       #c8d8f0;
+	text-transform: uppercase;
+	letter-spacing: .04em;
+}
+
+.fb-balance-container {
+	min-height: 60px;
+}
+
+.fb-balance-value {
+	font-size:   26px;
+	font-weight: 800;
+	line-height: 1.1;
+	margin-bottom: var(--fb-gap-xs);
+}
+
+.fb-balance-updated {
+	font-size:     11px;
+	color:         #90a8c8;
+	margin-bottom: var(--fb-gap-sm);
+}
+
+.fb-balance-breakdown {
+	display:        flex;
+	flex-direction: column;
+	gap:            2px;
+	font-size:      12px;
+}
+
+/* ============================================================================
+   6. ФІЛЬТРИ ТАБЛИЦІ ТРАНЗАКЦІЙ
+   ============================================================================ */
+
+.fb-filter-row {
+	display:       flex;
+	flex-wrap:     wrap;
+	gap:           var(--fb-gap-sm);
+	padding:       var(--fb-gap-sm) var(--fb-gap);
+	background:    #eef2f7;
+	border:        1px solid var(--fb-border);
+	border-bottom: none;          /* Зливається з таблицею */
+	border-radius: var(--fb-radius) var(--fb-radius) 0 0;
+}
+
+.fb-filter-control {
+	height:        var(--fb-ctrl-h);
+	padding:       0 8px;
+	font-size:     12px;
+	color:         #333;
+	background:    #fff;
+	border:        1px solid var(--fb-border);
+	border-radius: var(--fb-radius-sm);
+	flex:          1 1 140px;
+	min-width:     100px;
+	box-sizing:    border-box;
+	transition:    border-color .15s;
+}
+
+.fb-filter-control:focus {
+	outline:      none;
+	border-color: var(--fb-primary);
+}
+
+/* ============================================================================
+   7. ТАБЛИЦЯ ТРАНЗАКЦІЙ
+   ============================================================================ */
+
+.fb-table-wrapper {
+	overflow-x:     auto;
+	border:         1px solid var(--fb-border);
+	border-radius:  0 0 var(--fb-radius) var(--fb-radius);
+	background:     #fff;
+}
+
+.fb-table {
+	width:           100%;
+	border-collapse: collapse;
+	font-size:       13px;
+}
+
+.fb-table thead th {
+	background:     #2c3e50;
+	color:          #fff;
+	padding:        7px 8px;
+	text-align:     left;
+	font-weight:    600;
+	font-size:      12px;
+	white-space:    nowrap;
+	border-bottom:  2px solid #1a252f;
+}
+
+.fb-table tbody tr {
+	border-bottom: 1px solid #f0f0f0;
+	transition:    background .12s;
+}
+
+.fb-table tbody tr:hover {
+	background: #f5f8ff;
+}
+
+.fb-table tbody td {
+	padding:        5px 8px;
+	vertical-align: middle;
+}
+
+/* Колірне маркування рядків */
+.fb-transaction-income  { border-left: 3px solid var(--fb-income);   }
+.fb-transaction-expense { border-left: 3px solid var(--fb-expense);  }
+.fb-transaction-transfer{ border-left: 3px solid var(--fb-transfer); }
+
+/* Колонка суми — вирівнювання праворуч */
+.fb-amount-col {
+	text-align:  right;
+	white-space: nowrap;
+}
+
+/* Колонка дій */
+.fb-actions-col {
+	white-space: nowrap;
+	text-align:  center;
+}
+
+.fb-actions-col .fb-edit-btn,
+.fb-actions-col .fb-edit-params-btn,
+.fb-actions-col .fb-delete-btn {
+	background:    none;
+	border:        none;
+	padding:       2px 4px;
+	cursor:        pointer;
+	font-size:     14px;
+	line-height:   1;
+	border-radius: var(--fb-radius-sm);
+	text-decoration: none;
+	transition:    background .15s;
+}
+
+.fb-actions-col .fb-edit-btn:hover        { background: #e8f0fe; }
+.fb-actions-col .fb-edit-params-btn:hover { background: #fff3cd; }
+.fb-actions-col .fb-delete-btn:hover      { background: #fde8e8; }
+
+/* Порожній стан */
+.fb-empty-state {
+	text-align: center;
+	padding:    20px;
+	color:      #888;
+	font-size:  13px;
+}
+
+/* ============================================================================
+   8. ПАГІНАЦІЯ
+   ============================================================================ */
+
+.fb-pagination-row td {
+	padding:    var(--fb-gap-sm) var(--fb-gap);
+	background: #f5f6fa;
+}
+
+.fb-pagination {
+	display:         flex;
+	align-items:     center;
+	justify-content: center;
+	gap:             var(--fb-gap);
+}
+
+.fb-page-btn {
+	height:        28px;
+	padding:       0 12px;
+	background:    var(--fb-primary);
+	color:         #fff;
+	border:        none;
+	border-radius: var(--fb-radius-sm);
+	font-size:     12px;
+	cursor:        pointer;
+	transition:    background .15s, opacity .15s;
+}
+
+.fb-page-btn:hover {
+	background: var(--fb-primary-dark);
+}
+
+.fb-page-btn:disabled {
+	background: #b0bec5;
+	cursor:     default;
+	opacity:    .65;
+}
+
+.fb-page-info {
+	font-size: 12px;
+	color:     #555;
+}
+
+/* ============================================================================
+   9. МОДАЛЬНІ ВІКНА
+   ============================================================================ */
+
+.fb-modal {
+	display:  none;
+	position: fixed;
+	inset:    0;
+	z-index:  9999;
+}
+
+.fb-modal-show {
+	display: block;
+}
+
+.fb-modal-overlay {
+	position:   absolute;
+	inset:      0;
+	background: rgba(0, 0, 0, .55);
+}
+
+.fb-modal-content {
+	position:      absolute;
+	top:           50%;
+	left:          50%;
+	transform:     translate(-50%, -50%);
+	background:    #fff;
+	border-radius: var(--fb-radius);
+	box-shadow:    0 8px 32px rgba(0, 0, 0, .22);
+	padding:       20px;
+	width:         min(400px, 92vw);
+	max-height:    90vh;
+	overflow-y:    auto;
+	box-sizing:    border-box;
+}
+
+.fb-modal-title {
+	margin:      0 0 12px;
+	font-size:   15px;
+	font-weight: 700;
+	color:       #1a1a1a;
+}
+
+/* Поля у модалі */
+.fb-form-field {
+	margin-bottom: var(--fb-gap-sm);
+}
+
+.fb-form-field label {
+	display:       block;
+	font-size:     11px;
+	font-weight:   600;
+	color:         #555;
+	margin-bottom: 2px;
+}
+
+/* Кнопки у модалі */
+.fb-modal-actions {
+	display:         flex;
+	gap:             var(--fb-gap-sm);
+	justify-content: flex-end;
+	margin-top:      var(--fb-gap);
+}
+
+.fb-btn-cancel {
+	height:        var(--fb-ctrl-h);
+	padding:       0 14px;
+	background:    #e0e0e0;
+	color:         #333;
+	border:        none;
+	border-radius: var(--fb-radius-sm);
+	font-size:     13px;
+	cursor:        pointer;
+	transition:    background .15s;
+}
+
+.fb-btn-cancel:hover {
+	background: #c8c8c8;
+}
+
+/* ============================================================================
+  10. СИСТЕМНІ ПОВІДОМЛЕННЯ (notices)
+   ============================================================================ */
+
+.fb-notice {
+	padding:       10px 14px;
+	border-radius: var(--fb-radius);
+	margin-bottom: var(--fb-gap);
+	font-size:     13px;
+	font-weight:   500;
+}
+
+.fb-notice-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.fb-notice-error   { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+.fb-notice-info    { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+
+/* ============================================================================
+  11. ДОПОМІЖНІ ЕЛЕМЕНТИ
+   ============================================================================ */
+
+/* Спінер завантаження */
+.fb-spinner {
+	display:      inline-block;
+	width:        20px;
+	height:       20px;
+	border:       2px solid rgba(0, 0, 0, .1);
+	border-top:   2px solid var(--fb-primary);
+	border-radius: 50%;
+	animation:    fb-spin .7s linear infinite;
+}
+
+@keyframes fb-spin {
+	to { transform: rotate(360deg); }
+}
+
+/* Бейдж типу транзакції */
+.fb-type-badge {
+	font-weight:   600;
+	font-size:     12px;
+	white-space:   nowrap;
+}
+
+/* Прихований текст для скрінрідерів */
+.sr-only {
+	position:    absolute;
+	width:       1px;
+	height:      1px;
+	padding:     0;
+	margin:      -1px;
+	overflow:    hidden;
+	clip:        rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border:      0;
+}
+
+/* Повідомлення про помилку (inline у таблиці) */
+.fb-error {
+	color: var(--fb-expense);
+}
+
+/* ============================================================================
+  12. АДАПТИВНИЙ ДИЗАЙН
+   ============================================================================ */
+
+@media screen and (max-width: 900px) {
+	.fb-budget-container {
+		grid-template-columns: 1fr;
+	}
+
+	.fb-budget-sidebar {
+		order: 2;   /* На мобільних — sidebar іде після таблиці */
+	}
+
+	.fb-budget-main {
+		order: 1;
+	}
+}
+
+@media screen and (max-width: 600px) {
+	.fb-form-row-inline {
+		flex-wrap: wrap;
+	}
+
+	.fb-currency-select {
+		flex: 0 0 80px;
+	}
+
+	.fb-btn-submit {
+		flex: 1 0 100%;
+	}
+
+	.fb-filter-row {
+		padding: var(--fb-gap-xs) var(--fb-gap-sm);
+	}
+
+	.fb-filter-control {
+		flex: 1 1 100%;
+	}
+
+	.fb-modal-content {
+		padding: 14px;
+	}
+}

@@ -1,0 +1,165 @@
+/**
+ * UI/UX Оптимізація для модуля Рахунки
+ */
+
+.fb-accounts-wrapper {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+/* Компактне розміщення фільтрів та форми додавання */
+.fb-accounts-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f9f9f9;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-bottom: none;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.fb-filter-group, .fb-add-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* ЖОРСТКА ФІКСАЦІЯ ВИСОТИ ДЛЯ ВСІХ ІНПУТІВ ТА СЕЛЕКТІВ */
+.fb-accounts-wrapper select.fb-compact-input,
+.fb-accounts-wrapper input[type="text"].fb-compact-input {
+    box-sizing: border-box !important;
+    height: 32px !important;
+    min-height: 32px !important; /* ВАЖЛИВО: перебиває стандартні стилі WP */
+    max-height: 32px !important; /* Блокує будь-які спроби розтягування */
+    padding: 0 10px !important;
+    font-size: 13px !important;
+    border: 1px solid #8c8f94 !important;
+    border-radius: 3px !important;
+    margin: 0 !important;
+    line-height: normal !important;
+    vertical-align: middle !important;
+    box-shadow: none !important;
+    background-color: #fff !important;
+}
+
+/* Додатково фіксуємо ширину для текстового поля */
+.fb-accounts-wrapper input[type="text"].fb-compact-input {
+    width: 180px !important;
+}
+
+/* Кнопка ДОДАТИ */
+.fb-accounts-wrapper .fb-btn-primary {
+    box-sizing: border-box !important;
+    background: #2271b1 !important;
+    color: #fff !important;
+    border: 1px solid #2271b1 !important;
+    border-radius: 3px !important;
+    padding: 0 16px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin: 0 !important;
+    line-height: normal !important;
+    vertical-align: middle !important;
+    box-shadow: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.fb-accounts-wrapper .fb-btn-primary:hover {
+    background: #135e96 !important;
+}
+
+.fb-compact-input {
+    padding: 4px 8px;
+    font-size: 13px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    height: 30px;
+    margin: 0 !important; /* Overriding WP default margins */
+}
+
+.fb-btn-primary {
+    background: #2271b1;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 0 12px;
+    height: 30px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.fb-btn-primary:hover {
+    background: #135e96;
+}
+
+/* Таблиця */
+.fb-accounts-table-container {
+    overflow-x: auto;
+}
+
+.fb-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+    background: #fff;
+}
+
+.fb-table th, .fb-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #eee;
+    font-size: 13px;
+    vertical-align: middle;
+}
+
+.fb-table th {
+    background: #f1f1f1;
+    text-align: left;
+    font-weight: 600;
+}
+
+.text-center { text-align: center !important; }
+
+/* Елементи дій */
+.fb-drag-handle {
+    cursor: grab;
+    color: #999;
+}
+.fb-drag-handle:active {
+    cursor: grabbing;
+}
+
+.fb-actions span {
+    cursor: pointer;
+    margin: 0 4px;
+    font-size: 15px;
+    display: inline-block;
+}
+
+.fb-star { color: #ccc; transition: color 0.2s; }
+.fb-star:hover { color: #f1c40f; }
+.fb-star.is-default { color: gold; text-shadow: 0 0 2px rgba(200, 150, 0, 0.5); }
+
+.fb-edit-btn { color: #2271b1; }
+.fb-save-btn { color: #46b450; }
+.fb-delete-btn { color: #d63638; }
+
+.hidden { display: none !important; }
+
+/* Inline Edit Field */
+.fb-acc-name-input {
+    width: 100%;
+    padding: 2px 5px;
+    font-size: 13px;
+    height: 26px;
+}

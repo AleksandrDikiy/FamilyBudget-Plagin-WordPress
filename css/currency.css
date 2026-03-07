@@ -1,0 +1,100 @@
+/**
+ * Специфічні стилі для модуля Валюти
+ */
+.fb-currency-wrapper {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.fb-currency-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f9f9f9;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-bottom: none;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.fb-filter-group, .fb-add-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* ФІКСАЦІЯ ВИСОТИ ДЛЯ ВВОДУ */
+.fb-currency-wrapper select.fb-compact-input,
+.fb-currency-wrapper input[type="text"].fb-compact-input {
+    box-sizing: border-box !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
+    padding: 0 10px !important;
+    font-size: 13px !important;
+    border: 1px solid #8c8f94 !important;
+    border-radius: 3px !important;
+    margin: 0 !important;
+    line-height: normal !important;
+    vertical-align: middle !important;
+    box-shadow: none !important;
+    background-color: #fff !important;
+}
+
+/* Індивідуальна ширина полів для кращого вигляду */
+.fb-currency-wrapper input[type="text"].fb-input-name { width: 140px !important; }
+.fb-currency-wrapper input[type="text"].fb-input-code { width: 80px !important; }
+.fb-currency-wrapper input[type="text"].fb-input-symbol { width: 60px !important; text-align: center; }
+
+/* Кнопка ДОДАТИ */
+.fb-currency-wrapper .fb-btn-primary {
+    box-sizing: border-box !important;
+    background: #2271b1 !important;
+    color: #fff !important;
+    border: 1px solid #2271b1 !important;
+    border-radius: 3px !important;
+    padding: 0 16px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin: 0 !important;
+    line-height: normal !important;
+    vertical-align: middle !important;
+    box-shadow: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.fb-currency-wrapper .fb-btn-primary:hover {
+    background: #135e96 !important;
+}
+
+/* Таблиця */
+.fb-currency-table-container { overflow-x: auto; }
+.fb-table { width: 100%; border-collapse: collapse; border: 1px solid #ddd; background: #fff; }
+.fb-table th, .fb-table td { padding: 8px 12px; border-bottom: 1px solid #eee; font-size: 13px; vertical-align: middle; }
+.fb-table th { background: #f1f1f1; text-align: left; font-weight: 600; }
+.text-center { text-align: center !important; }
+
+/* Елементи дій */
+.fb-drag-handle { cursor: grab; color: #999; }
+.fb-drag-handle:active { cursor: grabbing; }
+
+.fb-actions span { cursor: pointer; margin: 0 4px; font-size: 15px; display: inline-block; }
+.fb-star { color: #ccc; transition: color 0.2s; }
+.fb-star:hover { color: #f1c40f; }
+.fb-star.is-primary { color: gold; text-shadow: 0 0 2px rgba(200, 150, 0, 0.5); }
+.fb-edit-btn { color: #2271b1; }
+.fb-save-btn { color: #46b450; }
+.fb-delete-btn { color: #d63638; }
+.hidden { display: none !important; }
+
+/* Кастомна ширина для інпутів під час inline-редагування в таблиці */
+.fb-edit-col input { width: 100% !important; max-width: 100%; padding: 0 5px !important; }

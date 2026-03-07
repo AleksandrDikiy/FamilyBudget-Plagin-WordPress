@@ -1,0 +1,678 @@
+/**
+ * Family Budget — Модуль «Родини» (family.css)
+ *
+ * Стилі для сторінки управління родинами та учасниками.
+ * Візуальна мова відповідає amount.css: темний sidebar, компактні відступи.
+ *
+ * Структура:
+ *  1. CSS-змінні
+ *  2. Макет (wrapper, container, sidebar, main)
+ *  3. Форма створення родини — відповідає скріншоту 1
+ *  4. Список родин у sidebar
+ *  5. Панель учасників — заголовок + кнопка «Додати»
+ *  6. Таблиця учасників — відповідає скріншоту 2
+ *  7. Модальне вікно
+ *  8. Системні повідомлення
+ *  9. Допоміжні елементи (spinner, placeholder)
+ * 10. Адаптивний дизайн
+ *
+ * @package    FamilyBudget
+ * @subpackage Assets/CSS
+ * @version    1.0.0
+ */
+
+/* ============================================================================
+   1. CSS-ЗМІННІ
+   ============================================================================ */
+
+:root {
+	--fb-primary:       #1a6dc1;
+	--fb-primary-dark:  #155aa0;
+	--fb-bg-sidebar:    linear-gradient( 160deg, #1a3a6c 0%, #0f2245 100% );
+	--fb-bg-table-head: #2c3e50;
+	--fb-bg-row-hover:  #f5f8ff;
+	--fb-border:        #dee2e6;
+	--fb-radius:        6px;
+	--fb-radius-sm:     4px;
+	--fb-shadow:        0 2px 8px rgba(0, 0, 0, .12);
+	--fb-ctrl-h:        38px;     /* висота контролів */
+	--fb-gap-xs:        4px;
+	--fb-gap-sm:        6px;
+	--fb-gap:           10px;
+	--fb-gap-md:        14px;
+	--fb-sidebar-w:     300px;
+}
+
+/* ============================================================================
+   2. МАКЕТ
+   ============================================================================ */
+
+.fb-family-wrapper {
+	width:      100%;
+	box-sizing: border-box;
+}
+
+.fb-family-container {
+	display:               grid;
+	grid-template-columns: var(--fb-sidebar-w) 1fr;
+	gap:                   var(--fb-gap-md);
+	align-items:           start;
+}
+
+/* ──────── Sidebar ──────── */
+.fb-family-sidebar {
+	display:        flex;
+	flex-direction: column;
+	gap:            var(--fb-gap-sm);
+	background:     var(--fb-bg-sidebar);
+	border-radius:  var(--fb-radius);
+	padding:        var(--fb-gap-md);
+	color:          #fff;
+}
+
+/* ──────── Main ──────── */
+.fb-family-main {
+	display:        flex;
+	flex-direction: column;
+	gap:            0;
+	min-width:      0;
+}
+
+/* ============================================================================
+   3. ФОРМА СТВОРЕННЯ РОДИНИ (відповідає скріншоту 1)
+   ============================================================================ */
+
+.fb-create-family-wrap {
+	margin-bottom: var(--fb-gap-sm);
+}
+
+/* Рядок: input + кнопка — один flex-рядок */
+.fb-create-row {
+	display:   flex;
+	gap:       var(--fb-gap-sm);
+	flex-wrap: nowrap;
+}
+
+/* Input назви родини — світлий, на темному тлі */
+.fb-create-row .fb-form-control {
+	flex:          1;
+	min-width:     0;
+	height:        var(--fb-ctrl-h);
+	padding:       0 12px;
+	font-size:     13px;
+	color:         #1a1a1a;
+	background:    #fff;
+	border:        none;
+	border-radius: var(--fb-radius-sm);
+	box-sizing:    border-box;
+	transition:    box-shadow .15s;
+}
+
+.fb-create-row .fb-form-control:focus {
+	outline:    none;
+	box-shadow: 0 0 0 2px rgba(255, 255, 255, .45);
+}
+
+.fb-create-row .fb-form-control.fb-input-error {
+	box-shadow: 0 0 0 2px #e74c3c;
+}
+
+/* Кнопка «Створити родину» — темно-синя, жирна (відповідає скріншоту 1) */
+.fb-btn-create {
+	flex-shrink:   0;
+	height:        var(--fb-ctrl-h);
+	padding:       0 16px;
+	background:    #2c3e50;
+	color:         #fff;
+	border:        none;
+	border-radius: var(--fb-radius-sm);
+	font-size:     13px;
+	font-weight:   700;
+	cursor:        pointer;
+	white-space:   nowrap;
+	transition:    background .2s;
+}
+
+.fb-btn-create:hover {
+	background: #1a252f;
+}
+
+.fb-btn-create:disabled {
+	opacity: .55;
+	cursor:  not-allowed;
+}
+
+/* ============================================================================
+   4. СПИСОК РОДИН У SIDEBAR
+   ============================================================================ */
+
+.fb-families-list-wrap {
+	flex: 1;
+}
+
+.fb-families-list {
+	list-style: none;
+	margin:     0;
+	padding:    0;
+	display:    flex;
+	flex-direction: column;
+	gap:        2px;
+}
+
+/* Рядок родини */
+.fb-family-item {
+	display:       flex;
+	align-items:   center;
+	gap:           var(--fb-gap-sm);
+	padding:       8px 10px;
+	background:    rgba(255, 255, 255, .06);
+	border-radius: var(--fb-radius-sm);
+	cursor:        default;
+	transition:    background .15s;
+	border-left:   3px solid transparent;
+}
+
+.fb-family-item:hover {
+	background: rgba(255, 255, 255, .11);
+}
+
+/* Активна (обрана) родина */
+.fb-family-item.fb-active {
+	background:  rgba(255, 255, 255, .14);
+	border-left: 3px solid #f0a500;
+}
+
+/* Назва родини — займає весь вільний простір */
+.fb-family-name-view {
+	flex:        1;
+	font-size:   13px;
+	font-weight: 600;
+	color:       #e8f0ff;
+	overflow:    hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* Inline-редагування */
+.fb-family-name-edit {
+	display:     flex;
+	align-items: center;
+	flex:        1;
+	gap:         4px;
+}
+
+.fb-inline-input {
+	flex:          1;
+	min-width:     0;
+	height:        28px;
+	padding:       0 8px;
+	font-size:     12px;
+	color:         #1a1a1a;
+	background:    #fff;
+	border:        none;
+	border-radius: var(--fb-radius-sm);
+	box-sizing:    border-box;
+}
+
+.fb-inline-input.fb-input-error {
+	box-shadow: 0 0 0 2px #e74c3c;
+}
+
+.fb-inline-save-btn,
+.fb-inline-cancel-btn {
+	width:         24px;
+	height:        24px;
+	padding:       0;
+	background:    rgba(255, 255, 255, .15);
+	color:         #fff;
+	border:        none;
+	border-radius: var(--fb-radius-sm);
+	font-size:     12px;
+	cursor:        pointer;
+	transition:    background .15s;
+	flex-shrink:   0;
+}
+
+.fb-inline-save-btn:hover   { background: rgba(40, 167, 69, .5); }
+.fb-inline-cancel-btn:hover { background: rgba(220, 53, 69, .4); }
+
+/* Кнопки дій у рядку родини */
+.fb-family-actions {
+	display:     flex;
+	align-items: center;
+	gap:         2px;
+	flex-shrink: 0;
+}
+
+.fb-family-actions button {
+	width:         26px;
+	height:        26px;
+	padding:       0;
+	background:    transparent;
+	border:        none;
+	border-radius: var(--fb-radius-sm);
+	font-size:     13px;
+	line-height:   1;
+	cursor:        pointer;
+	transition:    background .15s;
+	color:         #fff;
+}
+
+.fb-family-actions .fb-members-btn:hover        { background: rgba(255, 255, 255, .18); }
+.fb-family-actions .fb-edit-family-btn:hover    { background: rgba(255, 220, 50, .2);  }
+.fb-family-actions .fb-delete-family-btn:hover  { background: rgba(220, 53, 69, .3);   }
+
+.fb-family-actions .fb-btn-disabled,
+.fb-family-actions button:disabled {
+	opacity: .3;
+	cursor:  not-allowed;
+}
+
+/* Службові рядки списку */
+.fb-family-loading,
+.fb-family-empty,
+.fb-family-error {
+	padding:    var(--fb-gap);
+	font-size:  12px;
+	color:      #90a8c8;
+	text-align: center;
+}
+
+/* ============================================================================
+   5. ПАНЕЛЬ УЧАСНИКІВ — ЗАГОЛОВОК
+   ============================================================================ */
+
+.fb-members-header {
+	display:         flex;
+	align-items:     center;
+	justify-content: space-between;
+	padding:         8px 12px;
+	background:      #eef2f7;
+	border:          1px solid var(--fb-border);
+	border-bottom:   none;
+	border-radius:   var(--fb-radius) var(--fb-radius) 0 0;
+}
+
+.fb-members-title {
+	margin:      0;
+	font-size:   14px;
+	font-weight: 700;
+	color:       #1a1a1a;
+}
+
+/* Кнопка «+ Додати користувача» */
+.fb-btn-invite {
+	height:        32px;
+	padding:       0 14px;
+	background:    var(--fb-primary);
+	color:         #fff;
+	border:        none;
+	border-radius: var(--fb-radius-sm);
+	font-size:     12px;
+	font-weight:   600;
+	cursor:        pointer;
+	white-space:   nowrap;
+	transition:    background .2s;
+}
+
+.fb-btn-invite:hover { background: var(--fb-primary-dark); }
+
+/* ============================================================================
+   6. ТАБЛИЦЯ УЧАСНИКІВ (відповідає скріншоту 2)
+   ============================================================================ */
+
+.fb-table-wrapper {
+	overflow-x:    auto;
+	border:        1px solid var(--fb-border);
+	border-radius: 0 0 var(--fb-radius) var(--fb-radius);
+	background:    #fff;
+}
+
+.fb-table {
+	width:           100%;
+	border-collapse: collapse;
+	font-size:       13px;
+}
+
+/* Заголовок — темний, великими літерами (відповідає скріншоту 2) */
+.fb-members-table thead th {
+	background:     var(--fb-bg-table-head);
+	color:          #fff;
+	padding:        10px 16px;
+	text-align:     left;
+	font-size:      11px;
+	font-weight:    700;
+	text-transform: uppercase;
+	letter-spacing: .06em;
+	white-space:    nowrap;
+}
+
+.fb-members-table thead th.fb-th-actions {
+	width: 40px;
+}
+
+/* Рядки даних — відповідають скріншоту 2 */
+.fb-members-table tbody tr {
+	border-bottom: 1px solid #f0f0f0;
+	transition:    background .12s;
+}
+
+.fb-members-table tbody tr:last-child {
+	border-bottom: none;
+}
+
+.fb-members-table tbody tr:hover {
+	background: var(--fb-bg-row-hover);
+}
+
+.fb-members-table tbody td {
+	padding:        10px 16px;
+	vertical-align: middle;
+}
+
+/* Стовпець КОРИСТУВАЧ — відповідає скріншоту 2 */
+.fb-member-user {
+	white-space: nowrap;
+}
+
+/* Ім'я користувача (жирне) */
+.fb-member-name {
+	display:     block;
+	font-weight: 700;
+	font-size:   13px;
+	color:       #1a1a1a;
+	line-height: 1.3;
+}
+
+/* @логін нижче імені (менший, сірий) */
+.fb-member-login {
+	display:   block;
+	font-size: 12px;
+	color:     #888;
+	line-height: 1.2;
+}
+
+/* Стовпець EMAIL */
+.fb-member-email {
+	color:     #444;
+	font-size: 13px;
+}
+
+/* Стовпець ДАТА ДОДАВАННЯ */
+.fb-member-date {
+	color:      #666;
+	font-size:  12px;
+	white-space: nowrap;
+}
+
+/* Стовпець ДІЇ */
+.fb-member-actions {
+	text-align: center;
+	width:      40px;
+}
+
+.fb-remove-member-btn {
+	width:         22px;
+	height:        22px;
+	padding:       0;
+	background:    transparent;
+	color:         #aaa;
+	border:        1px solid #ddd;
+	border-radius: var(--fb-radius-sm);
+	font-size:     11px;
+	cursor:        pointer;
+	transition:    background .15s, color .15s, border-color .15s;
+}
+
+.fb-remove-member-btn:hover {
+	background:   #fde8e8;
+	color:        #dc3545;
+	border-color: #dc3545;
+}
+
+.fb-remove-member-btn:disabled {
+	opacity: .35;
+	cursor:  not-allowed;
+}
+
+/* Порожній стан таблиці */
+.fb-empty-state {
+	text-align: center;
+	padding:    20px;
+	color:      #888;
+	font-size:  13px;
+}
+
+/* ============================================================================
+   7. МОДАЛЬНЕ ВІКНО
+   ============================================================================ */
+
+.fb-modal {
+	display:  none;
+	position: fixed;
+	inset:    0;
+	z-index:  9999;
+}
+
+.fb-modal-show { display: block; }
+
+.fb-modal-overlay {
+	position:   absolute;
+	inset:      0;
+	background: rgba(0, 0, 0, .55);
+}
+
+.fb-modal-content {
+	position:      absolute;
+	top:           50%;
+	left:          50%;
+	transform:     translate(-50%, -50%);
+	background:    #fff;
+	border-radius: var(--fb-radius);
+	box-shadow:    0 8px 32px rgba(0, 0, 0, .22);
+	padding:       22px;
+	width:         min(380px, 92vw);
+	box-sizing:    border-box;
+}
+
+.fb-modal-title {
+	margin:      0 0 4px;
+	font-size:   15px;
+	font-weight: 700;
+	color:       #1a1a1a;
+}
+
+.fb-modal-subtitle {
+	margin:    0 0 14px;
+	font-size: 12px;
+	color:     #666;
+}
+
+.fb-form-field {
+	margin-bottom: var(--fb-gap);
+}
+
+.fb-form-field label {
+	display:       block;
+	font-size:     11px;
+	font-weight:   600;
+	color:         #555;
+	margin-bottom: 4px;
+}
+
+/* Input у модалі */
+.fb-modal-content .fb-form-control {
+	width:         100%;
+	height:        var(--fb-ctrl-h);
+	padding:       0 10px;
+	font-size:     13px;
+	color:         #1a1a1a;
+	background:    #fff;
+	border:        1px solid var(--fb-border);
+	border-radius: var(--fb-radius-sm);
+	box-sizing:    border-box;
+	transition:    border-color .15s, box-shadow .15s;
+}
+
+.fb-modal-content .fb-form-control:focus {
+	outline:      none;
+	border-color: var(--fb-primary);
+	box-shadow:   0 0 0 2px rgba(26, 109, 193, .2);
+}
+
+.fb-modal-content .fb-form-control.fb-input-error {
+	border-color: #dc3545;
+	box-shadow:   0 0 0 2px rgba(220, 53, 69, .2);
+}
+
+.fb-modal-actions {
+	display:         flex;
+	gap:             var(--fb-gap-sm);
+	justify-content: flex-end;
+	margin-top:      var(--fb-gap-md);
+}
+
+.fb-btn-submit {
+	height:        var(--fb-ctrl-h);
+	padding:       0 18px;
+	background:    #2c3e50;
+	color:         #fff;
+	border:        none;
+	border-radius: var(--fb-radius-sm);
+	font-size:     13px;
+	font-weight:   600;
+	cursor:        pointer;
+	transition:    background .2s, opacity .2s;
+}
+
+.fb-btn-submit:hover    { background: #1a252f; }
+.fb-btn-submit:disabled { opacity: .55; cursor: not-allowed; }
+
+.fb-btn-cancel {
+	height:        var(--fb-ctrl-h);
+	padding:       0 14px;
+	background:    #e0e0e0;
+	color:         #333;
+	border:        none;
+	border-radius: var(--fb-radius-sm);
+	font-size:     13px;
+	cursor:        pointer;
+	transition:    background .15s;
+}
+
+.fb-btn-cancel:hover { background: #c8c8c8; }
+
+/* ============================================================================
+   8. СИСТЕМНІ ПОВІДОМЛЕННЯ
+   ============================================================================ */
+
+.fb-notice {
+	padding:       10px 14px;
+	border-radius: var(--fb-radius);
+	margin-bottom: var(--fb-gap);
+	font-size:     13px;
+	font-weight:   500;
+}
+
+.fb-notice-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.fb-notice-error   { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+.fb-notice-info    { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+
+/* ============================================================================
+   9. ДОПОМІЖНІ ЕЛЕМЕНТИ
+   ============================================================================ */
+
+/* Спінер завантаження */
+.fb-spinner {
+	display:       inline-block;
+	width:         20px;
+	height:        20px;
+	border:        2px solid rgba(255, 255, 255, .2);
+	border-top:    2px solid var(--fb-primary);
+	border-radius: 50%;
+	animation:     fb-spin .7s linear infinite;
+}
+
+/* Спінер на темному тлі (sidebar) */
+.fb-family-sidebar .fb-spinner {
+	border-color:     rgba(255, 255, 255, .15);
+	border-top-color: #fff;
+}
+
+@keyframes fb-spin {
+	to { transform: rotate(360deg); }
+}
+
+/* Заглушка «Оберіть родину» */
+.fb-placeholder {
+	padding:    30px;
+	text-align: center;
+	color:      #aaa;
+	font-size:  13px;
+	border:     1px dashed var(--fb-border);
+	border-radius: var(--fb-radius);
+}
+
+.fb-placeholder p { margin: 0; }
+
+/* Inline-помилка */
+.fb-error { color: #dc3545; }
+
+/* Прихований текст для скрінрідерів */
+.sr-only {
+	position:    absolute;
+	width:       1px;
+	height:      1px;
+	padding:     0;
+	margin:      -1px;
+	overflow:    hidden;
+	clip:        rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border:      0;
+}
+
+/* ============================================================================
+  10. АДАПТИВНИЙ ДИЗАЙН
+   ============================================================================ */
+
+@media screen and (max-width: 860px) {
+	.fb-family-container {
+		grid-template-columns: 1fr;
+	}
+
+	.fb-family-sidebar {
+		order: 2;
+	}
+
+	.fb-family-main {
+		order: 1;
+	}
+}
+
+@media screen and (max-width: 540px) {
+	.fb-create-row {
+		flex-direction: column;
+	}
+
+	.fb-btn-create {
+		width: 100%;
+	}
+
+	.fb-members-header {
+		flex-direction: column;
+		align-items:    flex-start;
+		gap:            var(--fb-gap-sm);
+	}
+
+	.fb-btn-invite {
+		width: 100%;
+	}
+
+	.fb-member-date {
+		display: none; /* На мобільних ховаємо дату для компактності */
+	}
+
+	.fb-members-table thead th:nth-child(3) {
+		display: none;
+	}
+}

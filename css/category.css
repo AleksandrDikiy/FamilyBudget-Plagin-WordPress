@@ -1,0 +1,130 @@
+/**
+ * Специфічні стилі для модуля Категорії та Параметрів
+ */
+.fb-category-wrapper {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.fb-category-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f9f9f9;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-bottom: none;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.fb-filter-group, .fb-add-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* ФІКСАЦІЯ ВИСОТИ ДЛЯ ВВОДУ */
+.fb-category-wrapper select.fb-compact-input,
+.fb-category-wrapper input[type="text"].fb-compact-input,
+.fb-modal-body select.fb-compact-input,
+.fb-modal-body input[type="text"].fb-compact-input {
+    box-sizing: border-box !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
+    padding: 0 10px !important;
+    font-size: 13px !important;
+    border: 1px solid #8c8f94 !important;
+    border-radius: 3px !important;
+    margin: 0 !important;
+    line-height: normal !important;
+    vertical-align: middle !important;
+    box-shadow: none !important;
+    background-color: #fff !important;
+}
+
+/* Кнопка ДОДАТИ */
+.fb-category-wrapper .fb-btn-primary,
+.fb-modal-body .fb-btn-primary {
+    box-sizing: border-box !important;
+    background: #2271b1 !important;
+    color: #fff !important;
+    border: 1px solid #2271b1 !important;
+    border-radius: 3px !important;
+    padding: 0 16px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+.fb-category-wrapper .fb-btn-primary:hover { background: #135e96 !important; }
+
+/* Таблиця */
+.fb-category-table-container { overflow-x: auto; }
+.fb-table { width: 100%; border-collapse: collapse; border: 1px solid #ddd; background: #fff; margin-bottom: 0; }
+.fb-table th, .fb-table td { padding: 8px 12px; border-bottom: 1px solid #eee; font-size: 13px; vertical-align: middle; }
+.fb-table th { background: #f1f1f1; text-align: left; font-weight: 600; }
+.text-center { text-align: center !important; }
+
+/* Елементи дій та UI */
+.fb-drag-handle, .fb-drag-handle-param { cursor: grab; color: #999; }
+.fb-drag-handle:active, .fb-drag-handle-param:active { cursor: grabbing; }
+
+/* ЗАБОРОНЯЄМО ПЕРЕНЕСЕННЯ В КОЛОНЦІ "ДІЇ" */
+.fb-table td.fb-actions {
+    white-space: nowrap !important;
+    min-width: 120px;
+}
+
+.fb-actions span {
+    cursor: pointer;
+    margin: 0 4px;
+    font-size: 16px;
+    display: inline-block;
+    vertical-align: middle;
+    filter: grayscale(100%);
+    transition: 0.2s;
+}
+.fb-actions span:hover { filter: grayscale(0%); transform: scale(1.1); }
+.hidden { display: none !important; }
+
+/* Кастомна ширина для інпутів під час inline-редагування */
+.fb-edit-col input { width: 100% !important; max-width: 100%; }
+
+/* Типи категорій кольором */
+.fb-color-red { color: #d63638; font-weight: 500; }
+.fb-color-green { color: #00a32a; font-weight: 500; }
+.fb-cat-name-val { font-size: 14px; }
+
+/* Бейдж кількості параметрів */
+.fb-badge { background: #e0e0e0; color: #333; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+
+/* МОДАЛЬНЕ ВІКНО */
+.fb-modal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6); z-index: 99999;
+    display: flex; align-items: center; justify-content: center;
+}
+.fb-modal-content {
+    background: #fff; width: 600px; max-width: 90%;
+    border-radius: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    overflow: hidden;
+}
+.fb-modal-header {
+    background: #f1f1f1; padding: 15px 20px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid #ddd;
+}
+.fb-modal-header h3 { margin: 0; font-size: 16px; color: #23282d; }
+.fb-modal-close { font-size: 24px; cursor: pointer; color: #666; transition: 0.2s; line-height: 1; }
+.fb-modal-close:hover { color: #d63638; }
+.fb-modal-body { padding: 20px; max-height: 70vh; overflow-y: auto; }
