@@ -1,0 +1,401 @@
+/* =============================================================
+   Family Budget — Графіки  |  css/charts.css  v4
+   Дати завжди видимі: disabled (сірі) / active (сині).
+   Компактна ширина щоб не перекривати кнопку "Оновити".
+   ============================================================= */
+
+/* ── КОРЕНЕВИЙ КОНТЕЙНЕР ───────────────────────────────────── */
+#fb-cht-module {
+	display        : flex !important;
+	flex-direction : column !important;
+	width          : 100% !important;
+	height         : 500px !important;
+	background     : #fff !important;
+	border         : 1px solid #d1d5db !important;
+	border-radius  : 6px !important;
+	overflow       : visible !important;
+	font-size      : 12px !important;
+	font-family    : inherit !important;
+	color          : #111827 !important;
+	box-sizing     : border-box !important;
+}
+
+/* ── ПАНЕЛЬ ФІЛЬТРІВ ───────────────────────────────────────── */
+
+#fb-cht-module .fb-cht-filters {
+	display         : flex !important;
+	flex-direction  : row !important;
+	flex-wrap       : nowrap !important;
+	align-items     : flex-end !important;
+	gap             : 5px !important;
+	padding         : 6px 8px !important;
+	background      : #f3f4f6 !important;
+	border-bottom   : 1px solid #d1d5db !important;
+	box-sizing      : border-box !important;
+	width           : 100% !important;
+	overflow        : visible !important;
+	flex-shrink     : 0 !important;
+}
+
+/* ── КОМІРКИ ФІЛЬТРА ───────────────────────────────────────── */
+
+#fb-cht-module .fb-cht-fc {
+	display        : flex !important;
+	flex-direction : column !important;
+	gap            : 2px !important;
+	flex           : 1 1 70px !important;
+	min-width      : 70px !important;
+	max-width      : 150px !important;
+	position       : relative !important;
+}
+
+/* Блок дат: фіксована ширина = два поля по 102px + роздільник */
+#fb-cht-module .fb-cht-fc--dates {
+	flex       : 0 0 auto !important;
+	min-width  : 0 !important;
+	max-width  : 222px !important;
+	width      : 222px !important;
+}
+
+/* ── ПІДПИС ────────────────────────────────────────────────── */
+
+#fb-cht-module .fb-cht-lbl {
+	display        : block !important;
+	font-size      : 10px !important;
+	color          : #6b7280 !important;
+	font-weight    : 500 !important;
+	white-space    : nowrap !important;
+	line-height    : 1.3 !important;
+	overflow       : hidden !important;
+	text-overflow  : ellipsis !important;
+	margin         : 0 !important;
+	padding        : 0 !important;
+}
+
+/* ── SELECT ────────────────────────────────────────────────── */
+
+#fb-cht-module .fb-cht-sel {
+	display             : block !important;
+	width               : 100% !important;
+	height              : 26px !important;
+	padding             : 0 18px 0 5px !important;
+	font-size           : 11px !important;
+	border              : 1px solid #d1d5db !important;
+	border-radius       : 4px !important;
+	background-color    : #fff !important;
+	background-image    : url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%239ca3af'/%3E%3C/svg%3E") !important;
+	background-repeat   : no-repeat !important;
+	background-position : right 5px center !important;
+	-webkit-appearance  : none !important;
+	appearance          : none !important;
+	color               : #111827 !important;
+	cursor              : pointer !important;
+	box-sizing          : border-box !important;
+	margin              : 0 !important;
+	line-height         : 26px !important;
+}
+
+#fb-cht-module .fb-cht-sel:focus {
+	outline      : none !important;
+	border-color : #3b82f6 !important;
+	box-shadow   : 0 0 0 2px rgba(59,130,246,.2) !important;
+}
+
+/* ── РЯДОК ДАТ ─────────────────────────────────────────────── */
+
+#fb-cht-module .fb-dates-row {
+	display     : flex !important;
+	align-items : center !important;
+	gap         : 3px !important;
+	flex-wrap   : nowrap !important;
+}
+
+#fb-cht-module .fb-dates-sep {
+	font-size   : 11px !important;
+	color       : #9ca3af !important;
+	flex-shrink : 0 !important;
+}
+
+/* ── ПОЛЯ ДАТИ ─────────────────────────────────────────────── */
+
+/*
+ * Базовий стан: DISABLED (сіре поле) — активується лише при "Довільний".
+ * Ширина підібрана так щоб NOT виходити за межі панелі фільтрів.
+ * -webkit-date-and-time-value: без іконки calendar на мобільних.
+ */
+#fb-cht-module .fb-cht-date {
+	display       : block !important;
+	width         : 102px !important;   /* Рівно під формат дд.мм.рррр */
+	max-width     : 102px !important;
+	min-width     : 0 !important;
+	height        : 26px !important;
+	padding       : 0 2px 0 4px !important;
+	font-size     : 11px !important;
+	border        : 1px solid #d1d5db !important;
+	border-radius : 4px !important;
+	box-sizing    : border-box !important;
+	flex-shrink   : 1 !important;
+	flex-grow     : 0 !important;
+	margin        : 0 !important;
+	transition    : opacity .15s, border-color .15s !important;
+}
+
+/* Disabled-стан: напівпрозоре + сірий фон + заборонений курсор */
+#fb-cht-module .fb-cht-date:disabled {
+	opacity          : 0.45 !important;
+	background-color : #f3f4f6 !important;
+	color            : #9ca3af !important;
+	cursor           : not-allowed !important;
+	border-color     : #e5e7eb !important;
+}
+
+/* Active-стан: повна видимість + синя рамка */
+#fb-cht-module .fb-cht-date.fb-cht-date--active,
+#fb-cht-module .fb-cht-date:not(:disabled) {
+	opacity          : 1 !important;
+	background-color : #fff !important;
+	color            : #111827 !important;
+	cursor           : pointer !important;
+	border-color     : #3b82f6 !important;
+}
+
+#fb-cht-module .fb-cht-date:not(:disabled):focus {
+	outline    : none !important;
+	box-shadow : 0 0 0 2px rgba(59,130,246,.2) !important;
+}
+
+/* ── КНОПКА "ОНОВИТИ" ──────────────────────────────────────── */
+
+#fb-cht-module .fb-cht-apply {
+	display          : inline-block !important;
+	flex-shrink      : 0 !important;
+	align-self       : center !important;   /* По центру рядка */
+	height           : 30px !important;
+	padding          : 0 14px !important;
+	font-size        : 12px !important;
+	font-weight      : 600 !important;
+	line-height      : 30px !important;
+	background-color : #3b82f6 !important;
+	color            : #fff !important;
+	border           : none !important;
+	border-radius    : 4px !important;
+	cursor           : pointer !important;
+	white-space      : nowrap !important;
+	margin           : 0 !important;
+}
+
+#fb-cht-module .fb-cht-apply:hover  { background-color : #2563eb !important; }
+#fb-cht-module .fb-cht-apply:active { background-color : #1d4ed8 !important; }
+
+/* ── КАСТОМНИЙ МУЛЬТИВИБІР ─────────────────────────────────── */
+
+#fb-cht-module .fb-ms {
+	position : relative !important;
+	width    : 100% !important;
+}
+
+#fb-cht-module .fb-ms__btn {
+	display          : flex !important;
+	align-items      : center !important;
+	justify-content  : space-between !important;
+	width            : 100% !important;
+	height           : 26px !important;
+	padding          : 0 5px !important;
+	font-size        : 11px !important;
+	background-color : #fff !important;
+	border           : 1px solid #d1d5db !important;
+	border-radius    : 4px !important;
+	cursor           : pointer !important;
+	color            : #111827 !important;
+	gap              : 3px !important;
+	box-sizing       : border-box !important;
+	margin           : 0 !important;
+	text-align       : left !important;
+}
+
+#fb-cht-module .fb-ms__btn:focus { outline: none !important; }
+#fb-cht-module .fb-ms--open .fb-ms__btn { border-color: #3b82f6 !important; }
+
+#fb-cht-module .fb-ms__lbl {
+	flex          : 1 !important;
+	overflow      : hidden !important;
+	white-space   : nowrap !important;
+	text-overflow : ellipsis !important;
+}
+
+#fb-cht-module .fb-ms__arr {
+	font-size   : 8px !important;
+	color       : #9ca3af !important;
+	flex-shrink : 0 !important;
+}
+
+#fb-cht-module .fb-ms__drop {
+	display       : none !important;
+	position      : absolute !important;
+	top           : calc(100% + 2px) !important;
+	left          : 0 !important;
+	right         : 0 !important;
+	z-index       : 99999 !important;
+	background    : #fff !important;
+	border        : 1px solid #d1d5db !important;
+	border-radius : 4px !important;
+	box-shadow    : 0 4px 14px rgba(0,0,0,.14) !important;
+	max-height    : 180px !important;
+	overflow-y    : auto !important;
+	padding       : 2px 0 !important;
+	min-width     : 140px !important;
+}
+
+#fb-cht-module .fb-ms--open .fb-ms__drop { display: block !important; }
+
+#fb-cht-module .fb-ms__item {
+	display     : flex !important;
+	align-items : center !important;
+	gap         : 5px !important;
+	padding     : 4px 7px !important;
+	font-size   : 11px !important;
+	color       : #111827 !important;
+	cursor      : pointer !important;
+	white-space : nowrap !important;
+	user-select : none !important;
+}
+
+#fb-cht-module .fb-ms__item:hover { background: #f3f4f6 !important; }
+
+#fb-cht-module .fb-ms__item--all {
+	border-bottom : 1px solid #e5e7eb !important;
+	font-weight   : 600 !important;
+}
+
+#fb-cht-module .fb-ms__item input[type="checkbox"] {
+	flex-shrink  : 0 !important;
+	margin       : 0 !important;
+	cursor       : pointer !important;
+	accent-color : #3b82f6 !important;
+}
+
+/* ── DEBUG-БЛОК ────────────────────────────────────────────── */
+
+#fb-cht-module .fb-cht-debug {
+	flex-shrink   : 0 !important;
+	background    : #1e1e2e !important;
+	color         : #cdd6f4 !important;
+	padding       : 5px 10px !important;
+	font-size     : 11px !important;
+	border-bottom : 1px solid #313244 !important;
+	max-height    : 110px !important;
+	overflow-y    : auto !important;
+}
+
+#fb-cht-module .fb-cht-debug pre {
+	margin      : 2px 0 5px !important;
+	white-space : pre-wrap !important;
+	word-break  : break-all !important;
+	font-size   : 10px !important;
+	color       : #a6e3a1 !important;
+}
+
+#fb-cht-module .fb-cht-debug strong {
+	color     : #89b4fa !important;
+	font-size : 10px !important;
+}
+
+/* ── ОБЛАСТЬ ГРАФІКА ───────────────────────────────────────── */
+
+#fb-cht-module .fb-cht-area {
+	flex           : 1 !important;
+	min-height     : 0 !important;
+	position       : relative !important;
+	padding        : 4px 8px 2px !important;
+	display        : flex !important;
+	flex-direction : column !important;
+}
+
+#fb-cht-module #fb-budget-chart {
+	flex       : 1 !important;
+	min-height : 0 !important;
+	width      : 100% !important;
+	display    : block !important;
+	transition : opacity .2s ease !important;
+}
+
+#fb-cht-module .fb-cht-footer {
+	flex-shrink : 0 !important;
+	text-align  : right !important;
+	padding     : 2px 4px 3px !important;
+	font-size   : 12px !important;
+}
+
+#fb-cht-module .fb-cht-total {
+	color       : #3b82f6 !important;
+	font-weight : 700 !important;
+}
+
+/* ── ОВЕРЛЕЙ СТАНУ ─────────────────────────────────────────── */
+
+#fb-cht-module .fb-cht-overlay {
+	display         : none !important;
+	position        : absolute !important;
+	inset           : 4px 8px 28px !important;
+	align-items     : center !important;
+	justify-content : center !important;
+	flex-direction  : column !important;
+	gap             : 8px !important;
+	pointer-events  : none !important;
+}
+
+#fb-cht-module .fb-cht-overlay.fb-cht-overlay--on { display: flex !important; }
+
+#fb-cht-module .fb-cht-msg {
+	font-size  : 13px !important;
+	color      : #6b7280 !important;
+	text-align : center !important;
+}
+
+#fb-cht-module .fb-cht-spinner {
+	display       : block !important;
+	width         : 22px !important;
+	height        : 22px !important;
+	border        : 3px solid #e5e7eb !important;
+	border-top    : 3px solid #3b82f6 !important;
+	border-radius : 50% !important;
+	animation     : fbChtSpin .65s linear infinite !important;
+}
+
+@keyframes fbChtSpin { to { transform: rotate(360deg); } }
+
+/* ── СПОВІЩЕННЯ ────────────────────────────────────────────── */
+
+.fb-cht-notice {
+	padding       : 8px 12px;
+	border-radius : 4px;
+	font-size     : 12px;
+	background    : #fffbeb;
+	border        : 1px solid #fcd34d;
+	color         : #92400e;
+}
+
+/* ── АДАПТИВНІСТЬ ──────────────────────────────────────────── */
+
+@media (max-width: 960px) {
+	#fb-cht-module .fb-cht-filters {
+		flex-wrap : wrap !important;
+	}
+	#fb-cht-module .fb-cht-fc {
+		flex      : 1 1 85px !important;
+		max-width : 48% !important;
+	}
+	#fb-cht-module .fb-cht-fc--dates {
+		flex      : 1 1 220px !important;
+		max-width : 100% !important;
+		width     : auto !important;
+	}
+	#fb-cht-module {
+		height     : auto !important;
+		min-height : 500px !important;
+	}
+	#fb-cht-module .fb-cht-area {
+		height : 300px !important;
+		flex   : none !important;
+	}
+}

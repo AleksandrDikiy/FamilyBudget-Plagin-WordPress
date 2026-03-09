@@ -3,7 +3,7 @@
  * Plugin Name: Family Budget
  * Plugin URI: https://fbudget.pp.ua/
  * Description: Професійна система керування сімейними фінансами, інтеграцією курсів НБУ, аналітичними графіками та універсальною AJAX-системою. Повна підтримка мультивалютності та динамічних параметрів.
- * Version: 1.3.4
+ * Version: 1.3.5
  * Author: Alex Wild
  * Author URI: https://wildwind.org.ua/
  * License: GPL v2 or later
@@ -13,7 +13,7 @@
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * @package FamilyBudget
- * @version    1.3.4
+ * @version    1.3.5
  * @since 1.0.0
  */
 
@@ -52,7 +52,7 @@ if ( defined( 'FB_GITHUB_TOKEN' ) && '' !== FB_GITHUB_TOKEN ) {
 }
 
 // Константи плагіна
-define( 'FB_VERSION', '1.3.4' );
+define( 'FB_VERSION', '1.3.5' );
 define( 'FB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FB_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'FB_PLUGIN_FILE', __FILE__ );
@@ -86,7 +86,7 @@ $fb_modules = [
 	'views/amount-type.php',
 	'views/account-type.php',
 	'views/parameter-type.php',
-	'views/fb-charts.php',
+	'views/charts.php',
 	'views/communal.php',
 	'views/home.php',
 ];
@@ -162,7 +162,8 @@ add_shortcode( 'fb_accounts', 'fb_shortcode_accounts' );
 add_shortcode( 'fb_categories', 'fb_shortcode_categories_interface' );
 add_shortcode( 'fb_budget', 'fb_render_budget_interface' );
 add_shortcode( 'fb_analytics', 'fb_render_analytics_module' ); // аналітика
-add_shortcode( 'fb_charts', 'fb_render_charts_module' ); // графіки
+//add_shortcode( 'fb_charts', 'fb_render_charts_module' ); // графіки
+add_shortcode( 'fb_charts', 'fb_charts_render_page' ); // графіки
 
 add_shortcode( 'fb_account_type', 'fb_render_account_type_interface' );
 add_shortcode( 'fb_category_type', 'fb_render_category_type_interface' );
