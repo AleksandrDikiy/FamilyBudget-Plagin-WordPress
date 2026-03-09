@@ -267,17 +267,21 @@ function fb_charts_get_amount_types(): array {
 }
 
 /**
- * Повертає список категорій для родини
+ * Повертає список категорій для родини.
+ *
+ * [SCHEMA-v2] Family_ID перенесено з таблиці Category до CategoryType,
+ * тому фільтрація за родиною виконується через JOIN з CategoryType.
  *
  * Запит:
  * SELECT c.id, c.Category_Name
  * FROM wp_Category c
- * JOIN wp_Family f ON f.id = c.Family_ID
- * WHERE f.id = %d ORDER BY c.Category_Order
+ * INNER JOIN wp_CategoryType ct ON ct.id = c.CategoryType_ID
+ * WHERE ct.Family_ID = %d
+ * ORDER BY c.Category_Order ASC
  *
  * @since  1.0.0
- * @param  int   $family_id
- * @return array
+ * @param  int   $family_id Ідентифікатор родини.
+ * @return array            Масив об'єктів категорій (id, Category_Name).
  */
 function fb_charts_get_categories( int $family_id ): array {
 	global $wpdb;
@@ -285,9 +289,9 @@ function fb_charts_get_categories( int $family_id ): array {
 	$rows = $wpdb->get_results(
 		$wpdb->prepare(
 			"SELECT c.id, c.Category_Name
-			 FROM {$wpdb->prefix}Category c
-			 JOIN {$wpdb->prefix}Family f ON f.id = c.Family_ID
-			 WHERE f.id = %d
+			 FROM {$wpdb->prefix}Category AS c
+			 INNER JOIN {$wpdb->prefix}CategoryType AS ct ON ct.id = c.CategoryType_ID
+			 WHERE ct.Family_ID = %d
 			 ORDER BY c.Category_Order ASC",
 			$family_id
 		)

@@ -82,12 +82,14 @@ function fb_get_categories_have_value( int $family_id ): array {
 
     return $wpdb->get_results(
         $wpdb->prepare(
+            // [SCHEMA-v2] Family_ID перенесено з Category до CategoryType — фільтр через JOIN.
             "SELECT   c.id              AS Category_ID,
                       c.Category_Name
                FROM   {$wpdb->prefix}Category      AS c
+               JOIN   {$wpdb->prefix}CategoryType  AS ct ON ct.id              = c.CategoryType_ID
                JOIN   {$wpdb->prefix}CategoryParam AS p  ON p.Category_ID      = c.id
                JOIN   {$wpdb->prefix}AmountParam   AS a  ON a.CategoryParam_ID = p.id
-              WHERE   c.Family_ID = %d
+              WHERE   ct.Family_ID = %d
                 AND   a.AmountParam_Value IS NOT NULL
            GROUP BY   c.id, c.Category_Name
            ORDER BY   MIN(p.CategoryParam_Order)",
