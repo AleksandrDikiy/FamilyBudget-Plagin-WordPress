@@ -244,11 +244,13 @@
 					loadTransactions( currentPage );
 				} else {
 					window.alert( res.data || fbAmountI18n.saveError );
-					$btn.prop( 'disabled', false ).text( origText );
 				}
 			},
 			error:    function () {
 				window.alert( fbAmountI18n.networkError );
+			},
+			// Завжди розблоковуємо кнопку — незалежно від результату запиту.
+			complete: function () {
 				$btn.prop( 'disabled', false ).text( origText );
 			},
 		} );
@@ -340,11 +342,13 @@
 					loadTransactions( currentPage );
 				} else {
 					window.alert( res.data || fbAmountI18n.paramsError );
-					$btn.prop( 'disabled', false ).text( origText );
 				}
 			},
 			error:    function () {
 				window.alert( fbAmountI18n.networkError );
+			},
+			// Завжди розблоковуємо кнопку — незалежно від результату запиту.
+			complete: function () {
 				$btn.prop( 'disabled', false ).text( origText );
 			},
 		} );
