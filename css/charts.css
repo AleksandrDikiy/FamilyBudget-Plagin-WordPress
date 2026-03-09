@@ -352,14 +352,25 @@
 	text-align : center !important;
 }
 
+/*
+ * ВИПРАВЛЕННЯ: прибрано display:block !important
+ * Воно перебивало jQuery .hide() — !important сильніший за inline style.
+ * Спінер тепер прихований за замовчуванням і з'являється ЛИШЕ через
+ * CSS-модифікатор .fb-cht-overlay--loading на батьківському оверлеї.
+ */
 #fb-cht-module .fb-cht-spinner {
-	display       : block !important;
+	display       : none !important;
 	width         : 22px !important;
 	height        : 22px !important;
 	border        : 3px solid #e5e7eb !important;
 	border-top    : 3px solid #3b82f6 !important;
 	border-radius : 50% !important;
 	animation     : fbChtSpin .65s linear infinite !important;
+}
+
+/* Спінер видимий ЛИШЕ коли оверлей має клас --loading */
+#fb-cht-module .fb-cht-overlay.fb-cht-overlay--loading .fb-cht-spinner {
+	display : block !important;
 }
 
 @keyframes fbChtSpin { to { transform: rotate(360deg); } }

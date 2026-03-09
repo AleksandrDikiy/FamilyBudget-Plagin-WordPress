@@ -275,6 +275,15 @@
 	/**
 	 * Керує оверлеєм стану (завантаження / помилка / «нема даних»)
 	 *
+	 * Три стани:
+	 *  overlay('Завантаження...', true)  → спінер + текст + canvas dimmed
+	 *  overlay('Дані відсутні',   false) → тільки текст, спінер ПРИХОВАНИЙ
+	 *  overlay('',                false) → оверлей знімається, canvas повний
+	 *
+	 * Причина явного $sp.hide(): CSS-анімація (@keyframes) спінера продовжує
+	 * рендеритись навіть при display:none якщо батьківський елемент має
+	 * opacity > 0 або visibility:visible — тому скидаємо обидва атрибути.
+	 *
 	 * @param {string}  msg
 	 * @param {boolean} loading
 	 */
@@ -283,12 +292,25 @@
 		const $sp = $( '#fb-chart-spinner' );
 		const $m  = $( '#fb-chart-msg' );
 		const $cv = $( '#fb-budget-chart' );
+
 		if ( msg ) {
-			$sp.toggle( !! loading ); $m.text( msg );
+			$m.text( msg );
 			$ov.addClass( 'fb-cht-overlay--on' );
-			$cv.css( 'opacity', loading ? .3 : 0 );
+
+			if ( loading ) {
+				// Стан "завантаження": спінер видимий, canvas приглушений
+				$sp.show();
+				$cv.css( 'opacity', 0.3 );
+			} else {
+				// Стан "повідомлення" (нема даних / помилка): спінер явно прихований
+				$sp.hide();
+				$sp.css( 'visibility', 'hidden' ); // подвійний захист від CSS-анімації
+				$cv.css( 'opacity', 0 );
+			}
 		} else {
+			// Стан "дані є": повністю знімаємо оверлей, відновлюємо спінер для наступного разу
 			$ov.removeClass( 'fb-cht-overlay--on' );
+			$sp.show().css( 'visibility', 'visible' );
 			$cv.css( 'opacity', 1 );
 		}
 	}
@@ -315,9 +337,9 @@
 				plugins : {
 					legend  : { display: true, position: 'top', labels: { boxWidth: 12, boxHeight: 12, padding: 8, font: { size: 11 } } },
 					tooltip : { callbacks: {
-							title : c => c[0].label,
-							label : c => ' ' + c.dataset.label + ': ' + fmt( c.parsed.y ) + ' ₴',
-						} },
+						title : c => c[0].label,
+						label : c => ' ' + c.dataset.label + ': ' + fmt( c.parsed.y ) + ' ₴',
+					} },
 				},
 				scales : {
 					x : { grid: { display: false }, ticks: { color: '#6b7280', font: { size: 11 }, maxRotation: 45 } },
