@@ -237,7 +237,7 @@ function fb_ajax_load_categories() {
                 </td>
                 <td class="fb-actions text-center">
                     <span class="fb-param-btn" data-action="params" title="<?php esc_attr_e('Параметри', 'family-budget'); ?>">⚙️</span>
-                    <span class="fb-edit-btn" data-action="edit" title="<?php esc_attr_e('Редагувати', 'family-budget'); ?>">📝</span>
+                    <span class="fb-edit-btn" data-action="edit" title="<?php esc_attr_e('Редагувати', 'family-budget'); ?>">✎</span>
                     <span class="fb-save-btn hidden" data-action="save" title="<?php esc_attr_e('Зберегти', 'family-budget'); ?>">✔</span>
                     <span class="fb-delete-btn" data-action="delete" title="<?php esc_attr_e('Видалити', 'family-budget'); ?>">🗑️</span>
                 </td>
@@ -359,7 +359,7 @@ function fb_ajax_load_category_params() {
                     <input type="text" class="fb-input-val fb-p-name-input hidden fb-compact-input" value="<?php echo esc_attr( $p->CategoryParam_Name ); ?>">
                 </td>
                 <td class="fb-actions text-center">
-                    <span class="fb-edit-btn" data-action="edit-param" title="Редагувати">📝</span>
+                    <span class="fb-edit-btn" data-action="edit-param" title="Редагувати">✎</span>
                     <span class="fb-save-btn hidden" data-action="save-param" title="Зберегти">✔</span>
                     <span class="fb-delete-btn" data-action="delete-param" title="Видалити">🗑️</span>
                 </td>

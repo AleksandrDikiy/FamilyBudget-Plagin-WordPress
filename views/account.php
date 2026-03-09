@@ -191,7 +191,7 @@ function fb_ajax_load_accounts() {
                     <span class="<?php echo esc_attr( $star_class ); ?>" data-action="set_default" title="<?php esc_attr_e('Головна', 'family-budget'); ?>">★</span>
                     <span class="fb-edit-btn" data-action="edit" title="<?php esc_attr_e('Редагувати', 'family-budget'); ?>">✎</span>
                     <span class="fb-save-btn hidden" data-action="save" title="<?php esc_attr_e('Зберегти', 'family-budget'); ?>">✔</span>
-                    <span class="fb-delete-btn" data-action="delete" title="<?php esc_attr_e('Видалити', 'family-budget'); ?>">✖</span>
+                    <span class="fb-delete-btn" data-action="delete" title="<?php esc_attr_e('Видалити', 'family-budget'); ?>">🗑</span>
                 </td>
             </tr>
             <?php

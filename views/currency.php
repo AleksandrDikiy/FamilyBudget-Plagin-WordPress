@@ -331,7 +331,7 @@ function fb_ajax_load_currencies() {
 						class="fb-delete-btn"
 						data-action="delete"
 						title="<?php esc_attr_e( 'Видалити', 'family-budget' ); ?>"
-					>✖</span>
+					>🗑</span>
 				</td>
 			</tr>
 			<?php
