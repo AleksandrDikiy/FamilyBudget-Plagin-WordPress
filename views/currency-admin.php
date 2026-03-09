@@ -311,10 +311,12 @@ add_shortcode( 'fb_currency_admin', 'fb_render_currency_admin_interface' );
  */
 function fb_currency_admin_enqueue_assets(): void {
 	// CSS.
+	// Залежність 'family-budget-styles' не підключається в адмінці (лише wp_enqueue_scripts),
+	// тому передаємо порожній масив, щоб уникнути помилки "not registered".
 	wp_enqueue_style(
 		'fb-currency-admin-css',
 		FB_PLUGIN_URL . 'css/currency-admin.css',
-		array( 'family-budget-styles' ),
+		array(),
 		FB_VERSION
 	);
 

@@ -3,7 +3,7 @@
  * Plugin Name: Family Budget
  * Plugin URI: https://fbudget.pp.ua/
  * Description: Професійна система керування сімейними фінансами, інтеграцією курсів НБУ, аналітичними графіками та універсальною AJAX-системою. Повна підтримка мультивалютності та динамічних параметрів.
- * Version: 1.3.6
+ * Version: 1.3.7
  * Author: Alex Wild
  * Author URI: https://wildwind.org.ua/
  * License: GPL v2 or later
@@ -13,7 +13,7 @@
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * @package FamilyBudget
- * @version    1.3.6
+ * @version    1.3.7
  * @since 1.0.0
  */
 
@@ -52,7 +52,7 @@ if ( defined( 'FB_GITHUB_TOKEN' ) && '' !== FB_GITHUB_TOKEN ) {
 }
 
 // Константи плагіна
-define( 'FB_VERSION', '1.3.6' );
+define( 'FB_VERSION', '1.3.7' );
 define( 'FB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FB_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'FB_PLUGIN_FILE', __FILE__ );
@@ -61,7 +61,7 @@ define( 'FB_PLUGIN_FILE', __FILE__ );
 
 // 1. Задаємо версію структури БД (змінюйте її при кожній новій міграції)
 if ( ! defined( 'FB_DB_VERSION' ) ) {
-    define( 'FB_DB_VERSION', '1.2.0' ); // Наприклад, підвищили з 1.0.0
+    define( 'FB_DB_VERSION', '1.1.0' ); // Наприклад, підвищили з 1.0.0
 }
 // 2. Підключаємо файл, який відповідатиме за міграції
 // (Створіть папку includes, якщо її ще немає)
@@ -98,6 +98,7 @@ $fb_modules = [
 	'views/category-type.php',
 	'views/amount-type.php',
 	'views/account-type.php',
+	'views/currency-admin.php',
 	'views/parameter-type.php',
 	'views/charts.php',
 	'views/communal.php',
