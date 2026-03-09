@@ -1,0 +1,171 @@
+/**
+ * Family Budget — Модуль "Типи Категорій"
+ * Оновлено: ліве вирівнювання, ширина таблиці 100%, фікс ширини селекта
+ */
+
+/* 1. Головна обгортка (Вирівнюємо по лівому краю і розтягуємо) */
+.fb-category-type-wrapper {
+    max-width: 100%; /* Займає всю доступну ширину контейнера теми */
+    margin: 0;       /* Починається чітко зліва, під заголовком */
+    width: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+/* 2. Панель керування: фільтри та додавання */
+.fb-category-type-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 10px;
+    align-items: center;
+    justify-content: flex-start; /* Усі елементи туляться ліворуч */
+    background: #f8f9fa;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.fb-filter-group {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    margin: 0;
+    flex: 0 0 auto;
+}
+
+/* Форма додавання: розтягується на весь залишковий простір */
+.fb-add-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin: 0;
+    flex: 1 1 auto;
+}
+
+/* 3. Уніфікація полів вводу та кнопок (захист від Astra) */
+.fb-category-type-wrapper .fb-compact-input,
+.fb-category-type-wrapper .fb-btn-primary {
+    height: 36px !important;
+    line-height: normal !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    padding: 0 12px !important;
+    font-size: 14px;
+    border-radius: 4px;
+    vertical-align: middle;
+}
+
+/* Стилі для select та input */
+.fb-category-type-wrapper .fb-compact-input {
+    border: 1px solid #ccc;
+    background: #fff;
+    color: #333;
+}
+
+/* * СЕЛЕКТ РОДИНИ:
+ * Зроблено по ширині найдовшого тексту + невеликий запас.
+ * flex: 0 0 auto забороняє йому розтягуватися на пів екрана.
+ */
+.fb-category-type-wrapper select.fb-compact-input {
+    flex: 0 0 auto;
+    width: max-content !important; /* Ширина строго по тексту + 10% (завдяки padding) */
+    padding-right: 35px !important; /* Місце для стрілочки */
+}
+
+/* ПОЛЕ ВВОДУ: Займає весь вільний простір, що залишився */
+.fb-category-type-wrapper input[type="text"].fb-compact-input {
+    flex: 1 1 auto;
+    min-width: 200px;
+}
+
+/* Кнопка */
+.fb-category-type-wrapper .fb-btn-primary {
+    background: #2271b1 !important;
+    color: #fff !important;
+    border: none !important;
+    cursor: pointer;
+    transition: background 0.2s;
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fb-category-type-wrapper .fb-btn-primary:hover {
+    background: #135e96 !important;
+}
+
+/* 4. Таблиця (на всю ширину) */
+.fb-category-type-table-container {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+    width: 100%;
+}
+
+.fb-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 !important;
+    font-size: 14px;
+}
+
+.fb-table th, .fb-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.fb-table th {
+    background: #2c3e50;
+    font-weight: 600;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+}
+
+.fb-table tr:last-child td {
+    border-bottom: none;
+}
+
+.fb-table tr:hover td {
+    background: #fafafa;
+}
+
+/* 5. Дії та Drag Handle */
+.fb-drag-handle {
+    cursor: grab;
+    color: #999;
+    user-select: none;
+    text-align: center;
+}
+.fb-drag-handle:active {
+    cursor: grabbing;
+}
+
+.fb-actions span {
+    cursor: pointer;
+    margin: 0 5px;
+    font-size: 16px;
+    opacity: 0.6;
+    transition: opacity 0.2s, transform 0.1s;
+    display: inline-block;
+}
+.fb-actions span:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.hidden { display: none !important; }
+.text-center { text-align: center !important; }
+
+/* Режим редагування рядка */
+.fb-ct-name-input {
+    width: 100%;
+    max-width: 100%;
+}

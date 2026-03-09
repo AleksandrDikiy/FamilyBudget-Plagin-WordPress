@@ -6,7 +6,7 @@
  * родини, типи рахунків та перевірка доступу.
  *
  * @package FamilyBudget
- * @version 1.0.0
+ * @version 1.4.1
  */
 
 defined( 'ABSPATH' ) || exit; // Захист від прямого доступу до файлу.
@@ -132,7 +132,8 @@ function fb_get_current_family_id() {
 }
 
 /**
- * Отримання списку категорій родини
+ * Отримання списку категорій родини.
+ * Змінено: Перевірка Family_ID йде через таблицю CategoryType.
  */
 function fb_get_categories( int $family_id ) {
     global $wpdb;
@@ -141,8 +142,8 @@ function fb_get_categories( int $family_id ) {
             "SELECT c.id, c.Category_Name as name, c.CategoryType_ID, t.CategoryType_Name as type_name
             FROM {$wpdb->prefix}Category c
             JOIN {$wpdb->prefix}CategoryType t ON t.id = c.CategoryType_ID
-            WHERE c.Family_ID = %d
-            ORDER BY c.Category_Order, c.Category_Name",
+            WHERE t.Family_ID = %d
+            ORDER BY t.CategoryType_Order ASC, c.Category_Order ASC, c.Category_Name ASC",
             $family_id
         ),
         ARRAY_A
@@ -171,13 +172,6 @@ function fb_get_accounts( int $family_id ) {
 
 /**
  * Отримання списку валют родини.
- *
- * [SCHEMA-v2] Family_ID та Currency_Primary перенесені до таблиці CurrencyFamily.
- * Повертає CurrencyFamily_Primary під ключем Currency_Primary для зворотної сумісності
- * з усіма модулями, що використовують цю функцію (fb-charts.php тощо).
- *
- * @param int $family_id ID родини.
- * @return array Масив валют із ключами: id, name, symbol, Currency_Primary.
  */
 function fb_get_currencies( int $family_id ) {
     global $wpdb;
@@ -197,7 +191,8 @@ function fb_get_currencies( int $family_id ) {
 }
 
 /**
- * Отримує типи категорій, доступні в контексті родин поточного користувача.
+ * Отримує типи категорій, доступні в контексті родин поточного користувача,
+ * ЯКІ МАЮТЬ ХОЧА Б ОДНУ СТВОРЕНУ КАТЕГОРІЮ (використовується для фільтрів).
  */
 function fb_get_category_type() {
     if ( ! is_user_logged_in() ) {
@@ -207,18 +202,12 @@ function fb_get_category_type() {
     $uid = get_current_user_id();
     $types = $wpdb->get_results(
         $wpdb->prepare(
-            "SELECT DISTINCT ct.id, ct.CategoryType_Name
+            "SELECT DISTINCT ct.id, ct.CategoryType_Name, ct.CategoryType_Order
                FROM {$wpdb->prefix}CategoryType ct
-              WHERE ct.id IN (
-                    SELECT c.CategoryType_ID
-                      FROM {$wpdb->prefix}Category c
-                     WHERE c.Family_ID IN (
-                           SELECT uf.Family_ID
-                             FROM {$wpdb->prefix}UserFamily uf
-                            WHERE uf.User_ID = %d
-                     )
-              )
-              ORDER BY ct.CategoryType_Name ASC",
+               JOIN {$wpdb->prefix}Category c ON c.CategoryType_ID = ct.id
+               JOIN {$wpdb->prefix}UserFamily uf ON ct.Family_ID = uf.Family_ID
+              WHERE uf.User_ID = %d
+              ORDER BY ct.CategoryType_Order ASC, ct.CategoryType_Name ASC",
             $uid
         )
     );
@@ -226,14 +215,24 @@ function fb_get_category_type() {
 }
 
 /**
- * Отримує всі доступні типи категорій.
+ * Отримує ВСІ типи категорій, що належать родинам поточного користувача
+ * (використовується для випадаючих списків при додаванні/редагуванні).
  */
 function fb_get_all_category_types() {
+    if ( ! is_user_logged_in() ) {
+        return false;
+    }
     global $wpdb;
+    $uid = get_current_user_id();
     $types = $wpdb->get_results(
-        "SELECT id, CategoryType_Name
-        FROM {$wpdb->prefix}CategoryType
-        ORDER BY id ASC",
+        $wpdb->prepare(
+            "SELECT DISTINCT ct.id, ct.CategoryType_Name, ct.CategoryType_Order
+               FROM {$wpdb->prefix}CategoryType ct
+               JOIN {$wpdb->prefix}UserFamily uf ON ct.Family_ID = uf.Family_ID
+              WHERE uf.User_ID = %d
+              ORDER BY ct.CategoryType_Order ASC, ct.CategoryType_Name ASC",
+            $uid
+        ),
         ARRAY_A
     );
     return $types ?: false;
@@ -260,28 +259,37 @@ function fb_get_available_records( int $family_id ): bool {
         return false;
     }
     global $wpdb;
-    // Перевіряємо Account та Category (мають Family_ID).
-    $tables = array(
-        $wpdb->prefix . 'Account',
-        $wpdb->prefix . 'Category',
+
+    // 1. Перевіряємо Account
+    $acc_count = (int) $wpdb->get_var(
+        $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->prefix}Account WHERE Family_ID = %d LIMIT 1", $family_id )
     );
-    foreach ( $tables as $table ) {
-        $count = (int) $wpdb->get_var(
-            $wpdb->prepare(
-                "SELECT COUNT(*) FROM `{$table}` WHERE Family_ID = %d LIMIT 1",
-                $family_id
-            )
-        );
-        if ( $count > 0 ) return true;
-    }
-    // [SCHEMA-v2] Currency більше не має Family_ID — перевіряємо через CurrencyFamily.
-    $currency_count = (int) $wpdb->get_var(
+    if ( $acc_count > 0 ) return true;
+
+    // 2. Перевіряємо CategoryType (нові типи категорій)
+    $cat_type_count = (int) $wpdb->get_var(
+        $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->prefix}CategoryType WHERE Family_ID = %d LIMIT 1", $family_id )
+    );
+    if ( $cat_type_count > 0 ) return true;
+
+    // 3. Перевіряємо Category (через CategoryType)
+    $cat_count = (int) $wpdb->get_var(
         $wpdb->prepare(
-            "SELECT COUNT(*) FROM {$wpdb->prefix}CurrencyFamily WHERE Family_ID = %d LIMIT 1",
+            "SELECT COUNT(*) FROM {$wpdb->prefix}Category c
+             JOIN {$wpdb->prefix}CategoryType ct ON c.CategoryType_ID = ct.id
+             WHERE ct.Family_ID = %d LIMIT 1",
             $family_id
         )
     );
+    if ( $cat_count > 0 ) return true;
+
+    // 4. CurrencyFamily
+    $currency_count = (int) $wpdb->get_var(
+        $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->prefix}CurrencyFamily WHERE Family_ID = %d LIMIT 1", $family_id )
+    );
     if ( $currency_count > 0 ) return true;
+
+    // 5. Amount
     $amount_count = (int) $wpdb->get_var(
         $wpdb->prepare(
             "SELECT COUNT(*)
@@ -342,13 +350,13 @@ function fb_get_family_name( int $family_id ): string|false {
  * @return void
  */
 function fb_verify_ajax_request( string $action ): void {
-	if ( ! is_user_logged_in() ) {
-		wp_send_json_error( array( 'message' => __( 'Необхідна авторизація.', 'family-budget' ) ), 403 );
-	}
+    if ( ! is_user_logged_in() ) {
+        wp_send_json_error( array( 'message' => __( 'Необхідна авторизація.', 'family-budget' ) ), 403 );
+    }
 
-	$nonce = isset( $_POST['security'] ) ? sanitize_key( wp_unslash( $_POST['security'] ) ) : '';
+    $nonce = isset( $_POST['security'] ) ? sanitize_key( wp_unslash( $_POST['security'] ) ) : '';
 
-	if ( ! wp_verify_nonce( $nonce, $action ) ) {
-		wp_send_json_error( array( 'message' => __( 'Помилка безпеки. Оновіть сторінку.', 'family-budget' ) ), 403 );
-	}
+    if ( ! wp_verify_nonce( $nonce, $action ) ) {
+        wp_send_json_error( array( 'message' => __( 'Помилка безпеки. Оновіть сторінку.', 'family-budget' ) ), 403 );
+    }
 }

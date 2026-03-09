@@ -57,6 +57,19 @@ define( 'FB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FB_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'FB_PLUGIN_FILE', __FILE__ );
 
+// Головний файл: family-budget.php
+
+// 1. Задаємо версію структури БД (змінюйте її при кожній новій міграції)
+if ( ! defined( 'FB_DB_VERSION' ) ) {
+    define( 'FB_DB_VERSION', '1.1.0' ); // Наприклад, підвищили з 1.0.0
+}
+// 2. Підключаємо файл, який відповідатиме за міграції
+// (Створіть папку includes, якщо її ще немає)
+require_once plugin_dir_path( __FILE__ ) . 'includes/class-fb-migrations.php';
+
+// 3. Вішаємо перевірку версії на хук plugins_loaded
+add_action( 'plugins_loaded', 'fb_check_db_updates' );
+
 /**
  * ПІДКЛЮЧЕННЯ МОДУЛІВ ТА ЛОГІКИ
  *
@@ -231,11 +244,12 @@ function fb_render_admin_page(): void {
 				</tr>
 				<?php
 				$fb_admin_sc = array(
-					'fb_category_type'  => __( 'Типи категорій — Витрати, Доходи', 'family-budget' ),
 					'fb_amount_type'    => __( 'Типи операцій — Витрата, Переказ, Дохід', 'family-budget' ),
 					'fb_account_type'   => __( 'Типи рахунків — Готівка, Картка, Депозит', 'family-budget' ),
 					'fb_parameter_type' => __( 'Типи параметрів — Число, Текст, Дата', 'family-budget' ),
-				);
+                    'fb_currency'       => __( 'Валюти — Гривна, Долар, Евро', 'family-budget' ),
+
+                );
 				foreach ( $fb_admin_sc as $sc => $desc ) :
 					?>
 					<tr>
@@ -294,9 +308,9 @@ function fb_register_admin_menu(): void {
 
 	$subpages = array(
 		'fb_account_type'   => __( 'Типи рахунків', 'family-budget' ),
-		'fb_category_type'  => __( 'Типи категорій', 'family-budget' ),
 		'fb_amount_type'    => __( 'Типи операцій', 'family-budget' ),
-		'fb_parameter_type' => __( 'Типи параметрів', 'family-budget' ),
+        'fb_parameter_type' => __( 'Типи параметрів', 'family-budget' ),
+        'fb_currency'       => __( 'Валюти', 'family-budget' ),
 	);
 
 	foreach ( $subpages as $slug => $title ) {

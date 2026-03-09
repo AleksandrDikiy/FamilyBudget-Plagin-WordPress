@@ -44,7 +44,7 @@ function fb_create_tables() {
         // 1. Таблиця родин
         "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}Family (
             id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-            Family_Name VARCHAR(50) NOT NULL,
+            Family_Name VARCHAR(50) NOT NULL COMMENT 'назва родини',
             created_at DATETIME NULL,
             updated_at DATETIME NULL,
             PRIMARY KEY (id),
@@ -55,7 +55,7 @@ function fb_create_tables() {
         "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}UserFamily (
             id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
             User_ID BIGINT UNSIGNED NOT NULL,
-            Family_ID BIGINT UNSIGNED NOT NULL,
+            Family_ID BIGINT UNSIGNED NOT NULL COMMENT 'код родини',
             created_at DATETIME NULL,
             PRIMARY KEY (id),
             UNIQUE KEY Unique_User_Family (User_ID, Family_ID),
@@ -67,8 +67,8 @@ function fb_create_tables() {
         // 3. Типи параметрів (службовий довідник)
         "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}ParameterType (
             id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-            ParameterType_Name VARCHAR(50) NOT NULL,
-            ParameterType_Order SMALLINT NOT NULL DEFAULT 1,
+            ParameterType_Name VARCHAR(50) NOT NULL COMMENT 'найменування типу параметра',
+            ParameterType_Order SMALLINT NOT NULL DEFAULT 1 COMMENT 'сортування',
             created_at DATETIME NULL,
             updated_at DATETIME NULL,
             PRIMARY KEY (id),
@@ -122,8 +122,8 @@ function fb_create_tables() {
         // 5. Типи рахунків (службовий довідник)
         "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}AccountType (
             id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-            AccountType_Name VARCHAR(50) NOT NULL,
-            AccountType_Order SMALLINT DEFAULT 1,
+            AccountType_Name VARCHAR(50) NOT NULL COMMENT 'найменування типу рахунку',
+            AccountType_Order SMALLINT DEFAULT 1 COMMENT 'сортування',
             created_at DATETIME NULL,
             updated_at DATETIME NULL,
             PRIMARY KEY (id),
@@ -134,10 +134,10 @@ function fb_create_tables() {
         // 6. Рахунки
         "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}Account (
             id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-            Family_ID BIGINT UNSIGNED NOT NULL,
+            Family_ID BIGINT UNSIGNED NOT NULL COMMENT 'код родини',
             AccountType_ID BIGINT UNSIGNED NOT NULL,
-            Account_Name VARCHAR(50) NOT NULL,
-            Account_Order SMALLINT DEFAULT 1,
+            Account_Name VARCHAR(50) NOT NULL COMMENT 'найменування рахунку',
+            Account_Order SMALLINT DEFAULT 1 COMMENT 'сортування',
             Account_Default TINYINT(1) NOT NULL DEFAULT 0,
             created_at DATETIME NULL,
             updated_at DATETIME NULL,
@@ -152,17 +152,17 @@ function fb_create_tables() {
         // 7. Типи транзакцій (службовий довідник)
         "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}AmountType (
             id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-            AmountType_Name VARCHAR(50) NOT NULL,
+            AmountType_Name VARCHAR(50) NOT NULL COMMENT 'найменування типу транзакції',
             created_at DATETIME NULL,
             updated_at DATETIME NULL,
             PRIMARY KEY (id),
             UNIQUE KEY Unique_AmountType_Name (AmountType_Name)
         ) {$charset_collate} COMMENT='Типи транзакцій';",
 
-        // 8. Типи категорій (службовий довідник)
+        // 8. Типи категорій
         "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}CategoryType (
             id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-            CategoryType_Name VARCHAR(50) NOT NULL,
+            CategoryType_Name VARCHAR(50) NOT NULL COMMENT 'найменування типу категорії',
             created_at DATETIME NULL,
             updated_at DATETIME NULL,
             PRIMARY KEY (id),
@@ -172,10 +172,10 @@ function fb_create_tables() {
         // 9. Категорії
         "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}Category (
             id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-            Family_ID BIGINT UNSIGNED NOT NULL,
-            CategoryType_ID BIGINT UNSIGNED NOT NULL,
-            Category_Name VARCHAR(50) NOT NULL,
-            Category_Order SMALLINT DEFAULT 1,
+            Family_ID BIGINT UNSIGNED NOT NULL COMMENT 'код родини',
+            CategoryType_ID BIGINT UNSIGNED NOT NULL COMMENT 'код типу категорії',
+            Category_Name VARCHAR(50) NOT NULL COMMENT 'найменування категорії',
+            Category_Order SMALLINT DEFAULT 1 COMMENT 'сортування',
             created_at DATETIME NULL,
             updated_at DATETIME NULL,
             PRIMARY KEY (id),
@@ -190,11 +190,11 @@ function fb_create_tables() {
         "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}CategoryParam (
             id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
             User_ID BIGINT UNSIGNED NOT NULL,
-            Family_ID BIGINT UNSIGNED NOT NULL,
+            Family_ID BIGINT UNSIGNED NOT NULL COMMENT 'код родини',
             Category_ID BIGINT UNSIGNED NOT NULL,
             ParameterType_ID BIGINT UNSIGNED NOT NULL,
-            CategoryParam_Name VARCHAR(50) NOT NULL,
-            CategoryParam_Order SMALLINT NOT NULL DEFAULT 1,
+            CategoryParam_Name VARCHAR(50) NOT NULL COMMENT 'найменування параметру категорії',
+            CategoryParam_Order SMALLINT NOT NULL DEFAULT 1 COMMENT 'сортування',
             created_at DATETIME NULL,
             updated_at DATETIME NULL,
             PRIMARY KEY (id),
@@ -237,8 +237,8 @@ function fb_create_tables() {
             id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
             Amount_ID BIGINT UNSIGNED NOT NULL,
             CategoryParam_ID BIGINT UNSIGNED NOT NULL,
-            AmountParam_Value VARCHAR(50) NOT NULL,
-            created_at DATETIME NULL,
+            AmountParam_Value VARCHAR(50) NOT NULL COMMENT 'курс валюти до гривни',
+            created_at DATETIME NULL COMMENT 'дата курсу валюти',
             PRIMARY KEY (id),
             INDEX Idx_Amount_ID (Amount_ID),
             INDEX Idx_CategoryParam_ID (CategoryParam_ID),
