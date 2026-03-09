@@ -162,28 +162,29 @@ function fb_create_tables() {
         // 8. Типи категорій
         "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}CategoryType (
             id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+            Family_ID BIGINT UNSIGNED NOT NULL COMMENT 'код родини',
             CategoryType_Name VARCHAR(50) NOT NULL COMMENT 'найменування типу категорії',
+            CategoryType_Order SMALLINT DEFAULT 1 COMMENT 'сортування',
             created_at DATETIME NULL,
             updated_at DATETIME NULL,
             PRIMARY KEY (id),
-            UNIQUE KEY Unique_CategoryType_Name (CategoryType_Name)
+            INDEX Idx_Family_ID (Family_ID),
+            FOREIGN KEY (Family_ID) REFERENCES {$wpdb->prefix}Family(id) ON DELETE CASCADE,
+            UNIQUE KEY Unique_FamilyType (Family_ID, CategoryType_Name)
         ) {$charset_collate} COMMENT='Типи категорій';",
 
         // 9. Категорії
         "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}Category (
             id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-            Family_ID BIGINT UNSIGNED NOT NULL COMMENT 'код родини',
             CategoryType_ID BIGINT UNSIGNED NOT NULL COMMENT 'код типу категорії',
             Category_Name VARCHAR(50) NOT NULL COMMENT 'найменування категорії',
             Category_Order SMALLINT DEFAULT 1 COMMENT 'сортування',
             created_at DATETIME NULL,
             updated_at DATETIME NULL,
             PRIMARY KEY (id),
-            INDEX Idx_Family_ID (Family_ID),
             INDEX Idx_CategoryType_ID (CategoryType_ID),
             INDEX Idx_Category_Order (Category_Order),
-            FOREIGN KEY (CategoryType_ID) REFERENCES {$wpdb->prefix}CategoryType(id),
-            FOREIGN KEY (Family_ID) REFERENCES {$wpdb->prefix}Family(id) ON DELETE CASCADE
+            FOREIGN KEY (CategoryType_ID) REFERENCES {$wpdb->prefix}CategoryType(id)
         ) {$charset_collate} COMMENT='Категорії доходів та витрат';",
 
         // 10. Параметри категорій - користувацький

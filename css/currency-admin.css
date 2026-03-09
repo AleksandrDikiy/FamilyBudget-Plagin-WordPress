@@ -1,0 +1,227 @@
+/**
+ * Family Budget — Стилі модуля управління валютами
+ *
+ * Компактний UI, тісно інтегрований із загальними стилями плагіна
+ * (family-budget.css). Перевизначає лише специфічні для цього модуля властивості.
+ *
+ * @package    FamilyBudget
+ * @since      1.0.0
+ */
+
+/* ── Контейнер модуля ────────────────────────────────────────────────────── */
+
+.fb-currency-admin {
+	max-width: 760px;
+}
+
+.fb-currency-admin h2 {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 1.15rem;
+	margin: 0 0 10px;
+	color: #1d2327;
+}
+
+.fb-currency-admin h2 .dashicons {
+	font-size: 1.25rem;
+	width: 1.25rem;
+	height: 1.25rem;
+	color: #2271b1;
+}
+
+/* ── Форма (картка) ──────────────────────────────────────────────────────── */
+
+.fb-currency-admin .fb-card {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	padding: 10px 12px;
+	margin-bottom: 0;
+}
+
+.fb-currency-admin .fb-form-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	align-items: center;
+}
+
+.fb-currency-admin .fb-form-row input[type="text"] {
+	flex: 1 1 120px;
+	min-width: 90px;
+	height: 32px;
+	padding: 0 8px;
+	border: 1px solid #8c8f94;
+	border-radius: 3px;
+	font-size: 0.85rem;
+	box-sizing: border-box;
+}
+
+.fb-currency-admin .fb-form-row input[type="text"]:focus {
+	border-color: #2271b1;
+	outline: 1px solid #2271b1;
+}
+
+/* Поле Код — фіксована ширина */
+.fb-currency-admin #fb-currency-code {
+	flex: 0 0 80px;
+	text-transform: uppercase;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+}
+
+/* Поле Символ — фіксована ширина */
+.fb-currency-admin #fb-currency-symbol {
+	flex: 0 0 70px;
+	text-align: center;
+}
+
+/* ── Кнопки ──────────────────────────────────────────────────────────────── */
+
+.fb-currency-admin .fb-btn-save,
+.fb-currency-admin .fb-btn-cancel {
+	height: 32px;
+	padding: 0 12px;
+	border: none;
+	border-radius: 3px;
+	font-size: 0.83rem;
+	font-weight: 600;
+	cursor: pointer;
+	white-space: nowrap;
+	transition: background 0.15s;
+}
+
+.fb-currency-admin .fb-btn-save {
+	background: #2271b1;
+	color: #fff;
+}
+
+.fb-currency-admin .fb-btn-save:hover:not(:disabled) {
+	background: #135e96;
+}
+
+.fb-currency-admin .fb-btn-save:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+.fb-currency-admin .fb-btn-cancel {
+	background: #f0f0f1;
+	color: #1d2327;
+	border: 1px solid #8c8f94;
+}
+
+.fb-currency-admin .fb-btn-cancel:hover {
+	background: #dcdcde;
+}
+
+.fb-currency-admin .fb-btn-icon {
+	background: none;
+	border: none;
+	cursor: pointer;
+	padding: 2px 4px;
+	font-size: 0.95rem;
+	line-height: 1;
+	opacity: 0.85;
+	transition: opacity 0.15s;
+}
+
+.fb-currency-admin .fb-btn-icon:hover {
+	opacity: 1;
+}
+
+.fb-currency-admin .fb-btn-icon:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+
+/* ── Таблиця ─────────────────────────────────────────────────────────────── */
+
+.fb-currency-admin .fb-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.85rem;
+	border: 1px solid #dcdcde;
+	border-top: none; /* Таблиця примикає до форми-картки. */
+}
+
+.fb-currency-admin .fb-table thead tr {
+	background: #f6f7f7;
+}
+
+.fb-currency-admin .fb-table th {
+	padding: 6px 10px;
+	text-align: left;
+	border-bottom: 2px solid #c3c4c7;
+	font-size: 0.8rem;
+	font-weight: 600;
+	color: #50575e;
+	white-space: nowrap;
+}
+
+.fb-currency-admin .fb-table td {
+	padding: 5px 10px;
+	border-bottom: 1px solid #f0f0f1;
+	vertical-align: middle;
+	color: #1d2327;
+}
+
+.fb-currency-admin .fb-table tbody tr:last-child td {
+	border-bottom: none;
+}
+
+.fb-currency-admin .fb-table tbody tr:hover td {
+	background: #f6f7f7;
+}
+
+.fb-currency-admin .fb-table td:last-child {
+	white-space: nowrap;
+}
+
+/* Підсвічування рядка при редагуванні */
+.fb-currency-admin .fb-table tbody tr.fb-row-editing td {
+	background: #fef9e7;
+}
+
+/* ── Повідомлення ────────────────────────────────────────────────────────── */
+
+.fb-currency-admin .fb-notice {
+	padding: 7px 12px;
+	border-left: 4px solid #72aee6;
+	background: #f0f6fc;
+	border-radius: 0 3px 3px 0;
+	font-size: 0.85rem;
+	margin-bottom: 8px;
+}
+
+.fb-currency-admin .fb-notice-success {
+	border-left-color: #00a32a;
+	background: #f0fdf4;
+	color: #004b16;
+}
+
+.fb-currency-admin .fb-notice-error {
+	border-left-color: #d63638;
+	background: #fcf0f1;
+	color: #8a1f1f;
+}
+
+/* ── Адаптивність ────────────────────────────────────────────────────────── */
+
+@media screen and ( max-width: 600px ) {
+	.fb-currency-admin .fb-form-row {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.fb-currency-admin #fb-currency-code,
+	.fb-currency-admin #fb-currency-symbol {
+		flex: 1 1 auto;
+	}
+
+	.fb-currency-admin .fb-btn-save,
+	.fb-currency-admin .fb-btn-cancel {
+		width: 100%;
+	}
+}
