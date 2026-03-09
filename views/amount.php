@@ -15,7 +15,7 @@
  *
  * @package    FamilyBudget
  * @subpackage Modules
- * @version    1.3.0.0
+ * @version    1.3.8
  * @since      1.0.0
  *
  * CHANGELOG v1.1.1.0:
@@ -1311,10 +1311,13 @@ function fb_render_budget_interface(): string {
     );
 
     // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+    // [SCHEMA-v2] Family_ID перенесено з Category до CategoryType — вибірка через JOIN.
     $cats = $wpdb->get_results(
-        "SELECT id, Category_Name FROM {$wpdb->prefix}Category
-         WHERE Family_ID IN {$family_sql}
-         ORDER BY Category_Order ASC"
+        "SELECT c.id, c.Category_Name
+         FROM {$wpdb->prefix}Category AS c
+         INNER JOIN {$wpdb->prefix}CategoryType AS ct ON ct.id = c.CategoryType_ID
+         WHERE ct.Family_ID IN {$family_sql}
+         ORDER BY c.Category_Order ASC"
     );
 
     // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
