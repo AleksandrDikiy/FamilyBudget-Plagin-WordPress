@@ -1103,10 +1103,15 @@ class FB_Import {
     /**
      * Знаходить або створює категорію для родини за назвою.
      *
+     * [SCHEMA-v2] Family_ID перенесено з таблиці Category до CategoryType.
+     * Пошук виконується через JOIN з CategoryType по Family_ID.
+     * При створенні нової категорії — знаходимо або створюємо CategoryType
+     * з назвою "Імпорт", що належить вказаній родині.
+     *
      * @since  1.0.20.0
      * @param  string $name      Назва категорії з CSV.
      * @param  int    $family_id ID родини.
-     * @return int ID категорії або 0 у разі помилки.
+     * @return int               ID категорії або 0 у разі помилки.
      */
     private static function get_or_create_category( string $name, int $family_id ): int {
         global $wpdb;
@@ -1117,10 +1122,12 @@ class FB_Import {
             return 0;
         }
 
+        // [SCHEMA-v2] Family_ID більше не в Category — шукаємо через JOIN з CategoryType.
         $id = $wpdb->get_var( $wpdb->prepare(
-            "SELECT id
-             FROM {$wpdb->prefix}Category
-             WHERE Category_Name = %s AND Family_ID = %d
+            "SELECT c.id
+             FROM {$wpdb->prefix}Category AS c
+             INNER JOIN {$wpdb->prefix}CategoryType AS ct ON ct.id = c.CategoryType_ID
+             WHERE c.Category_Name = %s AND ct.Family_ID = %d
              LIMIT 1",
             $name,
             $family_id
@@ -1130,20 +1137,73 @@ class FB_Import {
             return (int) $id;
         }
 
+        // Знаходимо CategoryType для цієї родини (або створюємо тип "Імпорт").
+        $category_type_id = self::get_or_create_category_type( $family_id );
+
+        if ( ! $category_type_id ) {
+            error_log( '[FB Import] Category create FAILED: не вдалося отримати CategoryType для родини ' . $family_id );
+            return 0;
+        }
+
         $wpdb->insert(
             $wpdb->prefix . 'Category',
             array(
-                'Family_ID'       => $family_id,
-                'CategoryType_ID' => 1, // 'Витрати' за замовчуванням.
+                'CategoryType_ID' => $category_type_id,
                 'Category_Name'   => $name,
                 'Category_Order'  => 999,
                 'created_at'      => current_time( 'mysql' ),
             ),
-            array( '%d', '%d', '%s', '%d', '%s' )
+            array( '%d', '%s', '%d', '%s' )
         );
 
         if ( $wpdb->last_error ) {
             error_log( '[FB Import] Category create FAILED: ' . $wpdb->last_error );
+            return 0;
+        }
+
+        return (int) $wpdb->insert_id;
+    }
+
+    /**
+     * Знаходить першу CategoryType для родини або створює тип "Імпорт".
+     *
+     * Використовується як fallback при імпорті CSV, коли потрібно
+     * автоматично створити нову категорію без явного вказання типу.
+     *
+     * @since  1.0.20.0
+     * @param  int $family_id ID родини.
+     * @return int            ID типу категорії або 0 у разі помилки.
+     */
+    private static function get_or_create_category_type( int $family_id ): int {
+        global $wpdb;
+
+        // Шукаємо будь-який існуючий тип категорії для цієї родини.
+        $type_id = (int) $wpdb->get_var( $wpdb->prepare(
+            "SELECT id FROM {$wpdb->prefix}CategoryType
+             WHERE Family_ID = %d
+             ORDER BY id ASC
+             LIMIT 1",
+            $family_id
+        ) );
+
+        if ( $type_id ) {
+            return $type_id;
+        }
+
+        // Якщо жодного типу немає — створюємо "Імпорт" як базовий.
+        $wpdb->insert(
+            $wpdb->prefix . 'CategoryType',
+            array(
+                'Family_ID'          => $family_id,
+                'CategoryType_Name'  => 'Імпорт',
+                'CategoryType_Order' => 999,
+                'created_at'         => current_time( 'mysql' ),
+            ),
+            array( '%d', '%s', '%d', '%s' )
+        );
+
+        if ( $wpdb->last_error ) {
+            error_log( '[FB Import] CategoryType create FAILED: ' . $wpdb->last_error );
             return 0;
         }
 
