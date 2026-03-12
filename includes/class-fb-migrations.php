@@ -14,13 +14,34 @@ defined( 'ABSPATH' ) || exit;
  * @since  1.0.0
  * @return void
  */
+/**
+ * Перевіряє необхідність оновлення схеми бази даних.
+ */
+/**
+ * Файл: includes/class-fb-migrations.php
+ */
 function fb_check_db_updates(): void {
-	$installed_version = get_option( 'fb_db_version', '1.0.0' );
+    $installed_version = get_option( 'fb_db_version', '1.0.0' );
 
-	if ( version_compare( $installed_version, FB_DB_VERSION, '<' ) ) {
-		fb_migrate_database_schema();
-		update_option( 'fb_db_version', FB_DB_VERSION );
-	}
+    // FB_DB_VERSION вже визначена в головному файлі, тут просто використовуємо
+    if ( version_compare( $installed_version, FB_DB_VERSION, '<' ) ) {
+
+        if ( version_compare( $installed_version, '1.1.0', '<' ) ) {
+            // ВАЖЛИВО: Оскільки цей файл вже в includes/,
+            // використовуємо __DIR__ для точного шляху
+            $migration_v2 = __DIR__ . '/class-fb-migrations-v2.php';
+
+            if ( file_exists( $migration_v2 ) ) {
+                require_once $migration_v2;
+
+                if ( function_exists( 'fb_migrate_utilities_v2' ) ) {
+                    fb_migrate_utilities_v2();
+                }
+            }
+        }
+
+        update_option( 'fb_db_version', FB_DB_VERSION );
+    }
 }
 
 /**

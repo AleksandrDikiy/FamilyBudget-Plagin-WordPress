@@ -3,7 +3,7 @@
  * Plugin Name: Family Budget
  * Plugin URI: https://fbudget.pp.ua/
  * Description: Професійна система керування сімейними фінансами, інтеграцією курсів НБУ, аналітичними графіками та універсальною AJAX-системою. Повна підтримка мультивалютності та динамічних параметрів.
- * Version: 1.3.11
+ * Version: 1.3.12
  * Author: Alex Wild
  * Author URI: https://wildwind.org.ua/
  * License: GPL v2 or later
@@ -13,7 +13,7 @@
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * @package FamilyBudget
- * @version    1.3.11
+ * @version    1.3.12
  * @since 1.0.0
  */
 
@@ -52,7 +52,7 @@ if ( defined( 'FB_GITHUB_TOKEN' ) && '' !== FB_GITHUB_TOKEN ) {
 }
 
 // Константи плагіна
-define( 'FB_VERSION', '1.3.11' );
+define( 'FB_VERSION', '1.3.12' );
 define( 'FB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FB_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'FB_PLUGIN_FILE', __FILE__ );
@@ -61,11 +61,34 @@ define( 'FB_PLUGIN_FILE', __FILE__ );
 
 // 1. Задаємо версію структури БД (змінюйте її при кожній новій міграції)
 if ( ! defined( 'FB_DB_VERSION' ) ) {
-    define( 'FB_DB_VERSION', '1.1.0' ); // Наприклад, підвищили з 1.0.0
+    define( 'FB_DB_VERSION', '1.2.0' ); // Наприклад, підвищили з 1.0.0
 }
 // 2. Підключаємо файл, який відповідатиме за міграції
 // (Створіть папку includes, якщо її ще немає)
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-fb-migrations.php';
+// 1. Підключаємо PHP-файли
+require_once plugin_dir_path( __FILE__ ) . 'includes/class-fb-utilities-model.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/class-fb-ajax.php';
+
+// 2. Реєструємо та підключаємо JS-скрипти
+add_action( 'wp_enqueue_scripts', 'fb_enqueue_scripts' );
+function fb_enqueue_scripts() {
+
+    // Шлях до вашого JS-файлу
+    wp_enqueue_script(
+        'family-budget-js',
+        plugin_dir_url( __FILE__ ) . 'js/family-budget.js',
+        array( 'jquery' ), // Залежність від jQuery
+        '1.1.0',
+        true // Підключити у футері
+    );
+
+    // ВАЖЛИВО: Передаємо дані з PHP в JS (ajax_url та nonce)
+    wp_localize_script( 'family-budget-js', 'fb_obj', array(
+        'ajax_url' => admin_url( 'admin-ajax.php' ),
+        'nonce'    => wp_create_nonce( 'fb_utilities_nonce' )
+    ) );
+}
 
 // 3. Вішаємо перевірку версії на хук plugins_loaded
 add_action( 'plugins_loaded', 'fb_check_db_updates' );
