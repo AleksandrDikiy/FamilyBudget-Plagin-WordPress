@@ -125,7 +125,9 @@ $fb_modules = [
 	'views/parameter-type.php',
 	'views/charts.php',
 	'views/communal.php',
-	'views/home.php',
+    'views/home.php',
+    'views/houses.php',
+	'views/personal-accounts.php',
 ];
 
 foreach ( $fb_modules as $fb_module ) {
@@ -207,6 +209,9 @@ add_shortcode( 'fb_category_type', 'fb_render_category_type_interface' );
 add_shortcode( 'fb_amount_type', 'fb_render_amount_type_interface' );
 add_shortcode( 'fb_parameter_type', 'fb_render_parameter_type_interface' );
 add_shortcode( 'fb_home', 'fb_shortcode_home_interface' );
+// комуналка
+//add_shortcode( 'fb_houses', 'fb_shortcode_houses_interface' );
+
 
 /**
  * МЕНЮ АДМІНІСТРАТОРА

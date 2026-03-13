@@ -1,0 +1,213 @@
+/**
+ * UI/UX Оптимізація для модуля Оселі
+ * Відповідає дизайну модуля Рахунки (account.css)
+ */
+
+/* ─── Wrapper ───────────────────────────────────────────────────────────── */
+.fb-houses-wrapper {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                 Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    max-width: 100%;
+    /* Прижимаємо до горішнього краю: скидаємо відступи теми Astra */
+    margin: 0 auto !important;
+    margin-top: -20px !important;  /* компенсує padding теми .entry-content */
+}
+
+/* Скидаємо margin у всіх прямих дочірніх елементів (Astra додає свої) */
+.fb-houses-wrapper > * {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+/* ─── Панель контролів ──────────────────────────────────────────────────── */
+.fb-houses-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f9f9f9;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-bottom: none;   /* зливається з таблицею — нульовий зазор */
+    gap: 15px;
+    flex-wrap: wrap;
+    margin: 0 !important;
+    box-sizing: border-box;
+}
+
+.fb-filter-group,
+.fb-add-group {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+/* ─── Фіксована висота 32px для інпутів та селектів ────────────────────── */
+.fb-houses-wrapper select.fb-compact-input,
+.fb-houses-wrapper input[type="text"].fb-compact-input {
+    box-sizing: border-box !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
+    padding: 0 8px !important;
+    font-size: 13px !important;
+    border: 1px solid #8c8f94 !important;
+    border-radius: 3px !important;
+    margin: 0 !important;
+    line-height: normal !important;
+    vertical-align: middle !important;
+    box-shadow: none !important;
+    background-color: #fff !important;
+}
+
+/* ─── Кнопка "Додати" ───────────────────────────────────────────────────── */
+.fb-houses-wrapper .fb-btn-primary {
+    box-sizing: border-box !important;
+    background: #2271b1 !important;
+    color: #fff !important;
+    border: 1px solid #2271b1 !important;
+    border-radius: 3px !important;
+    padding: 0 16px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin: 0 !important;
+    line-height: normal !important;
+    vertical-align: middle !important;
+    box-shadow: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: nowrap;
+}
+
+.fb-houses-wrapper .fb-btn-primary:hover {
+    background: #135e96 !important;
+    border-color: #135e96 !important;
+}
+
+/* ─── Контейнер таблиці — впритул до панелі ────────────────────────────── */
+.fb-houses-table-container {
+    overflow-x: auto;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* ─── Таблиця ───────────────────────────────────────────────────────────── */
+.fb-houses-wrapper .fb-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+    background: #fff;
+    margin: 0 !important;
+}
+
+/* Шапка: темний фон, білий uppercase */
+.fb-houses-wrapper .fb-table th {
+    background: #323d4d;
+    color: #fff;
+    text-align: left;
+    padding: 10px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: none;
+    white-space: nowrap;
+}
+
+/* Клітинки даних */
+.fb-houses-wrapper .fb-table td {
+    padding: 8px 12px !important;
+    border-bottom: 1px solid #eee;
+    font-size: 13px;
+    vertical-align: middle !important;
+    line-height: 1.4;
+    background: #fff;
+}
+
+.fb-houses-wrapper .fb-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* ─── КРИТИЧНО: .hidden має вищу специфічність ніж будь-який display-клас ── */
+/* Це вирішує конфлікт між .fb-edit-mode{display:flex} та .hidden{display:none} */
+.fb-houses-wrapper .hidden {
+    display: none !important;
+}
+
+/* Inline edit mode — горизонтально, без переносу рядків */
+/* НЕ використовуємо display:flex тут — лише коли .hidden знято через JS */
+.fb-houses-wrapper .fb-edit-mode:not(.hidden) {
+    display: inline-flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 4px !important;
+    align-items: center !important;
+}
+
+/* Інпути в режимі редагування — компактніші */
+.fb-houses-wrapper td input.fb-compact-input,
+.fb-houses-wrapper td select.fb-compact-input {
+    height: 28px !important;
+    min-height: 28px !important;
+    max-height: 28px !important;
+    padding: 0 6px !important;
+    font-size: 12px !important;
+    flex-shrink: 0;
+}
+
+/* ─── Колонка дій ───────────────────────────────────────────────────────── */
+.fb-houses-wrapper .fb-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    white-space: nowrap;
+}
+
+.fb-houses-wrapper .fb-actions span {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s;
+    line-height: 1;
+    /* Примусово текстовий рендеринг — не emoji */
+    font-family: "Segoe UI Symbol", "Apple Symbols", sans-serif;
+}
+
+.fb-houses-wrapper .fb-actions span:hover { opacity: 0.6; }
+
+.fb-houses-wrapper .fb-edit-btn   { color: #2271b1; font-size: 16px; }
+.fb-houses-wrapper .fb-save-btn   { color: #46b450; font-size: 16px; }
+/* ─── Delete: SVG-іконка через background — стабільна у всіх браузерах ─── */
+.fb-houses-wrapper .fb-delete-btn {
+    color: transparent;
+    width: 16px;
+    height: 16px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d63638' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'%3E%3C/polyline%3E%3Cpath d='M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6'%3E%3C/path%3E%3Cpath d='M10 11v6'%3E%3C/path%3E%3Cpath d='M14 11v6'%3E%3C/path%3E%3Cpath d='M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    font-size: 0;
+}
+
+.fb-houses-wrapper .fb-delete-btn:hover {
+    opacity: 0.6;
+}
+
+/* ─── Утиліти ───────────────────────────────────────────────────────────── */
+/* .hidden вже оголошений вище з вищою специфічністю */
+.text-center { text-align: center !important; }
+
+.fb-houses-wrapper .fb-empty-row td {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    padding: 18px 12px !important;
+}
