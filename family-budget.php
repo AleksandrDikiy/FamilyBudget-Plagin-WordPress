@@ -3,7 +3,7 @@
  * Plugin Name: Family Budget
  * Plugin URI: https://fbudget.pp.ua/
  * Description: Професійна система керування сімейними фінансами, інтеграцією курсів НБУ, аналітичними графіками та універсальною AJAX-системою. Повна підтримка мультивалютності та динамічних параметрів.
- * Version: 1.3.12
+ * Version: 1.3.13
  * Author: Alex Wild
  * Author URI: https://wildwind.org.ua/
  * License: GPL v2 or later
@@ -13,7 +13,7 @@
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * @package FamilyBudget
- * @version    1.3.12
+ * @version    1.3.13
  * @since 1.0.0
  */
 
@@ -21,6 +21,12 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
+// Головний файл: family-budget.php
+// Константи плагіна
+define( 'FB_VERSION', '1.3.13' );
+define( 'FB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'FB_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'FB_PLUGIN_FILE', __FILE__ );
 
 // Підключаємо бібліотеку автоматичних оновлень
 require_once __DIR__ . '/plugin-update-checker/plugin-update-checker.php';
@@ -51,13 +57,6 @@ if ( defined( 'FB_GITHUB_TOKEN' ) && '' !== FB_GITHUB_TOKEN ) {
 	$myUpdateChecker->setAuthentication( FB_GITHUB_TOKEN );
 }
 
-// Константи плагіна
-define( 'FB_VERSION', '1.3.12' );
-define( 'FB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-define( 'FB_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'FB_PLUGIN_FILE', __FILE__ );
-
-// Головний файл: family-budget.php
 
 // 1. Задаємо версію структури БД (змінюйте її при кожній новій міграції)
 if ( ! defined( 'FB_DB_VERSION' ) ) {
