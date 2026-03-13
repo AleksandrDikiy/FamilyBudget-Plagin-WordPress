@@ -1,0 +1,387 @@
+/**
+ * UI/UX для модуля Показників лічильників (Family Budget)
+ * Відповідає дизайн-системі плагіна (account.css)
+ */
+
+/* ─── Wrapper ───────────────────────────────────────────────────────────── */
+.fb-ind-wrapper {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                 Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.fb-ind-wrapper > * {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+/* ─── Панель фільтрів ───────────────────────────────────────────────────── */
+.fb-ind-filters {
+    display: flex;
+    align-items: center;
+    background: #f9f9f9;
+    padding: 9px 15px;
+    border: 1px solid #ddd;
+    border-bottom: none;
+    margin: 0 !important;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.fb-ind-filters .fb-filter-group {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+/* ─── Рядок додавання ───────────────────────────────────────────────────── */
+.fb-ind-add-bar {
+    background: #fff;
+    padding: 8px 15px;
+    border: 1px solid #ddd;
+    border-bottom: none;
+    margin: 0 !important;
+}
+
+.fb-ind-add-bar form {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+/* ─── Фіксована висота 32px для всіх полів ─────────────────────────────── */
+.fb-ind-wrapper select.fb-compact-input,
+.fb-ind-wrapper input[type="text"].fb-compact-input,
+.fb-ind-wrapper input[type="number"].fb-compact-input {
+    box-sizing: border-box !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
+    padding: 0 8px !important;
+    font-size: 13px !important;
+    border: 1px solid #8c8f94 !important;
+    border-radius: 3px !important;
+    margin: 0 !important;
+    line-height: normal !important;
+    vertical-align: middle !important;
+    box-shadow: none !important;
+    background-color: #fff !important;
+    -moz-appearance: textfield;
+}
+
+.fb-ind-wrapper input[type="number"].fb-compact-input::-webkit-inner-spin-button,
+.fb-ind-wrapper input[type="number"].fb-compact-input::-webkit-outer-spin-button {
+    opacity: 0.5;
+}
+
+/* ─── Кнопка "Додати" ───────────────────────────────────────────────────── */
+.fb-ind-wrapper .fb-btn-primary {
+    box-sizing: border-box !important;
+    background: #2271b1 !important;
+    color: #fff !important;
+    border: 1px solid #2271b1 !important;
+    border-radius: 3px !important;
+    padding: 0 14px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin: 0 !important;
+    line-height: normal !important;
+    vertical-align: middle !important;
+    box-shadow: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: nowrap;
+}
+
+.fb-ind-wrapper .fb-btn-primary:hover { background: #135e96 !important; }
+.fb-ind-wrapper .fb-btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ─── Контейнер таблиці ─────────────────────────────────────────────────── */
+.fb-ind-table-container {
+    overflow-x: auto;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* ─── Таблиця ───────────────────────────────────────────────────────────── */
+.fb-ind-wrapper .fb-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+    background: #fff;
+    margin: 0 !important;
+}
+
+.fb-ind-wrapper .fb-table th {
+    background: #323d4d;
+    color: #fff;
+    text-align: left;
+    padding: 9px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    border: none;
+    white-space: nowrap;
+}
+
+.fb-ind-wrapper .fb-table td {
+    padding: 7px 10px !important;
+    border-bottom: 1px solid #eee;
+    font-size: 13px;
+    vertical-align: middle !important;
+    line-height: 1.3;
+    background: #fff;
+}
+
+.fb-ind-wrapper .fb-table tr:last-child td { border-bottom: none; }
+.fb-ind-wrapper .fb-table tbody tr:hover td { background: #fafafa; }
+
+/* Адреса оселі — з переносом на мобільних */
+.fb-ind-wrapper .fb-ind-addr { font-size: 12px; color: #555; }
+
+/* Суми */
+.fb-ind-wrapper .fb-ind-amounts { font-weight: 600; color: #2271b1; }
+.fb-ind-wrapper .fb-ind-no-amount { color: #bbb; font-weight: normal; }
+
+/* ─── КРИТИЧНО: специфічність hidden > edit-mode ────────────────────────── */
+.fb-ind-wrapper .hidden { display: none !important; }
+
+.fb-ind-wrapper .fb-edit-mode:not(.hidden) {
+    display: inline-flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 3px !important;
+    align-items: center !important;
+}
+
+/* Компактні інпути в режимі редагування */
+.fb-ind-wrapper td input.fb-compact-input,
+.fb-ind-wrapper td select.fb-compact-input {
+    height: 26px !important;
+    min-height: 26px !important;
+    max-height: 26px !important;
+    padding: 0 5px !important;
+    font-size: 12px !important;
+    flex-shrink: 0;
+}
+
+/* ─── Колонка дій ───────────────────────────────────────────────────────── */
+.fb-ind-wrapper .fb-ind-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.fb-ind-wrapper .fb-ind-actions span {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s;
+    line-height: 1;
+}
+
+.fb-ind-wrapper .fb-ind-actions span:hover { opacity: 0.6; }
+
+/* ⚙ Прив'язка */
+.fb-ind-wrapper .fb-link-btn {
+    color: #666;
+    font-size: 15px;
+    transition: color 0.2s, opacity 0.2s;
+}
+.fb-ind-wrapper .fb-link-btn:hover { color: #2271b1; opacity: 1 !important; }
+
+/* ✎ Редагувати */
+.fb-ind-wrapper .fb-edit-btn { color: #2271b1; font-size: 15px; }
+
+/* ✔ Зберегти */
+.fb-ind-wrapper .fb-save-btn { color: #46b450; font-size: 15px; }
+
+/* 🗑 Видалити — SVG кошик */
+.fb-ind-wrapper .fb-delete-btn {
+    width: 14px;
+    height: 14px;
+    color: transparent;
+    font-size: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d63638' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'/%3E%3Cpath d='M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6'/%3E%3Cpath d='M10 11v6'/%3E%3Cpath d='M14 11v6'/%3E%3Cpath d='M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+/* ─── Утиліти ───────────────────────────────────────────────────────────── */
+.text-center { text-align: center !important; }
+.text-right  { text-align: right  !important; }
+
+.fb-ind-wrapper .fb-ind-empty td {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    padding: 20px 10px !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * МОДАЛЬНЕ ВІКНО
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+.fb-ind-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fb-ind-modal-box {
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+    width: 480px;
+    max-width: 95vw;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Заголовок модалки */
+.fb-ind-modal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: #323d4d;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.fb-ind-modal-close {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 4px;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+.fb-ind-modal-close:hover { opacity: 1; }
+
+/* Тіло модалки */
+.fb-ind-modal-body {
+    padding: 14px 16px;
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.fb-ind-modal-search { flex-shrink: 0; }
+
+/* Результати пошуку */
+.fb-ind-search-results {
+    flex: 1;
+    min-height: 80px;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    background: #fafafa;
+}
+
+.fb-ind-result-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-bottom: 1px solid #eee;
+    font-size: 13px;
+}
+.fb-ind-result-item:last-child { border-bottom: none; }
+.fb-ind-result-item.is-linked { background: #f0fff0; }
+
+.fb-ind-res-val   { font-weight: 600; color: #2271b1; min-width: 60px; }
+.fb-ind-res-note  { flex: 1; color: #555; font-size: 12px; }
+.fb-ind-already   { font-size: 11px; color: #46b450; white-space: nowrap; }
+
+.fb-ind-link-amount-btn {
+    background: #2271b1;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    padding: 3px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background 0.2s;
+}
+.fb-ind-link-amount-btn:hover    { background: #135e96; }
+.fb-ind-link-amount-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Прив'язані платежі */
+.fb-ind-linked-list { flex-shrink: 0; }
+
+.fb-ind-linked-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #888;
+    margin-bottom: 6px;
+}
+
+.fb-ind-linked-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 13px;
+}
+.fb-ind-linked-item:last-child { border-bottom: none; }
+
+.fb-ind-linked-val  { font-weight: 600; color: #2271b1; min-width: 60px; }
+.fb-ind-linked-note { flex: 1; color: #555; font-size: 12px; }
+
+.fb-ind-unlink-btn {
+    background: none;
+    border: 1px solid #d63638;
+    color: #d63638;
+    border-radius: 3px;
+    padding: 2px 8px;
+    font-size: 11px;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background 0.2s, color 0.2s;
+}
+.fb-ind-unlink-btn:hover    { background: #d63638; color: #fff; }
+.fb-ind-unlink-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Підказки (порожні стани) */
+.fb-ind-hint {
+    text-align: center;
+    color: #999;
+    font-style: italic;
+    font-size: 12px;
+    padding: 16px 10px;
+    margin: 0;
+}

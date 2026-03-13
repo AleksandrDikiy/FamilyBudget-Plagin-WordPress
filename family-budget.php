@@ -3,7 +3,7 @@
  * Plugin Name: Family Budget
  * Plugin URI: https://fbudget.pp.ua/
  * Description: Професійна система керування сімейними фінансами, інтеграцією курсів НБУ, аналітичними графіками та універсальною AJAX-системою. Повна підтримка мультивалютності та динамічних параметрів.
- * Version: 1.3.13
+ * Version: 1.3.14
  * Author: Alex Wild
  * Author URI: https://wildwind.org.ua/
  * License: GPL v2 or later
@@ -13,8 +13,9 @@
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * @package FamilyBudget
- * @version    1.3.13
+ * @version    1.3.14
  * @since 1.0.0
+ * кількість таблиць: 21
  */
 
 // Захист від прямого доступу
@@ -23,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 // Головний файл: family-budget.php
 // Константи плагіна
-define( 'FB_VERSION', '1.3.13' );
+define( 'FB_VERSION', '1.3.14' );
 define( 'FB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FB_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'FB_PLUGIN_FILE', __FILE__ );
@@ -126,7 +127,8 @@ $fb_modules = [
 	'views/communal.php',
     'views/home.php',
     'views/houses.php',
-	'views/personal-accounts.php',
+    'views/personal-accounts.php',
+	'views/indicators.php',
 ];
 
 foreach ( $fb_modules as $fb_module ) {
