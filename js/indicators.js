@@ -1,61 +1,99 @@
 /**
  * Family Budget — Модуль Показників лічильників
- *
- * Обробляє: завантаження/фільтрацію таблиці, додавання,
- * inline-редагування, видалення та прив'язку платежів.
+ * Версія з пагінацією (20 рядків на сторінку)
  */
 jQuery( document ).ready( function ( $ ) {
 
-    const $tbody = $( '#fb-ind-tbody' );
+    const $tbody      = $( '#fb-ind-tbody' );
+    const $pagination = $( '#fb-ind-pagination' );
 
     // Guard: запобігає подвійній ініціалізації
     if ( $tbody.data( 'fb-ind-init' ) ) return;
     $tbody.data( 'fb-ind-init', true );
 
-    // Скидаємо всі попередні обробники (namespace .fbind)
     $tbody.off( '.fbind' );
     $( document ).off( '.fbind' );
     $( '#fb-ind-add-form' ).off( '.fbind' );
 
-    // Поточний ID показника для модального вікна
+    let currentPage  = 1;
     let currentIndId = 0;
     let searchTimer  = null;
+    /* ─── ЗАВАНТАЖЕННЯ ТАБЛИЦІ ───────────────────────────────────────────── */
 
-    /* ───────────────────────────────────────────────────────────────────────
-     * ЗАВАНТАЖЕННЯ ТАБЛИЦІ
-     * ─────────────────────────────────────────────────────────────────────── */
-
-    /**
-     * Збирає фільтри та завантажує рядки таблиці через AJAX.
-     */
-    function loadIndicators() {
+    function loadIndicators( page ) {
+        currentPage = page || 1;
         $tbody.css( 'opacity', '0.5' );
 
         $.post( fbIndObj.ajax_url, {
-            action:    'fb_ajax_ind_load',
-            security:  fbIndObj.nonce,
-            family_id: $( '#fb-ind-f-family' ).val(),
-            house_id:  $( '#fb-ind-f-house' ).val(),
-            account_id:$( '#fb-ind-f-account' ).val(),
-            year:      $( '#fb-ind-f-year' ).val(),
-            month:     $( '#fb-ind-f-month' ).val(),
+            action:     'fb_ajax_ind_load',
+            security:   fbIndObj.nonce,
+            family_id:  $( '#fb-ind-f-family' ).val(),
+            account_id: $( '#fb-ind-f-account' ).val(),
+            year:       $( '#fb-ind-f-year' ).val(),
+            month:      $( '#fb-ind-f-month' ).val(),
+            page:       currentPage,
         }, function ( res ) {
             $tbody.css( 'opacity', '1' );
-            if ( res.success ) $tbody.html( res.data.html );
+            if ( ! res.success ) return;
+
+            $tbody.html( res.data.html );
+
+            // Рендер пагінації
+            renderPagination( res.data.page, res.data.total_pages, res.data.total );
         } );
     }
 
-    loadIndicators();
+    loadIndicators( 1 );
 
-    // Реакція на зміну будь-якого фільтра
     $( document ).on( 'change.fbind',
-        '#fb-ind-f-family, #fb-ind-f-house, #fb-ind-f-account, #fb-ind-f-year, #fb-ind-f-month',
-        loadIndicators
+        '#fb-ind-f-family, #fb-ind-f-account, #fb-ind-f-year, #fb-ind-f-month',
+        function () { loadIndicators( 1 ); }
     );
 
-    /* ───────────────────────────────────────────────────────────────────────
-     * ФОРМА ДОДАВАННЯ
-     * ─────────────────────────────────────────────────────────────────────── */
+    /* ─── ПАГІНАЦІЯ ──────────────────────────────────────────────────────── */
+
+    function renderPagination( page, totalPages, total ) {
+        if ( totalPages <= 1 ) {
+            $pagination.hide().empty();
+            return;
+        }
+
+        $pagination.show();
+        let html = '<div class="fb-ind-pag-info">Показано сторінку ' + page + ' з ' + totalPages
+                 + ' (всього: ' + total + ')</div><div class="fb-ind-pag-btns">';
+
+        // Кнопка "Перша"
+        if ( page > 1 ) {
+            html += '<button class="fb-ind-pag-btn" data-page="1">«</button>';
+            html += '<button class="fb-ind-pag-btn" data-page="' + ( page - 1 ) + '">‹</button>';
+        }
+
+        // Кнопки сторінок (±2 від поточної)
+        const from = Math.max( 1, page - 2 );
+        const to   = Math.min( totalPages, page + 2 );
+
+        for ( let i = from; i <= to; i++ ) {
+            const active = i === page ? ' active' : '';
+            html += '<button class="fb-ind-pag-btn' + active + '" data-page="' + i + '">' + i + '</button>';
+        }
+
+        // Кнопка "Остання"
+        if ( page < totalPages ) {
+            html += '<button class="fb-ind-pag-btn" data-page="' + ( page + 1 ) + '">›</button>';
+            html += '<button class="fb-ind-pag-btn" data-page="' + totalPages + '">»</button>';
+        }
+
+        html += '</div>';
+        $pagination.html( html );
+    }
+
+    // Клік по кнопці пагінації
+    $( document ).on( 'click.fbind', '.fb-ind-pag-btn', function () {
+        const page = parseInt( $( this ).data( 'page' ) );
+        if ( page ) loadIndicators( page );
+    } );
+
+    /* ─── ФОРМА ДОДАВАННЯ ────────────────────────────────────────────────── */
 
     $( '#fb-ind-add-form' ).on( 'submit.fbind', function ( e ) {
         e.preventDefault();
@@ -68,7 +106,8 @@ jQuery( document ).ready( function ( $ ) {
                 $btn.prop( 'disabled', false );
                 if ( res.success ) {
                     $( '#fb-ind-add-form' )[ 0 ].reset();
-                    loadIndicators();
+                    $( '#fb-ind-f-month' ).val( '0' );
+                    loadIndicators( 1 );
                 } else {
                     alert( res.data.message );
                 }
@@ -76,11 +115,8 @@ jQuery( document ).ready( function ( $ ) {
         );
     } );
 
-    /* ───────────────────────────────────────────────────────────────────────
-     * INLINE-РЕДАГУВАННЯ
-     * ─────────────────────────────────────────────────────────────────────── */
+    /* ─── INLINE-РЕДАГУВАННЯ ─────────────────────────────────────────────── */
 
-    // Перехід у режим редагування
     $tbody.on( 'click.fbind', '.fb-edit-btn', function () {
         const $tr = $( this ).closest( 'tr' );
         $tr.find( '.fb-view-mode' ).addClass( 'hidden' );
@@ -90,7 +126,6 @@ jQuery( document ).ready( function ( $ ) {
         $tr.find( '.fb-ind-edit-consumed' ).trigger( 'focus' );
     } );
 
-    // Збереження
     $tbody.on( 'click.fbind', '.fb-save-btn', function () {
         const $btn = $( this ).prop( 'disabled', true );
         const $tr  = $btn.closest( 'tr' );
@@ -107,21 +142,15 @@ jQuery( document ).ready( function ( $ ) {
             consumed: $tr.find( '.fb-ind-edit-consumed' ).val(),
         }, function ( res ) {
             $btn.prop( 'disabled', false );
-            if ( res.success ) {
-                loadIndicators();
-            } else {
-                alert( res.data.message );
-            }
+            if ( res.success ) loadIndicators( currentPage );
+            else alert( res.data.message );
         } );
     } );
 
-    /* ───────────────────────────────────────────────────────────────────────
-     * ВИДАЛЕННЯ
-     * ─────────────────────────────────────────────────────────────────────── */
+    /* ─── ВИДАЛЕННЯ ──────────────────────────────────────────────────────── */
 
     $tbody.on( 'click.fbind', '.fb-delete-btn', function ( e ) {
         e.stopImmediatePropagation();
-
         if ( ! window.confirm( fbIndObj.confirm_delete ) ) return;
 
         const $btn = $( this ).css( 'opacity', '0.4' );
@@ -131,25 +160,18 @@ jQuery( document ).ready( function ( $ ) {
             security: fbIndObj.nonce,
             id:       $btn.closest( 'tr' ).data( 'id' ),
         }, function ( res ) {
-            if ( res.success ) {
-                loadIndicators();
-            } else {
-                $btn.css( 'opacity', '1' );
-                alert( res.data.message );
-            }
+            if ( res.success ) loadIndicators( currentPage );
+            else { $btn.css( 'opacity', '1' ); alert( res.data.message ); }
         } );
     } );
 
-    /* ───────────────────────────────────────────────────────────────────────
-     * МОДАЛЬНЕ ВІКНО: ПРИВ'ЯЗКА ПЛАТЕЖУ
-     * ─────────────────────────────────────────────────────────────────────── */
+    /* ─── МОДАЛЬНЕ ВІКНО: ПРИВ'ЯЗКА ─────────────────────────────────────── */
 
     const $modal        = $( '#fb-ind-modal' );
     const $searchInput  = $( '#fb-ind-search-input' );
     const $searchResult = $( '#fb-ind-search-results' );
     const $linkedList   = $( '#fb-ind-linked-list' );
 
-    /** Відкриває модальне вікно та завантажує прив'язані платежі */
     function openModal( indId ) {
         currentIndId = indId;
         $searchInput.val( '' );
@@ -159,43 +181,31 @@ jQuery( document ).ready( function ( $ ) {
         $searchInput.trigger( 'focus' );
     }
 
-    /** Закриває модальне вікно */
     function closeModal() {
         $modal.fadeOut( 150 );
         currentIndId = 0;
-        loadIndicators(); // Оновлюємо таблицю щоб відобразити нові суми
+        loadIndicators( currentPage );
     }
 
-    // Відкриття модального вікна при кліку на ⚙
     $tbody.on( 'click.fbind', '.fb-link-btn', function ( e ) {
         e.stopImmediatePropagation();
         openModal( $( this ).data( 'id' ) );
     } );
 
-    // Закриття: кнопка × або клік на overlay
     $( '#fb-ind-modal-close' ).on( 'click.fbind', closeModal );
-    $modal.on( 'click.fbind', function ( e ) {
-        if ( $( e.target ).is( $modal ) ) closeModal();
-    } );
-
-    // Закриття через Escape
+    $modal.on( 'click.fbind', function ( e ) { if ( $( e.target ).is( $modal ) ) closeModal(); } );
     $( document ).on( 'keydown.fbind', function ( e ) {
         if ( e.key === 'Escape' && $modal.is( ':visible' ) ) closeModal();
     } );
 
-    /** Завантажує список прив'язаних платежів */
     function loadLinked() {
         $.post( fbIndObj.ajax_url, {
             action:   'fb_ajax_ind_get_linked',
             security: fbIndObj.nonce,
             ind_id:   currentIndId,
-        }, function ( res ) {
-            if ( ! res.success ) return;
-            renderLinked( res.data.linked );
-        } );
+        }, function ( res ) { if ( res.success ) renderLinked( res.data.linked ); } );
     }
 
-    /** Рендерить список прив'язаних платежів */
     function renderLinked( items ) {
         if ( ! items || ! items.length ) {
             $linkedList.html( '<p class="fb-ind-hint">Прив\'язаних платежів немає</p>' );
@@ -206,45 +216,35 @@ jQuery( document ).ready( function ( $ ) {
             html += '<div class="fb-ind-linked-item">'
                   + '<span class="fb-ind-linked-val">' + escHtml( item.Amount_Value ) + '</span>'
                   + '<span class="fb-ind-linked-note">' + escHtml( item.Note || '' ) + '</span>'
-                  + '<button class="fb-ind-unlink-btn" data-amount-id="' + parseInt( item.id ) + '">'
-                  + 'Від\'язати</button>'
+                  + '<button class="fb-ind-unlink-btn" data-amount-id="' + parseInt( item.id ) + '">Від\'язати</button>'
                   + '</div>';
         } );
         $linkedList.html( html );
     }
 
-    /** Пошук платежів із debounce 400ms */
     $searchInput.on( 'input.fbind', function () {
         clearTimeout( searchTimer );
         const q = $( this ).val().trim();
-
         if ( q.length < 1 ) {
             $searchResult.html( '<p class="fb-ind-hint">Введіть запит для пошуку</p>' );
             return;
         }
-
         searchTimer = setTimeout( function () {
             $searchResult.html( '<p class="fb-ind-hint">Пошук...</p>' );
-
             $.post( fbIndObj.ajax_url, {
-                action:   'fb_ajax_ind_search_amounts',
-                security: fbIndObj.nonce,
-                ind_id:   currentIndId,
-                query:    q,
+                action: 'fb_ajax_ind_search_amounts', security: fbIndObj.nonce,
+                ind_id: currentIndId, query: q,
             }, function ( res ) {
-                if ( ! res.success ) return;
-                renderSearchResults( res.data.amounts, res.data.linked_ids );
+                if ( res.success ) renderSearchResults( res.data.amounts, res.data.linked_ids );
             } );
         }, 400 );
     } );
 
-    /** Рендерить результати пошуку */
     function renderSearchResults( amounts, linkedIds ) {
         if ( ! amounts || ! amounts.length ) {
             $searchResult.html( '<p class="fb-ind-hint">Нічого не знайдено</p>' );
             return;
         }
-
         let html = '';
         amounts.forEach( function ( a ) {
             const isLinked = linkedIds.indexOf( parseInt( a.id ) ) !== -1;
@@ -252,67 +252,41 @@ jQuery( document ).ready( function ( $ ) {
                   + '<span class="fb-ind-res-val">' + escHtml( a.Amount_Value ) + '</span>'
                   + '<span class="fb-ind-res-note">' + escHtml( a.Note || '' ) + '</span>'
                   + ( isLinked
-                        ? '<span class="fb-ind-already">✓ Прив\'язано</span>'
-                        : '<button class="fb-ind-link-amount-btn" data-amount-id="' + parseInt( a.id ) + '">+ Прив\'язати</button>'
+                      ? '<span class="fb-ind-already">✓ Прив\'язано</span>'
+                      : '<button class="fb-ind-link-amount-btn" data-amount-id="' + parseInt( a.id ) + '">+ Прив\'язати</button>'
                     )
                   + '</div>';
         } );
         $searchResult.html( html );
     }
 
-    // Прив'язати платіж
     $searchResult.on( 'click.fbind', '.fb-ind-link-amount-btn', function () {
         const $btn = $( this ).prop( 'disabled', true ).text( '...' );
-
         $.post( fbIndObj.ajax_url, {
-            action:    'fb_ajax_ind_link',
-            security:  fbIndObj.nonce,
-            ind_id:    currentIndId,
-            amount_id: $btn.data( 'amount-id' ),
+            action: 'fb_ajax_ind_link', security: fbIndObj.nonce,
+            ind_id: currentIndId, amount_id: $btn.data( 'amount-id' ),
         }, function ( res ) {
-            if ( res.success ) {
-                loadLinked();
-                $searchInput.trigger( 'input' ); // Оновлюємо результати пошуку
-            } else {
-                $btn.prop( 'disabled', false ).text( '+ Прив\'язати' );
-                alert( res.data.message );
-            }
+            if ( res.success ) { loadLinked(); $searchInput.trigger( 'input' ); }
+            else { $btn.prop( 'disabled', false ).text( '+ Прив\'язати' ); alert( res.data.message ); }
         } );
     } );
 
-    // Від'язати платіж
     $linkedList.on( 'click.fbind', '.fb-ind-unlink-btn', function () {
         if ( ! window.confirm( fbIndObj.confirm_unlink ) ) return;
-
         const $btn = $( this ).prop( 'disabled', true );
-
         $.post( fbIndObj.ajax_url, {
-            action:    'fb_ajax_ind_unlink',
-            security:  fbIndObj.nonce,
-            ind_id:    currentIndId,
-            amount_id: $btn.data( 'amount-id' ),
+            action: 'fb_ajax_ind_unlink', security: fbIndObj.nonce,
+            ind_id: currentIndId, amount_id: $btn.data( 'amount-id' ),
         }, function ( res ) {
-            if ( res.success ) {
-                loadLinked();
-                $searchInput.trigger( 'input' );
-            } else {
-                $btn.prop( 'disabled', false );
-                alert( res.data.message );
-            }
+            if ( res.success ) { loadLinked(); $searchInput.trigger( 'input' ); }
+            else { $btn.prop( 'disabled', false ); alert( res.data.message ); }
         } );
     } );
 
-    /* ───────────────────────────────────────────────────────────────────────
-     * УТИЛІТИ
-     * ─────────────────────────────────────────────────────────────────────── */
-
-    /** Екранує HTML-символи для безпечного вставлення в DOM */
     function escHtml( str ) {
         return String( str )
-            .replace( /&/g, '&amp;' )
-            .replace( /</g, '&lt;' )
-            .replace( />/g, '&gt;' )
-            .replace( /"/g, '&quot;' );
+            .replace( /&/g, '&amp;' ).replace( /</g, '&lt;' )
+            .replace( />/g, '&gt;' ).replace( /"/g, '&quot;' );
     }
 
 } );

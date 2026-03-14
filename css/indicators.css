@@ -1,5 +1,5 @@
 /**
- * UI/UX Модуль Показників — точна відповідність модулю Рахунки
+ * UI/UX Модуль Показників лічильників (Family Budget)
  */
 
 /* ─── Wrapper ───────────────────────────────────────────────────────────── */
@@ -10,72 +10,51 @@
     margin: 0 auto;
 }
 
-/* Агресивний скид усіх відступів теми — для ВСІХ нащадків */
-.fb-ind-wrapper,
-.fb-ind-wrapper *,
-.fb-ind-wrapper *::before,
-.fb-ind-wrapper *::after {
+/* ─── controls — фільтри ліворуч + форма праворуч в одному рядку ─────────── */
+.fb-ind-wrapper .fb-ind-controls {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    flex-wrap: wrap;
+    background: #f9f9f9;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-bottom: none;
+    gap: 10px;
+    margin: 0 !important;
     box-sizing: border-box;
 }
 
-.fb-ind-wrapper > div {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-}
-
-/* ─── Панель фільтрів ───────────────────────────────────────────────────── */
-.fb-ind-filters {
+/* Фільтри — горизонтально, без переносу */
+.fb-ind-wrapper .fb-filter-group {
     display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
     align-items: center !important;
-    background: #f9f9f9 !important;
-    padding: 10px 15px !important;
-    border: 1px solid #ddd !important;
-    border-bottom: none !important;
-    margin: 0 !important;
     gap: 6px !important;
-    flex-wrap: wrap;
-    min-height: unset !important;
-    height: auto !important;
-}
-
-.fb-ind-filters .fb-filter-group {
-    display: flex !important;
-    gap: 6px !important;
-    align-items: center !important;
-    flex-wrap: nowrap;
     margin: 0 !important;
     padding: 0 !important;
 }
 
-/* ─── Рядок додавання ───────────────────────────────────────────────────── */
-.fb-ind-add-bar {
+/* Форма додавання — горизонтально, без переносу */
+.fb-ind-wrapper .fb-add-group {
     display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
     align-items: center !important;
-    background: #f9f9f9 !important;
-    padding: 10px 15px !important;
-    border: 1px solid #ddd !important;
-    border-bottom: none !important;
-    margin: 0 !important;
-    min-height: unset !important;
-    height: auto !important;
-}
-
-.fb-ind-add-bar form,
-.fb-ind-add-bar #fb-ind-add-form {
-    display: flex !important;
-    gap: 6px !important;
-    align-items: center !important;
-    flex-wrap: nowrap;
+    gap: 5px !important;
     margin: 0 !important;
     padding: 0 !important;
-    width: 100%;
 }
 
-/* ─── Жорстка фіксація 32px — усі поля ─────────────────────────────────── */
+/* ─── Жорстка фіксація 32px — скасовуємо display:block та width:100% теми ── */
 .fb-ind-wrapper select.fb-compact-input,
 .fb-ind-wrapper input[type="text"].fb-compact-input,
 .fb-ind-wrapper input[type="number"].fb-compact-input {
     box-sizing: border-box !important;
+    display: inline-block !important;   /* скасовує display:block від Astra */
+    width: auto !important;             /* скасовує width:100% від Astra    */
     height: 32px !important;
     min-height: 32px !important;
     max-height: 32px !important;
@@ -89,12 +68,54 @@
     box-shadow: none !important;
     background-color: #fff !important;
     -moz-appearance: textfield;
-    appearance: auto;
 }
 
 .fb-ind-wrapper input[type="number"].fb-compact-input::-webkit-inner-spin-button,
 .fb-ind-wrapper input[type="number"].fb-compact-input::-webkit-outer-spin-button {
     opacity: 0.4;
+}
+
+/* ─── КРИТИЧНО: hidden перемагає display:inline-block та display:inline-flex ─
+ * Проблема: specificity (0,3,1) у input[type="number"].fb-compact-input
+ * перебивала (0,2,0) у .hidden.
+ * Рішення: задаємо .hidden з тією ж або вищою специфічністю.
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+/* Базовий hidden */
+.fb-ind-wrapper .hidden {
+    display: none !important;
+}
+
+/* Специфічний hidden для fb-compact-input елементів (specificity 0,3,1) */
+.fb-ind-wrapper select.fb-compact-input.hidden,
+.fb-ind-wrapper input[type="text"].fb-compact-input.hidden,
+.fb-ind-wrapper input[type="number"].fb-compact-input.hidden {
+    display: none !important;
+}
+
+/* hidden для fb-edit-mode (specificity 0,3,0) */
+.fb-ind-wrapper .fb-edit-mode.hidden {
+    display: none !important;
+}
+
+/* Edit mode ТІЛЬКИ коли hidden знято */
+.fb-ind-wrapper .fb-edit-mode:not(.hidden) {
+    display: inline-flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 3px !important;
+    align-items: center !important;
+}
+
+/* Компактні інпути в режимі редагування */
+.fb-ind-wrapper td input.fb-compact-input,
+.fb-ind-wrapper td select.fb-compact-input {
+    height: 28px !important;
+    min-height: 28px !important;
+    max-height: 28px !important;
+    padding: 0 5px !important;
+    font-size: 12px !important;
+    flex-shrink: 0;
 }
 
 /* ─── Кнопка "Додати" ───────────────────────────────────────────────────── */
@@ -121,16 +142,17 @@
     justify-content: center !important;
     white-space: nowrap;
     flex-shrink: 0;
+    width: auto !important;
 }
 
 .fb-ind-wrapper .fb-btn-primary:hover    { background: #135e96 !important; border-color: #135e96 !important; }
 .fb-ind-wrapper .fb-btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
 
-/* ─── Таблиця: контейнер впритул до рядка додавання ────────────────────── */
+/* ─── Таблиця — впритул до controls ────────────────────────────────────── */
 .fb-ind-table-container {
     overflow-x: auto;
-    margin: 0 !important;
-    padding: 0 !important;
+    margin: 0;
+    padding: 0;
 }
 
 .fb-ind-wrapper .fb-table {
@@ -139,11 +161,9 @@
     border: 1px solid #ddd;
     background: #fff;
     margin: 0 !important;
-    /* Динамічні ширини: таблиця не ширше viewport */
     table-layout: auto;
 }
 
-/* Шапка */
 .fb-ind-wrapper .fb-table th {
     background: #323d4d;
     color: #fff;
@@ -160,7 +180,6 @@
 .fb-ind-wrapper .fb-table th.text-center { text-align: center !important; }
 .fb-ind-wrapper .fb-table th.text-right  { text-align: right  !important; }
 
-/* Рядки даних */
 .fb-ind-wrapper .fb-table td {
     padding: 7px 8px !important;
     border-bottom: 1px solid #eee;
@@ -168,46 +187,21 @@
     vertical-align: middle !important;
     line-height: 1.3;
     background: #fff;
-    /* Динамічна ширина — контент визначає ширину колонки */
     white-space: nowrap;
 }
 
-/* Виняток: адреса оселі та рахунок можуть переноситись */
-.fb-ind-wrapper .fb-table td.fb-ind-addr,
 .fb-ind-wrapper .fb-table td:nth-child(1),
 .fb-ind-wrapper .fb-table td:nth-child(2) {
     white-space: normal;
-    min-width: 100px;
+    min-width: 80px;
 }
 
-.fb-ind-wrapper .fb-table tr:last-child td { border-bottom: none; }
+.fb-ind-wrapper .fb-table tr:last-child td  { border-bottom: none; }
 .fb-ind-wrapper .fb-table tbody tr:hover td { background: #fafafa; }
 
-.fb-ind-wrapper .fb-ind-addr    { font-size: 12px; color: #555; }
-.fb-ind-wrapper .fb-ind-amounts { font-weight: 600; color: #2271b1; }
+.fb-ind-wrapper .fb-ind-addr     { font-size: 12px; color: #555; }
+.fb-ind-wrapper .fb-ind-amounts  { font-weight: 600; color: #2271b1; }
 .fb-ind-wrapper .fb-ind-no-amount { color: #bbb; font-weight: normal; }
-
-/* ─── Специфічність: hidden завжди перемагає flex ───────────────────────── */
-.fb-ind-wrapper .hidden { display: none !important; }
-
-.fb-ind-wrapper .fb-edit-mode:not(.hidden) {
-    display: inline-flex !important;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    gap: 3px !important;
-    align-items: center !important;
-}
-
-/* Компактні інпути в режимі редагування */
-.fb-ind-wrapper td input.fb-compact-input,
-.fb-ind-wrapper td select.fb-compact-input {
-    height: 26px !important;
-    min-height: 26px !important;
-    max-height: 26px !important;
-    padding: 0 4px !important;
-    font-size: 12px !important;
-    flex-shrink: 0;
-}
 
 /* ─── Колонка дій ───────────────────────────────────────────────────────── */
 .fb-ind-wrapper .fb-ind-actions {
@@ -228,22 +222,16 @@
     flex-shrink: 0;
 }
 
-.fb-ind-wrapper .fb-ind-actions span:hover { opacity: 0.6; }
+.fb-ind-wrapper .fb-ind-actions span:hover  { opacity: 0.6; }
+.fb-ind-wrapper .fb-link-btn                { color: #888; font-size: 14px; }
+.fb-ind-wrapper .fb-link-btn:hover          { color: #2271b1; opacity: 1 !important; }
+.fb-ind-wrapper .fb-edit-btn                { color: #2271b1; font-size: 15px; }
+.fb-ind-wrapper .fb-save-btn                { color: #46b450; font-size: 15px; }
 
-.fb-ind-wrapper .fb-link-btn  { color: #888; font-size: 14px; }
-.fb-ind-wrapper .fb-link-btn:hover { color: #2271b1; opacity: 1 !important; }
-.fb-ind-wrapper .fb-edit-btn  { color: #2271b1; font-size: 15px; }
-.fb-ind-wrapper .fb-save-btn  { color: #46b450; font-size: 15px; }
-
-/* Delete — SVG кошик (розмір як у Рахунках) */
 .fb-ind-wrapper .fb-delete-btn {
-    width: 15px;
-    height: 15px;
-    color: transparent;
-    font-size: 0;
+    width: 15px; height: 15px; color: transparent; font-size: 0;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d63638' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'/%3E%3Cpath d='M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6'/%3E%3Cpath d='M10 11v6'/%3E%3Cpath d='M14 11v6'/%3E%3Cpath d='M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-size: contain;
+    background-repeat: no-repeat; background-size: contain;
 }
 .fb-ind-wrapper .fb-delete-btn:hover { opacity: 0.6; }
 
@@ -252,11 +240,64 @@
 .text-right  { text-align: right  !important; }
 
 .fb-ind-wrapper .fb-ind-empty td {
-    text-align: center;
-    color: #888;
-    font-style: italic;
-    padding: 16px 10px !important;
-    white-space: normal;
+    text-align: center; color: #888; font-style: italic;
+    padding: 16px 10px !important; white-space: normal;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * ПАГІНАЦІЯ
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+.fb-ind-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-top: none;
+    font-size: 13px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.fb-ind-pag-info {
+    color: #666;
+    font-size: 12px;
+}
+
+.fb-ind-pag-btns {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+}
+
+.fb-ind-pag-btn {
+    box-sizing: border-box;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    padding: 0 9px;
+    height: 28px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    min-width: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #2271b1;
+    line-height: 1;
+}
+
+.fb-ind-pag-btn:hover { background: #f0f6fc; border-color: #2271b1; }
+
+.fb-ind-pag-btn.active {
+    background: #2271b1;
+    border-color: #2271b1;
+    color: #fff;
+    cursor: default;
+    font-weight: 600;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -264,209 +305,67 @@
  * ═══════════════════════════════════════════════════════════════════════════ */
 
 .fb-ind-modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.55);
-    z-index: 99999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+    z-index: 99999; display: flex; align-items: center; justify-content: center;
 }
-
 .fb-ind-modal-box {
-    background: #fff;
-    border-radius: 6px;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.25);
-    width: 480px;
-    max-width: 95vw;
-    max-height: 80vh;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    background: #fff; border-radius: 6px; box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+    width: 480px; max-width: 95vw; max-height: 80vh;
+    display: flex; flex-direction: column; overflow: hidden;
 }
-
 .fb-ind-modal-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 11px 16px;
-    background: #323d4d;
-    color: #fff;
-    font-size: 13px;
-    font-weight: 600;
-    flex-shrink: 0;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 11px 16px; background: #323d4d; color: #fff;
+    font-size: 13px; font-weight: 600; flex-shrink: 0;
 }
-
 .fb-ind-modal-close {
-    background: none;
-    border: none;
-    color: #fff;
-    font-size: 20px;
-    cursor: pointer;
-    line-height: 1;
-    padding: 0 4px;
-    opacity: 0.8;
-    transition: opacity 0.2s;
+    background: none; border: none; color: #fff; font-size: 20px;
+    cursor: pointer; line-height: 1; padding: 0 4px; opacity: 0.8; transition: opacity 0.2s;
 }
 .fb-ind-modal-close:hover { opacity: 1; }
-
 .fb-ind-modal-body {
-    padding: 14px 16px;
-    overflow-y: auto;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    padding: 14px 16px; overflow-y: auto; flex: 1;
+    display: flex; flex-direction: column; gap: 10px;
 }
-
 .fb-ind-modal-search { flex-shrink: 0; }
-
 .fb-ind-search-results {
-    flex: 1;
-    min-height: 80px;
-    max-height: 200px;
-    overflow-y: auto;
-    border: 1px solid #eee;
-    border-radius: 4px;
-    background: #fafafa;
+    flex: 1; min-height: 80px; max-height: 200px; overflow-y: auto;
+    border: 1px solid #eee; border-radius: 4px; background: #fafafa;
 }
-
 .fb-ind-result-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 10px;
-    border-bottom: 1px solid #eee;
-    font-size: 13px;
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 10px; border-bottom: 1px solid #eee; font-size: 13px;
 }
 .fb-ind-result-item:last-child { border-bottom: none; }
 .fb-ind-result-item.is-linked  { background: #f0fff0; }
-
 .fb-ind-res-val  { font-weight: 600; color: #2271b1; min-width: 60px; }
 .fb-ind-res-note { flex: 1; color: #555; font-size: 12px; }
 .fb-ind-already  { font-size: 11px; color: #46b450; white-space: nowrap; }
-
 .fb-ind-link-amount-btn {
-    background: #2271b1;
-    color: #fff;
-    border: none;
-    border-radius: 3px;
-    padding: 3px 10px;
-    font-size: 12px;
-    cursor: pointer;
-    white-space: nowrap;
-    flex-shrink: 0;
-    transition: background 0.2s;
+    background: #2271b1; color: #fff; border: none; border-radius: 3px;
+    padding: 3px 10px; font-size: 12px; cursor: pointer;
+    white-space: nowrap; flex-shrink: 0; transition: background 0.2s;
 }
 .fb-ind-link-amount-btn:hover    { background: #135e96; }
 .fb-ind-link-amount-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
 .fb-ind-linked-list  { flex-shrink: 0; }
 .fb-ind-linked-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #888; margin-bottom: 6px; }
-
 .fb-ind-linked-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 5px 0;
-    border-bottom: 1px solid #f0f0f0;
-    font-size: 13px;
+    display: flex; align-items: center; gap: 8px;
+    padding: 5px 0; border-bottom: 1px solid #f0f0f0; font-size: 13px;
 }
 .fb-ind-linked-item:last-child { border-bottom: none; }
-
 .fb-ind-linked-val  { font-weight: 600; color: #2271b1; min-width: 60px; }
 .fb-ind-linked-note { flex: 1; color: #555; font-size: 12px; }
-
 .fb-ind-unlink-btn {
-    background: none;
-    border: 1px solid #d63638;
-    color: #d63638;
-    border-radius: 3px;
-    padding: 2px 8px;
-    font-size: 11px;
-    cursor: pointer;
-    white-space: nowrap;
-    flex-shrink: 0;
+    background: none; border: 1px solid #d63638; color: #d63638;
+    border-radius: 3px; padding: 2px 8px; font-size: 11px;
+    cursor: pointer; white-space: nowrap; flex-shrink: 0;
     transition: background 0.2s, color 0.2s;
 }
 .fb-ind-unlink-btn:hover    { background: #d63638; color: #fff; }
 .fb-ind-unlink-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
 .fb-ind-hint {
-    text-align: center;
-    color: #999;
-    font-style: italic;
-    font-size: 12px;
-    padding: 16px 10px;
-    margin: 0;
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
- * SQL ДЕБАГ-ПАНЕЛЬ
- * ═══════════════════════════════════════════════════════════════════════════ */
-
-.fb-ind-debug {
-    margin-top: 12px;
-    border-radius: 4px;
-    overflow: hidden;
-    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-}
-
-.fb-ind-debug-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #1a1a2e;
-    color: #a0aec0;
-    padding: 6px 14px;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
-
-.fb-ind-debug-head button {
-    background: none;
-    border: 1px solid #4a5568;
-    color: #a0aec0;
-    border-radius: 3px;
-    padding: 2px 8px;
-    font-size: 11px;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-.fb-ind-debug-head button:hover { background: #4a5568; color: #fff; }
-
-.fb-ind-debug-log {
-    background: #0d1117;
-    max-height: 220px;
-    overflow-y: auto;
-    padding: 6px 0;
-}
-
-.fb-ind-debug-entry {
-    padding: 5px 14px;
-    border-bottom: 1px solid #1e2430;
-}
-.fb-ind-debug-entry:last-child { border-bottom: none; }
-
-.fb-ind-debug-meta {
-    color: #58a6ff;
-    font-size: 11px;
-    margin-bottom: 3px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
-
-.fb-ind-debug-sql {
-    display: block;
-    color: #f8f8f2;
-    white-space: pre-wrap;
-    word-break: break-all;
-    font-size: 11px;
-    line-height: 1.5;
-    background: none;
-    padding: 0;
-    border: none;
+    text-align: center; color: #999; font-style: italic;
+    font-size: 12px; padding: 16px 10px; margin: 0;
 }
