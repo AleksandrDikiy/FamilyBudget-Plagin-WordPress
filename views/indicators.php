@@ -177,7 +177,7 @@ function fb_shortcode_indicators_interface(): string {
         <!-- ─── Рядок додавання ─── -->
         <div class="fb-ind-add-bar">
             <form id="fb-ind-add-form">
-                <select name="id_personal_accounts" required class="fb-compact-input fb-add-account">
+                <select name="id_personal_accounts" required class="fb-compact-input fb-add-account" style="min-width:160px;flex:1;">
                     <option value="" disabled selected>Рахунок</option>
                     <?php foreach ( $accounts as $a ) : ?>
                         <option value="<?php echo absint( $a->id ); ?>">
@@ -205,14 +205,14 @@ function fb_shortcode_indicators_interface(): string {
                     <tr>
                         <th>Родина</th>
                         <th>Оселя</th>
-                        <th style="width:140px;">Рахунок</th>
-                        <th style="width:60px;" class="text-center">Міс.</th>
-                        <th style="width:56px;" class="text-center">Рік</th>
-                        <th style="width:76px;" class="text-right">Знач.1</th>
-                        <th style="width:76px;" class="text-right">Знач.2</th>
-                        <th style="width:80px;" class="text-right">Спожито</th>
-                        <th style="width:80px;" class="text-right">Сума</th>
-                        <th style="width:90px;" class="text-center">Дії</th>
+                        <th>Рахунок</th>
+                        <th class="text-center">Міс.</th>
+                        <th class="text-center">Рік</th>
+                        <th class="text-right">Знач.1</th>
+                        <th class="text-right">Знач.2</th>
+                        <th class="text-right">Спожито</th>
+                        <th class="text-right">Сума</th>
+                        <th class="text-center">Дії</th>
                     </tr>
                 </thead>
                 <tbody id="fb-ind-tbody">

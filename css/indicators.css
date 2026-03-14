@@ -1,5 +1,5 @@
 /**
- * UI/UX Модуль Показників — відповідає дизайну модуля Рахунки (account.css)
+ * UI/UX Модуль Показників — точна відповідність модулю Рахунки
  */
 
 /* ─── Wrapper ───────────────────────────────────────────────────────────── */
@@ -10,53 +10,68 @@
     margin: 0 auto;
 }
 
-/* Скидаємо відступи теми Astra для всіх прямих дітей */
-.fb-ind-wrapper > * {
+/* Агресивний скид усіх відступів теми — для ВСІХ нащадків */
+.fb-ind-wrapper,
+.fb-ind-wrapper *,
+.fb-ind-wrapper *::before,
+.fb-ind-wrapper *::after {
+    box-sizing: border-box;
+}
+
+.fb-ind-wrapper > div {
     margin-top: 0 !important;
     margin-bottom: 0 !important;
 }
 
 /* ─── Панель фільтрів ───────────────────────────────────────────────────── */
 .fb-ind-filters {
-    display: flex;
-    align-items: center;
-    background: #f9f9f9;
-    padding: 10px 15px;
-    border: 1px solid #ddd;
-    border-bottom: none;   /* зливається з наступним блоком */
+    display: flex !important;
+    align-items: center !important;
+    background: #f9f9f9 !important;
+    padding: 10px 15px !important;
+    border: 1px solid #ddd !important;
+    border-bottom: none !important;
     margin: 0 !important;
-    box-sizing: border-box;
+    gap: 6px !important;
     flex-wrap: wrap;
-    gap: 6px;
+    min-height: unset !important;
+    height: auto !important;
 }
 
 .fb-ind-filters .fb-filter-group {
-    display: flex;
-    gap: 6px;
-    align-items: center;
+    display: flex !important;
+    gap: 6px !important;
+    align-items: center !important;
     flex-wrap: nowrap;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 /* ─── Рядок додавання ───────────────────────────────────────────────────── */
 .fb-ind-add-bar {
-    background: #f9f9f9;
-    padding: 8px 15px;
-    border: 1px solid #ddd;
-    border-bottom: none;   /* зливається з таблицею */
+    display: flex !important;
+    align-items: center !important;
+    background: #f9f9f9 !important;
+    padding: 10px 15px !important;
+    border: 1px solid #ddd !important;
+    border-bottom: none !important;
     margin: 0 !important;
-    box-sizing: border-box;
+    min-height: unset !important;
+    height: auto !important;
 }
 
-.fb-ind-add-bar form {
-    display: flex;
-    gap: 5px;
-    align-items: center;
+.fb-ind-add-bar form,
+.fb-ind-add-bar #fb-ind-add-form {
+    display: flex !important;
+    gap: 6px !important;
+    align-items: center !important;
     flex-wrap: nowrap;
-    margin: 0;
-    padding: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100%;
 }
 
-/* ─── Жорстка фіксація висоти 32px (як у Рахунках) ─────────────────────── */
+/* ─── Жорстка фіксація 32px — усі поля ─────────────────────────────────── */
 .fb-ind-wrapper select.fb-compact-input,
 .fb-ind-wrapper input[type="text"].fb-compact-input,
 .fb-ind-wrapper input[type="number"].fb-compact-input {
@@ -74,6 +89,7 @@
     box-shadow: none !important;
     background-color: #fff !important;
     -moz-appearance: textfield;
+    appearance: auto;
 }
 
 .fb-ind-wrapper input[type="number"].fb-compact-input::-webkit-inner-spin-button,
@@ -110,28 +126,29 @@
 .fb-ind-wrapper .fb-btn-primary:hover    { background: #135e96 !important; border-color: #135e96 !important; }
 .fb-ind-wrapper .fb-btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
 
-/* ─── Контейнер таблиці — впритул до рядка додавання ───────────────────── */
+/* ─── Таблиця: контейнер впритул до рядка додавання ────────────────────── */
 .fb-ind-table-container {
     overflow-x: auto;
     margin: 0 !important;
     padding: 0 !important;
 }
 
-/* ─── Таблиця ───────────────────────────────────────────────────────────── */
 .fb-ind-wrapper .fb-table {
     width: 100%;
     border-collapse: collapse;
     border: 1px solid #ddd;
     background: #fff;
     margin: 0 !important;
+    /* Динамічні ширини: таблиця не ширше viewport */
+    table-layout: auto;
 }
 
-/* Шапка: темний фон, білий uppercase */
+/* Шапка */
 .fb-ind-wrapper .fb-table th {
     background: #323d4d;
     color: #fff;
     text-align: left;
-    padding: 9px 10px;
+    padding: 9px 8px;
     font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
@@ -145,22 +162,32 @@
 
 /* Рядки даних */
 .fb-ind-wrapper .fb-table td {
-    padding: 7px 10px !important;
+    padding: 7px 8px !important;
     border-bottom: 1px solid #eee;
     font-size: 13px;
     vertical-align: middle !important;
     line-height: 1.3;
     background: #fff;
+    /* Динамічна ширина — контент визначає ширину колонки */
+    white-space: nowrap;
+}
+
+/* Виняток: адреса оселі та рахунок можуть переноситись */
+.fb-ind-wrapper .fb-table td.fb-ind-addr,
+.fb-ind-wrapper .fb-table td:nth-child(1),
+.fb-ind-wrapper .fb-table td:nth-child(2) {
+    white-space: normal;
+    min-width: 100px;
 }
 
 .fb-ind-wrapper .fb-table tr:last-child td { border-bottom: none; }
 .fb-ind-wrapper .fb-table tbody tr:hover td { background: #fafafa; }
 
-.fb-ind-wrapper .fb-ind-addr { font-size: 12px; color: #555; }
+.fb-ind-wrapper .fb-ind-addr    { font-size: 12px; color: #555; }
 .fb-ind-wrapper .fb-ind-amounts { font-weight: 600; color: #2271b1; }
 .fb-ind-wrapper .fb-ind-no-amount { color: #bbb; font-weight: normal; }
 
-/* ─── КРИТИЧНО: специфічність hidden перемагає flex ────────────────────── */
+/* ─── Специфічність: hidden завжди перемагає flex ───────────────────────── */
 .fb-ind-wrapper .hidden { display: none !important; }
 
 .fb-ind-wrapper .fb-edit-mode:not(.hidden) {
@@ -198,25 +225,27 @@
     justify-content: center;
     transition: opacity 0.2s;
     line-height: 1;
+    flex-shrink: 0;
 }
 
 .fb-ind-wrapper .fb-ind-actions span:hover { opacity: 0.6; }
 
-.fb-ind-wrapper .fb-link-btn   { color: #666; font-size: 14px; }
+.fb-ind-wrapper .fb-link-btn  { color: #888; font-size: 14px; }
 .fb-ind-wrapper .fb-link-btn:hover { color: #2271b1; opacity: 1 !important; }
-.fb-ind-wrapper .fb-edit-btn   { color: #2271b1; font-size: 14px; }
-.fb-ind-wrapper .fb-save-btn   { color: #46b450; font-size: 14px; }
+.fb-ind-wrapper .fb-edit-btn  { color: #2271b1; font-size: 15px; }
+.fb-ind-wrapper .fb-save-btn  { color: #46b450; font-size: 15px; }
 
-/* Delete — SVG кошик */
+/* Delete — SVG кошик (розмір як у Рахунках) */
 .fb-ind-wrapper .fb-delete-btn {
-    width: 13px;
-    height: 13px;
+    width: 15px;
+    height: 15px;
     color: transparent;
     font-size: 0;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d63638' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'/%3E%3Cpath d='M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6'/%3E%3Cpath d='M10 11v6'/%3E%3Cpath d='M14 11v6'/%3E%3Cpath d='M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-size: contain;
 }
+.fb-ind-wrapper .fb-delete-btn:hover { opacity: 0.6; }
 
 /* ─── Утиліти ───────────────────────────────────────────────────────────── */
 .text-center { text-align: center !important; }
@@ -227,6 +256,7 @@
     color: #888;
     font-style: italic;
     padding: 16px 10px !important;
+    white-space: normal;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -312,9 +342,9 @@
 .fb-ind-result-item:last-child { border-bottom: none; }
 .fb-ind-result-item.is-linked  { background: #f0fff0; }
 
-.fb-ind-res-val   { font-weight: 600; color: #2271b1; min-width: 60px; }
-.fb-ind-res-note  { flex: 1; color: #555; font-size: 12px; }
-.fb-ind-already   { font-size: 11px; color: #46b450; white-space: nowrap; }
+.fb-ind-res-val  { font-weight: 600; color: #2271b1; min-width: 60px; }
+.fb-ind-res-note { flex: 1; color: #555; font-size: 12px; }
+.fb-ind-already  { font-size: 11px; color: #46b450; white-space: nowrap; }
 
 .fb-ind-link-amount-btn {
     background: #2271b1;
@@ -331,8 +361,8 @@
 .fb-ind-link-amount-btn:hover    { background: #135e96; }
 .fb-ind-link-amount-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-.fb-ind-linked-list   { flex-shrink: 0; }
-.fb-ind-linked-title  { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #888; margin-bottom: 6px; }
+.fb-ind-linked-list  { flex-shrink: 0; }
+.fb-ind-linked-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #888; margin-bottom: 6px; }
 
 .fb-ind-linked-item {
     display: flex;
