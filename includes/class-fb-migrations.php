@@ -63,6 +63,20 @@ function fb_check_db_updates(): void {
         }
     }
 
+    // -------------------------------------------------------------------------
+    // Міграція v1.4.0: інтеграція з Monobank (transaction_id, mcc, comment).
+    // -------------------------------------------------------------------------
+    if ( version_compare( $installed_version, '1.4.0', '<' ) ) {
+        $migration_v4 = __DIR__ . '/class-fb-migrations-v4.php';
+
+        if ( file_exists( $migration_v4 ) ) {
+            require_once $migration_v4;
+
+            if ( function_exists( 'fb_migrate_amount_v4' ) ) {
+                fb_migrate_amount_v4();
+            }
+        }
+    }
     // Зберігаємо нову версію після успішного виконання всіх міграцій.
     update_option( 'fb_db_version', FB_DB_VERSION );
 }
