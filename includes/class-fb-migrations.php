@@ -92,6 +92,20 @@ function fb_check_db_updates(): void {
             }
         }
     }
+    // -------------------------------------------------------------------------
+    // Міграція v1.6.0: Прив'язка зовнішнього ID рахунку Monobank.
+    // -------------------------------------------------------------------------
+    if ( version_compare( $installed_version, '1.6.0', '<' ) ) {
+        $migration_v6 = __DIR__ . '/class-fb-migrations-v6.php';
+
+        if ( file_exists( $migration_v6 ) ) {
+            require_once $migration_v6;
+
+            if ( function_exists( 'fb_migrate_account_mono_v6' ) ) {
+                fb_migrate_account_mono_v6();
+            }
+        }
+    }
 
     // Зберігаємо нову версію після успішного виконання всіх міграцій.
     update_option( 'fb_db_version', FB_DB_VERSION );
