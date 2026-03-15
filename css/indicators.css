@@ -369,3 +369,167 @@
     text-align: center; color: #999; font-style: italic;
     font-size: 12px; padding: 16px 10px; margin: 0;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * DEBUG ПАНЕЛЬ ІМПОРТУ
+ * Темний блок під .fb-ind-wrapper — відображається після кожного імпорту CSV.
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+.fb-ind-debug-panel {
+    background: #1a1d23;
+    color: #c9d1d9;
+    font-family: "SF Mono", "Fira Code", Consolas, "Courier New", monospace;
+    font-size: 12px;
+    border: 1px solid #30363d;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    overflow: hidden;
+    margin: 0;
+}
+
+/* ─── Заголовок ──────────────────────────────────────────────────────────── */
+.fb-dbg-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 14px;
+    background: #161b22;
+    border-bottom: 1px solid #30363d;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.fb-dbg-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #8b949e;
+    letter-spacing: 0.3px;
+}
+
+.fb-dbg-toggle {
+    background: #21262d;
+    border: 1px solid #30363d;
+    color: #8b949e;
+    border-radius: 3px;
+    padding: 2px 10px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+.fb-dbg-toggle:hover { background: #30363d; color: #c9d1d9; }
+
+/* ─── Тіло (список рядків) ───────────────────────────────────────────────── */
+.fb-dbg-body {
+    max-height: 340px;
+    overflow-y: auto;
+    padding: 6px 0;
+}
+
+.fb-dbg-body::-webkit-scrollbar       { width: 6px; }
+.fb-dbg-body::-webkit-scrollbar-track { background: #1a1d23; }
+.fb-dbg-body::-webkit-scrollbar-thumb { background: #30363d; border-radius: 3px; }
+
+/* ─── Один рядок CSV ─────────────────────────────────────────────────────── */
+.fb-dbg-row {
+    padding: 5px 14px 7px;
+    border-bottom: 1px solid #21262d;
+}
+.fb-dbg-row:last-child { border-bottom: none; }
+
+.fb-dbg-row-ok   { border-left: 3px solid #3fb950; }
+.fb-dbg-row-skip { border-left: 3px solid #d29922; }
+.fb-dbg-row-err  { border-left: 3px solid #f85149; }
+
+/* ─── Заголовок рядка ────────────────────────────────────────────────────── */
+.fb-dbg-row-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+}
+
+.fb-dbg-row-num {
+    font-weight: 700;
+    color: #58a6ff;
+    min-width: 32px;
+}
+
+.fb-dbg-action {
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 1px 6px;
+    border-radius: 2px;
+    background: #21262d;
+    color: #8b949e;
+}
+
+.fb-dbg-row-ok  .fb-dbg-action { color: #3fb950; }
+.fb-dbg-row-err .fb-dbg-action { color: #f85149; }
+.fb-dbg-row-skip .fb-dbg-action { color: #d29922; }
+
+.fb-dbg-account { color: #e3b341; font-weight: 500; }
+.fb-dbg-period  { color: #8b949e; }
+.fb-dbg-sum     { color: #79c0ff; }
+.fb-dbg-sum b   { color: #a5d6ff; font-weight: 700; }
+
+/* ─── SQL-блок ───────────────────────────────────────────────────────────── */
+.fb-dbg-sql-block {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 3px;
+    flex-wrap: wrap;
+}
+
+.fb-dbg-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #6e7681;
+    background: #21262d;
+    border: 1px solid #30363d;
+    border-radius: 2px;
+    padding: 1px 5px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.fb-dbg-sql-tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 1px 7px;
+    border-radius: 2px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.tag-ok   { background: #1c3a24; color: #3fb950; border: 1px solid #2d6a3f; }
+.tag-err  { background: #3b1219; color: #f85149; border: 1px solid #6e1b1b; }
+.tag-warn { background: #2f2215; color: #d29922; border: 1px solid #5a3e0e; }
+
+.fb-dbg-sql {
+    display: block;
+    flex: 1;
+    min-width: 0;
+    color: #a5d6ff;
+    font-size: 11px;
+    word-break: break-all;
+    white-space: pre-wrap;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* ─── Рядок помилки ──────────────────────────────────────────────────────── */
+.fb-dbg-error-line {
+    margin-top: 4px;
+    font-size: 11px;
+    color: #f85149;
+    padding-left: 4px;
+    border-left: 2px solid #f85149;
+}

@@ -283,6 +283,267 @@ jQuery( document ).ready( function ( $ ) {
         } );
     } );
 
+    /* ─── ІМПОРТ CSV (Thickbox) ──────────────────────────────────────────── */
+
+    const $csvFileInput  = $( '#fb-ind-csv-file' );
+    const $importTrigger = $( '#fb-ind-import-btn' );
+    const $importBox     = $( '#fb-ind-import-box' );
+    const $debugPanel    = $( '#fb-ind-debug-panel' );
+    const $addFormInputs = $( '#fb-ind-add-form :input' );
+    const $filterInputs  = $( '#fb-ind-f-family, #fb-ind-f-account, #fb-ind-f-year, #fb-ind-f-month' );
+
+    // [FIX-1] КРИТИЧНИЙ БАГ — WordPress Thickbox в режимі inline КОПІЮЄ вміст
+    // #fb-ind-import-box у #TB_ajaxContent і ПРИХОВУЄ оригінальний div.
+    // Тому всі оновлення після tb_show() мають йти в #TB_ajaxContent,
+    // а НЕ в $importBox — інакше оновлюється прихований елемент і спіннер вічний.
+    function fbIndUpdateDisplay( html ) {
+        var $tb = $( '#TB_ajaxContent' );
+        ( $tb.length ? $tb : $importBox ).html( html );
+    }
+
+    // Кнопка відкриває діалог вибору файлу
+    $importTrigger.on( 'click.fbind', function () {
+        $csvFileInput.trigger( 'click' );
+    } );
+
+    // Вибір файлу → запускаємо імпорт
+    $csvFileInput.on( 'change.fbind', function () {
+        const file = this.files[ 0 ];
+        if ( ! file ) return;
+
+        if ( ! /\.csv$/i.test( file.name ) ) {
+            alert( 'Оберіть файл із розширенням .csv' );
+            this.value = '';
+            return;
+        }
+
+        // Наповнюємо $importBox спіннером ДО виклику tb_show(),
+        // щоб Thickbox скопіював коректний вміст у #TB_ajaxContent
+        $importBox.show().html(
+            '<div class="fb-ind-tb-inner">'
+          + '<div class="fb-ind-tb-spinner"></div>'
+          + '<p class="fb-ind-tb-loading-msg">Обробка файлу: <strong>' + escHtml( file.name ) + '</strong></p>'
+          + '</div>'
+        );
+
+        tb_show(
+            'Імпорт CSV — результат',
+            '#TB_inline?width=500&height=360&inlineId=fb-ind-import-box',
+            false
+        );
+
+        // Блокуємо UI форми та фільтрів на час обробки
+        $addFormInputs.prop( 'disabled', true );
+        $filterInputs.prop( 'disabled', true );
+        $importTrigger.prop( 'disabled', true );
+
+        // Формуємо FormData та надсилаємо
+        const formData = new FormData();
+        formData.append( 'action',   'fb_ind_import' );
+        formData.append( 'security', fbIndObj.import_nonce );
+        formData.append( 'csv_file', file );
+
+        $.ajax( {
+            url:         fbIndObj.ajax_url,
+            type:        'POST',
+            data:        formData,
+            processData: false,
+            contentType: false,
+
+            success: function ( res ) {
+                renderImportResult( res );
+            },
+
+            error: function ( xhr ) {
+                fbIndUpdateDisplay(
+                    '<div class="fb-ind-tb-inner">'
+                  + '<p class="fb-ind-tb-error-msg">Помилка з\'єднання (HTTP '
+                  + xhr.status + '). Спробуйте ще раз.</p>'
+                  + fbIndTbCloseBtn()
+                  + '</div>'
+                );
+            },
+
+            complete: function () {
+                // Розблоковуємо UI в будь-якому випадку
+                $addFormInputs.prop( 'disabled', false );
+                $filterInputs.prop( 'disabled', false );
+                $importTrigger.prop( 'disabled', false );
+                $csvFileInput.val( '' );
+            },
+        } );
+    } );
+
+    /**
+     * Рендерить фінальний звіт імпорту всередині Thickbox
+     * та debug-панель на сторінці нижче таблиці.
+     *
+     * @param {Object} res Відповідь WordPress AJAX.
+     */
+    function renderImportResult( res ) {
+        let html = '<div class="fb-ind-tb-inner">';
+
+        if ( ! res || ! res.success ) {
+            const msg = res && res.data && res.data.message
+                ? res.data.message
+                : 'Невідома помилка. Перевірте консоль браузера.';
+            html += '<p class="fb-ind-tb-error-msg">' + escHtml( msg ) + '</p>';
+            html += fbIndTbCloseBtn();
+            html += '</div>';
+            fbIndUpdateDisplay( html );
+            return;
+        }
+
+        const d = res.data;
+
+        // Статистика: успішно / помилки
+        html += '<div class="fb-ind-tb-stats">';
+        html += '<div class="fb-ind-tb-stat fb-ind-tb-stat-ok">'
+              + '<span class="fb-ind-tb-stat-num">' + parseInt( d.imported || 0 ) + '</span>'
+              + '<span class="fb-ind-tb-stat-lbl">успішно</span>'
+              + '</div>';
+        html += '<div class="fb-ind-tb-stat fb-ind-tb-stat-err">'
+              + '<span class="fb-ind-tb-stat-num">' + parseInt( d.errors || 0 ) + '</span>'
+              + '<span class="fb-ind-tb-stat-lbl">помилок</span>'
+              + '</div>';
+        html += '</div>';
+
+        // Рядки з помилками
+        if ( d.failed_rows && d.failed_rows.length ) {
+            html += '<div class="fb-ind-tb-failed">'
+                  + '<div class="fb-ind-tb-failed-title">Рядки з помилками (' + d.failed_rows.length + '):</div>'
+                  + '<ul class="fb-ind-tb-failed-list">';
+            d.failed_rows.forEach( function ( row ) {
+                html += '<li>' + escHtml( row ) + '</li>';
+            } );
+            html += '</ul></div>';
+        }
+
+        const btnLabel = parseInt( d.imported || 0 ) > 0 ? 'Закрити та оновити' : 'Закрити';
+        html += fbIndTbCloseBtn( btnLabel );
+        html += '</div>';
+
+        fbIndUpdateDisplay( html );
+
+        // Рендеримо debug-панель на сторінці
+        if ( d.debug_log && d.debug_log.length ) {
+            renderDebugPanel( d.debug_log );
+        }
+
+        // Оновлюємо таблицю якщо є успішні рядки
+        if ( parseInt( d.imported || 0 ) > 0 ) {
+            loadIndicators( currentPage );
+        }
+    }
+
+    /**
+     * Рендерить debug-панель із SQL-запитами та параметрами під таблицею.
+     *
+     * @param {Array} log Масив записів відлагодження з PHP.
+     */
+    function renderDebugPanel( log ) {
+        let html = '<div class="fb-dbg-header">'
+                 + '<span class="fb-dbg-title">🐛 Debug: Імпорт CSV — ' + log.length + ' рядків</span>'
+                 + '<button type="button" class="fb-dbg-toggle" data-open="1">▲ Згорнути</button>'
+                 + '</div>'
+                 + '<div class="fb-dbg-body">';
+
+        log.forEach( function ( entry ) {
+            const isOk      = entry.action === 'insert' || entry.action === 'update';
+            const isSkip    = entry.action === 'skip';
+            const isError   = entry.action === 'error';
+            const rowClass  = isOk ? 'fb-dbg-row-ok' : ( isSkip ? 'fb-dbg-row-skip' : 'fb-dbg-row-err' );
+            const actionIcon = isOk ? '✔' : ( isSkip ? '⊘' : '✖' );
+
+            html += '<div class="fb-dbg-row ' + rowClass + '">';
+
+            // Заголовок рядка
+            html += '<div class="fb-dbg-row-head">'
+                  + '<span class="fb-dbg-row-num">#' + entry.row + '</span>'
+                  + '<span class="fb-dbg-action">' + actionIcon + ' ' + escHtml( entry.action ) + '</span>'
+                  + '<span class="fb-dbg-account">' + escHtml( entry.account || '—' ) + '</span>'
+                  + '<span class="fb-dbg-period">' + entry.month + '/' + entry.year + '</span>';
+
+            if ( entry.sum_str ) {
+                html += '<span class="fb-dbg-sum">sum: <b>' + escHtml( entry.sum_str ) + '</b></span>';
+            }
+            html += '</div>';
+
+            // SQL пошуку рахунку
+            if ( entry.pa_sql ) {
+                html += '<div class="fb-dbg-sql-block">'
+                      + '<span class="fb-dbg-label">PA SQL</span>'
+                      + '<span class="fb-dbg-sql-tag ' + ( entry.pa_id ? 'tag-ok' : 'tag-err' ) + '">'
+                      + 'pa_id=' + entry.pa_id + '</span>'
+                      + '<code class="fb-dbg-sql">' + escHtml( entry.pa_sql ) + '</code>'
+                      + '</div>';
+            }
+
+            // SQL пошуку суми
+            if ( entry.amount_sql ) {
+                const amtClass = entry.amount_id ? 'tag-ok' : 'tag-warn';
+                const amtLabel = entry.amount_id
+                    ? 'amount_id=' + entry.amount_id
+                    : 'matches=' + entry.matches + ' (пропущено)';
+                html += '<div class="fb-dbg-sql-block">'
+                      + '<span class="fb-dbg-label">AMOUNT SQL</span>'
+                      + '<span class="fb-dbg-sql-tag ' + amtClass + '">' + amtLabel + '</span>'
+                      + '<code class="fb-dbg-sql">' + escHtml( entry.amount_sql ) + '</code>'
+                      + '</div>';
+            } else if ( entry.sum_raw && ! entry.amount_sql ) {
+                html += '<div class="fb-dbg-sql-block">'
+                      + '<span class="fb-dbg-label">AMOUNT SQL</span>'
+                      + '<span class="fb-dbg-sql-tag tag-warn">sum порожній або 0 — пошук пропущено</span>'
+                      + '</div>';
+            }
+
+            // Помилка рядка
+            if ( entry.error ) {
+                html += '<div class="fb-dbg-error-line">⚠ ' + escHtml( entry.error ) + '</div>';
+            }
+
+            html += '</div>';
+        } );
+
+        html += '</div>'; // .fb-dbg-body
+        $debugPanel.html( html ).show();
+    }
+
+    // Toggle згорнути/розгорнути debug-панель
+    $( document ).on( 'click.fbind', '.fb-dbg-toggle', function () {
+        const $btn  = $( this );
+        const $body = $debugPanel.find( '.fb-dbg-body' );
+        if ( $btn.data( 'open' ) ) {
+            $body.hide();
+            $btn.text( '▼ Розгорнути' ).data( 'open', 0 );
+        } else {
+            $body.show();
+            $btn.text( '▲ Згорнути' ).data( 'open', 1 );
+        }
+    } );
+
+    /**
+     * Повертає HTML кнопки закриття Thickbox.
+     *
+     * @param  {string} label Текст кнопки (необов'язково).
+     * @return {string} HTML-рядок.
+     */
+    function fbIndTbCloseBtn( label ) {
+        label = label || 'Закрити';
+        return '<div class="fb-ind-tb-footer">'
+             + '<button type="button" class="fb-ind-tb-close-btn fb-btn-primary">'
+             + escHtml( label )
+             + '</button>'
+             + '</div>';
+    }
+
+    // Делегований обробник кнопки "Закрити" всередині Thickbox
+    $( document ).on( 'click.fbind', '.fb-ind-tb-close-btn', function () {
+        tb_remove();
+    } );
+
+    /* ─── УТИЛІТИ ────────────────────────────────────────────────────────── */
+
     function escHtml( str ) {
         return String( str )
             .replace( /&/g, '&amp;' ).replace( /</g, '&lt;' )

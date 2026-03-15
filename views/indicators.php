@@ -8,6 +8,11 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// Підключення класу імпорту CSV для показників
+if ( ! class_exists( 'FB_Import_Ind' ) ) {
+    require_once __DIR__ . 'includes/class-fb-import-ind.php';
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
  * БЕЗПЕКА
  * ═══════════════════════════════════════════════════════════════════════════ */
@@ -78,8 +83,9 @@ function fb_shortcode_indicators_interface(): string {
 
     global $wpdb;
     $uid           = get_current_user_id();
-    $current_year  = (int) date( 'Y' );
-    $current_month = (int) date( 'n' );
+    // [FIX-5] wp_date() замість date() відповідно до WPCS
+    $current_year  = (int) wp_date( 'Y' );
+    $current_month = (int) wp_date( 'n' );
 
     // Повний словник місяців (для форми додавання — завжди всі 12)
     $months_all = [
@@ -153,11 +159,14 @@ function fb_shortcode_indicators_interface(): string {
     $plugin_url = defined( 'FB_PLUGIN_URL' )     ? FB_PLUGIN_URL     : plugin_dir_url( dirname( __FILE__ ) );
     $plugin_ver = defined( 'FB_PLUGIN_VERSION' ) ? FB_PLUGIN_VERSION : '1.0.0';
 
+    add_thickbox(); // Thickbox для відображення результатів імпорту CSV
+
     wp_enqueue_style( 'fb-indicators-css', $plugin_url . 'css/indicators.css', [], $plugin_ver );
-    wp_enqueue_script( 'fb-indicators-js', $plugin_url . 'js/indicators.js', [ 'jquery' ], $plugin_ver, true );
+    wp_enqueue_script( 'fb-indicators-js', $plugin_url . 'js/indicators.js', [ 'jquery', 'thickbox' ], $plugin_ver, true );
     wp_localize_script( 'fb-indicators-js', 'fbIndObj', [
         'ajax_url'       => admin_url( 'admin-ajax.php' ),
         'nonce'          => wp_create_nonce( 'fb_ind_nonce' ),
+        'import_nonce'   => wp_create_nonce( 'fb_ind_import_nonce' ),
         'confirm_delete' => esc_js( 'Видалити показник та всі пов\'язані дані?' ),
         'confirm_unlink' => esc_js( 'Від\'язати платіж від цього показника?' ),
     ] );
@@ -210,11 +219,31 @@ function fb_shortcode_indicators_interface(): string {
                         $m = absint( $m );
                         if ( ! isset( $months_all[ $m ] ) ) continue;
                     ?>
-                        <option value="<?php echo $m; ?>"><?php echo esc_html( $months_all[ $m ] ); ?></option>
+                        <option value="<?php echo absint( $m ); ?>"><?php echo esc_html( $months_all[ $m ] ); ?></option>
                     <?php endforeach; ?>
                 </select>
 
             </div><!-- .fb-filter-group -->
+
+            <!-- ═══ ІМПОРТ CSV ═══ -->
+            <div class="fb-ind-import-group">
+
+                <!-- Прихований input[type=file], активується кнопкою нижче -->
+                <input type="file" id="fb-ind-csv-file" accept=".csv">
+
+                <button type="button" id="fb-ind-import-btn"
+                        class="fb-ind-btn-import"
+                        title="Імпорт показників з CSV-файлу">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                </button>
+
+            </div><!-- .fb-ind-import-group -->
 
             <!-- ПРАВОРУЧ: форма додавання -->
             <form id="fb-ind-add-form" class="fb-add-group">
@@ -236,14 +265,14 @@ function fb_shortcode_indicators_interface(): string {
                 <!-- Завдання 6: всі 12 місяців, поточний за замовчуванням -->
                 <select name="indicators_month" required class="fb-compact-input" style="width:100px;">
                     <?php foreach ( $months_all as $num => $name ) : ?>
-                        <option value="<?php echo $num; ?>" <?php selected( $num, $current_month ); ?>>
+                        <option value="<?php echo absint( $num ); ?>" <?php selected( $num, $current_month ); ?>>
                             <?php echo esc_html( $name ); ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
 
                 <input type="number" name="indicators_year" required min="1960" max="2060"
-                       value="<?php echo $current_year; ?>" placeholder="Рік"
+                       value="<?php echo absint( $current_year ); ?>" placeholder="Рік"
                        class="fb-compact-input" style="width:66px;">
                 <input type="number" name="indicators_value1" min="0" step="0.001"
                        placeholder="Знач.1" class="fb-compact-input" style="width:74px;">
@@ -256,6 +285,8 @@ function fb_shortcode_indicators_interface(): string {
             </form><!-- #fb-ind-add-form -->
 
         </div><!-- .fb-ind-controls -->
+
+        <div id="fb-ind-import-box" style="display:none;"></div>
 
         <!-- ═══ ТАБЛИЦЯ ═══ -->
         <div class="fb-ind-table-container">
@@ -284,6 +315,9 @@ function fb_shortcode_indicators_interface(): string {
         </div><!-- .fb-ind-table-container -->
 
     </div><!-- .fb-ind-wrapper -->
+
+    <!-- ═══ DEBUG ПАНЕЛЬ ІМПОРТУ ═══ -->
+    <div id="fb-ind-debug-panel" class="fb-ind-debug-panel" style="display:none;"></div>
 
     <!-- Модальне вікно прив'язки платежу -->
     <div id="fb-ind-modal" class="fb-ind-modal-overlay" style="display:none;">
@@ -334,18 +368,8 @@ function fb_ajax_ind_load(): void {
     $per_page = 20;
     $offset   = ( $page - 1 ) * $per_page;
 
-    // Довідник рахунків для select у inline-редагуванні
-    $accounts_edit = $wpdb->get_results( $wpdb->prepare(
-        "SELECT DISTINCT pa.id, pa.personal_accounts_number, pat.personal_accounts_type_name,
-                CONCAT('м. ', h.houses_city, ', ', h.houses_street, ' ', h.houses_number) AS house_address
-         FROM {$wpdb->prefix}personal_accounts pa
-         INNER JOIN {$wpdb->prefix}personal_accounts_type pat ON pa.id_personal_accounts_type = pat.id
-         INNER JOIN {$wpdb->prefix}houses h ON pa.id_houses = h.id
-         INNER JOIN {$wpdb->prefix}house_family hf ON h.id = hf.id_houses
-         INNER JOIN {$wpdb->prefix}UserFamily uf ON hf.id_family = uf.Family_ID
-         WHERE uf.User_ID = %d ORDER BY h.houses_city ASC, pat.personal_accounts_type_name ASC",
-        $uid
-    ) );
+    // [FIX-3] Запит $accounts_edit видалено — змінна ніде не використовувалась
+    //         у функції, але виконувалась при кожному завантаженні сторінки.
 
     // Базовий WHERE
     $where  = "WHERE uf.User_ID = %d";
@@ -532,6 +556,9 @@ function fb_ajax_ind_add(): void {
 /**
  * AJAX: Оновлює поля показника (inline-редагування).
  *
+ * [FIX-1] При збереженні вручну скидає indicators_import = 0,
+ * що захищає запис від автоматичного перезапису при наступному CSV-імпорті.
+ *
  * @return void
  */
 add_action( 'wp_ajax_fb_ajax_ind_edit', 'fb_ajax_ind_edit' );
@@ -557,14 +584,24 @@ function fb_ajax_ind_edit(): void {
 
     global $wpdb;
 
-    $wpdb->update( "{$wpdb->prefix}indicators", [
-        'id_personal_accounts' => $pa_id,
-        'indicators_month'     => $month,
-        'indicators_year'      => $year,
-        'indicators_consumed'  => $consumed,
-        'indicators_value1'    => $val1,
-        'indicators_value2'    => $val2,
-    ], [ 'id' => $id ] );
+    // [FIX-1] indicators_import = 0: позначаємо як відредагований вручну —
+    //         блокує перезапис цього запису при наступному CSV-імпорті.
+    // [FIX-2] Явні формати для $wpdb->update() відповідно до WPCS.
+    $wpdb->update(
+        "{$wpdb->prefix}indicators",
+        [
+            'id_personal_accounts' => $pa_id,
+            'indicators_month'     => $month,
+            'indicators_year'      => $year,
+            'indicators_consumed'  => $consumed,
+            'indicators_value1'    => $val1,
+            'indicators_value2'    => $val2,
+            'indicators_import'    => 0,
+        ],
+        [ 'id' => $id ],
+        [ '%d', '%d', '%d', '%f', '%f', '%f', '%d' ],
+        [ '%d' ]
+    );
 
     wp_send_json_success();
 }

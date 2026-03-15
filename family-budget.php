@@ -109,7 +109,8 @@ $fb_modules = [
 	'includes/db-setup.php',
 	'includes/class-fb-crud.php',
 	'includes/class-fb-currency-rates.php',
-	'includes/class-fb-import.php',
+    'includes/class-fb-import.php',
+	'includes/class-fb-import-ind.php',
 
 	// Потім views/ — модулі з шорткодами та бізнес-логікою
 	'views/family.php',
