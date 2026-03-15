@@ -77,6 +77,22 @@ function fb_check_db_updates(): void {
             }
         }
     }
+
+    // -------------------------------------------------------------------------
+    // Міграція v1.5.0: Мапінг MCC-кодів на категорії.
+    // -------------------------------------------------------------------------
+    if ( version_compare( $installed_version, '1.5.0', '<' ) ) {
+        $migration_v5 = __DIR__ . '/class-fb-migrations-v5.php';
+
+        if ( file_exists( $migration_v5 ) ) {
+            require_once $migration_v5;
+
+            if ( function_exists( 'fb_migrate_mcc_mapping_v5' ) ) {
+                fb_migrate_mcc_mapping_v5();
+            }
+        }
+    }
+
     // Зберігаємо нову версію після успішного виконання всіх міграцій.
     update_option( 'fb_db_version', FB_DB_VERSION );
 }
