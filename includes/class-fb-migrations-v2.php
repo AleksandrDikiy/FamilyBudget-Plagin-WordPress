@@ -1,12 +1,12 @@
 <?php
 /**
- * Міграція v1.1.0: Модуль обліку осель та комунальних показників
+ * Міграція v1.2.0: Модуль обліку осель та комунальних показників
  * * Цей файл відповідає за:
  * 1. Створення 7 нових таблиць.
  * 2. Наповнення службових довідників (Seed Data).
  * 3. Налаштування зв'язків (Foreign Keys) з існуючими таблицями Family та Amount.
  * * @package FamilyBudget
- * @version 1.1.0
+ * @version 1.2.0
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -60,11 +60,11 @@ function fb_migrate_utilities_v2(): void {
         "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}indicators (
             id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
             id_personal_accounts BIGINT UNSIGNED  NULL,
-            indicators_month TINYINT UNSIGNED NOT NULL DEFAULT 1,
-            indicators_year YEAR NOT NULL DEFAULT '2026',
-            indicators_value1 DECIMAL(12, 3) NULL,
-            indicators_value2 DECIMAL(12, 3) NULL,
-            indicators_consumed DECIMAL(12, 3) NOT NULL,
+            indicators_month TINYINT UNSIGNED NOT NULL DEFAULT 1 COMMENT 'номер місяця (від 1 до 12)',
+            indicators_year YEAR NOT NULL DEFAULT '2026' COMMENT 'номер року (4 цифри)',
+            indicators_value1 DECIMAL(12, 3) NULL COMMENT 'показання лічильника1',
+            indicators_value2 DECIMAL(12, 3) NULL COMMENT 'показання лічильника2',
+            indicators_consumed DECIMAL(12, 3) NOT NULL COMMENT 'спожито за місяць',
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY (id),
             UNIQUE KEY uk_period (indicators_year, indicators_month, id_personal_accounts)
