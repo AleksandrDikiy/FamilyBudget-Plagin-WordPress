@@ -107,6 +107,21 @@ function fb_check_db_updates(): void {
         }
     }
 
+    // -------------------------------------------------------------------------
+    // Міграція v1.7.0: Account to Category Mapping
+    // -------------------------------------------------------------------------
+    if ( version_compare( $installed_version, '1.7.0', '<' ) ) {
+        $migration_v7 = __DIR__ . '/class-fb-migrations-v7.php';
+
+        if ( file_exists( $migration_v7 ) ) {
+            require_once $migration_v7;
+
+            if ( function_exists( 'fb_migrate_account_mono_v7' ) ) {
+                fb_migrate_account_mono_v7();
+            }
+        }
+    }
+
     // Зберігаємо нову версію після успішного виконання всіх міграцій.
     update_option( 'fb_db_version', FB_DB_VERSION );
 }
