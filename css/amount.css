@@ -369,15 +369,63 @@
 	flex:        0 0 auto;
 }
 
+/* Дати: 30px висота, 116px ширина — рік відображається повністю */
+input[type="date"].fb-filter-control {
+	height:    30px;
+	padding:   0 4px;
+	flex:      0 0 120px;
+	min-width: 116px;
+}
+
+/* Випадаючі списки: 34px; flex:1 — стискаються, звільняючи місце для дат */
+select.fb-filter-control {
+	height:    34px;
+	flex:      1 1 100px;
+	min-width: 80px;
+}
+
 .fb-filter-date-range .fb-filter-control {
-	flex:      0 0 96px;          /* Фіксована ширина для date-інпутів */
-	min-width: 96px;
+	flex:      0 0 116px;
+	min-width: 116px;
 }
 
 .fb-filter-date-sep {
-	font-size:  11px;
-	color:      #888;
+	font-size:   11px;
+	color:       #888;
 	flex-shrink: 0;
+}
+
+/* ── Пошук по примітці, вбудований у заголовок таблиці ── */
+.fb-th-search {
+	padding: 2px 5px !important;  /* мінімальний padding — рядок thead менший  3 6 */
+}
+
+/* Інпут займає всю ширину <th>, стилізований під header */
+.fb-th-search-input {
+	display:       block;
+	width:         100%;
+	height:        15px;          /* зменшено: було 24px */
+	padding:       0 6px;
+	font-size:     11px;
+	font-weight:   400;
+	color:         #1a1a1a;
+	background:    rgba(255, 255, 255, .92);
+	border:        1px solid rgba(255, 255, 255, .35);
+	border-radius: 3px;
+	box-sizing:    border-box;
+	outline:       none;
+	transition:    border-color .15s, box-shadow .15s;
+}
+
+.fb-th-search-input::placeholder {
+	color:     #888;
+	font-size: 11px;
+}
+
+.fb-th-search-input:focus {
+	border-color: var(--fb-primary);
+	box-shadow:   0 0 0 2px rgba(26, 109, 193, .25);
+	background:   #fff;
 }
 
 /* ============================================================================
@@ -704,9 +752,15 @@
 		flex: 1 1 100%;
 	}
 
-	.fb-filter-date-range .fb-filter-control {
-		flex: 1 1 0;
+	.fb-filter-date-range .fb-filter-control,
+	input[type="date"].fb-filter-control {
+		flex:      1 1 0;
 		min-width: 0;
+	}
+
+	/* Пошук у thead на мобільних — зменшений плейсхолдер */
+	.fb-th-search-input {
+		font-size: 10px;
 	}
 
 	.fb-modal-content {

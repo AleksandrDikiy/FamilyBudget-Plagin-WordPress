@@ -1804,10 +1804,6 @@ function fb_render_budget_interface(): string {
                 <div class="fb-filter-row" role="search"
                      aria-label="<?php esc_attr_e( 'Фільтри транзакцій', 'family-budget' ); ?>">
 
-                    <input type="text" id="fb-search"
-                           placeholder="<?php esc_attr_e( '🔍 Примітка...', 'family-budget' ); ?>"
-                           class="fb-filter-control fb-filter-search">
-
                     <?php /* Діапазон дат: початкова — кінцева */ ?>
                     <div class="fb-filter-date-range">
                         <input type="date" id="fb-filter-date-from" class="fb-filter-control"
@@ -1857,7 +1853,12 @@ function fb_render_budget_interface(): string {
                                 <th scope="col"><?php esc_html_e( 'Тип', 'family-budget' ); ?></th>
                                 <th scope="col"><?php esc_html_e( 'Рахунок', 'family-budget' ); ?></th>
                                 <th scope="col"><?php esc_html_e( 'Категорія', 'family-budget' ); ?></th>
-                                <th scope="col"><?php esc_html_e( 'Примітка', 'family-budget' ); ?></th>
+                                <th scope="col" class="fb-th-search">
+                                    <input type="text" id="fb-search"
+                                           class="fb-th-search-input"
+                                           placeholder="<?php esc_attr_e( '🔍 Примітка...', 'family-budget' ); ?>"
+                                           aria-label="<?php esc_attr_e( 'Пошук по примітці', 'family-budget' ); ?>">
+                                </th>
                                 <th scope="col" class="fb-amount-col"><?php esc_html_e( 'Сума', 'family-budget' ); ?></th>
                                 <th scope="col" class="fb-actions-col"><?php esc_html_e( 'Дії', 'family-budget' ); ?></th>
                             </tr>
