@@ -95,14 +95,15 @@
 			url:      fbAmountData.ajax_url,
 			type:     'POST',
 			data:     {
-				action:   'fb_filter_transactions',
-				security: fbAmountData.nonce,
-				search:   $( '#fb-search' ).val(),
-				date:     $( '#fb-filter-date' ).val(),
-				type:     $( '#fb-filter-type' ).val(),
-				account:  $( '#fb-filter-account' ).val(),
-				category: $( '#fb-filter-category' ).val(),
-				page:     currentPage,
+				action:    'fb_filter_transactions',
+				security:  fbAmountData.nonce,
+				search:    $( '#fb-search' ).val(),
+				date_from: $( '#fb-filter-date-from' ).val(),
+				date_to:   $( '#fb-filter-date-to' ).val(),
+				type:      $( '#fb-filter-type' ).val(),
+				account:   $( '#fb-filter-account' ).val(),
+				category:  $( '#fb-filter-category' ).val(),
+				page:      currentPage,
 			},
 			success:  function ( response ) {
 				$( '#fb-transactions-body' ).html( response );
@@ -118,7 +119,7 @@
 	}
 
 	// Реакція на зміну фільтрів — скидаємо на першу сторінку.
-	$( '#fb-filter-date, #fb-filter-type, #fb-filter-account, #fb-filter-category' ).on( 'change', function () {
+	$( '#fb-filter-date-from, #fb-filter-date-to, #fb-filter-type, #fb-filter-account, #fb-filter-category' ).on( 'change', function () {
 		loadTransactions( 1 );
 	} );
 

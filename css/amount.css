@@ -328,8 +328,9 @@
 .fb-filter-row {
 	display:       flex;
 	flex-wrap:     wrap;
-	gap:           var(--fb-gap-sm);
-	padding:       var(--fb-gap-sm) var(--fb-gap);
+	align-items:   center;
+	gap:           4px;
+	padding:       5px 8px;
 	background:    #eef2f7;
 	border:        1px solid var(--fb-border);
 	border-bottom: none;          /* Зливається з таблицею */
@@ -337,15 +338,15 @@
 }
 
 .fb-filter-control {
-	height:        var(--fb-ctrl-h);
-	padding:       0 8px;
-	font-size:     12px;
+	height:        28px;          /* Компактніше: було 34px */
+	padding:       0 6px;
+	font-size:     11px;          /* Компактніше: було 12px */
 	color:         #333;
 	background:    #fff;
 	border:        1px solid var(--fb-border);
 	border-radius: var(--fb-radius-sm);
-	flex:          1 1 140px;
-	min-width:     100px;
+	flex:          1 1 120px;
+	min-width:     80px;
 	box-sizing:    border-box;
 	transition:    border-color .15s;
 }
@@ -353,6 +354,30 @@
 .fb-filter-control:focus {
 	outline:      none;
 	border-color: var(--fb-primary);
+}
+
+/* Поле пошуку — трохи ширше, щоб вмістити плейсхолдер */
+.fb-filter-search {
+	flex: 1 1 160px;
+}
+
+/* Контейнер діапазону дат: два інпути + роздільник */
+.fb-filter-date-range {
+	display:     flex;
+	align-items: center;
+	gap:         3px;
+	flex:        0 0 auto;
+}
+
+.fb-filter-date-range .fb-filter-control {
+	flex:      0 0 96px;          /* Фіксована ширина для date-інпутів */
+	min-width: 96px;
+}
+
+.fb-filter-date-sep {
+	font-size:  11px;
+	color:      #888;
+	flex-shrink: 0;
 }
 
 /* ============================================================================
@@ -408,8 +433,10 @@
 	white-space: nowrap;
 }
 
-/* Колонка дій */
+/* Колонка дій — фіксована ширина запобігає горизонтальному зсуву */
 .fb-actions-col {
+	width:       92px;
+	min-width:   92px;
 	white-space: nowrap;
 	text-align:  center;
 }
@@ -431,6 +458,16 @@
 .fb-actions-col .fb-edit-btn:hover        { background: #e8f0fe; }
 .fb-actions-col .fb-edit-params-btn:hover { background: #fff3cd; }
 .fb-actions-col .fb-delete-btn:hover      { background: #fde8e8; }
+
+/* Кнопка параметрів у disabled-стані — сіра, ненатискна, без hover-ефекту */
+.fb-actions-col .fb-params-btn--disabled {
+	opacity: 0.28;
+	cursor:  default;
+	filter:  grayscale(1);
+}
+.fb-actions-col .fb-params-btn--disabled:hover {
+	background: none;
+}
 
 /* Порожній стан */
 .fb-empty-state {
@@ -655,11 +692,21 @@
 	}
 
 	.fb-filter-row {
-		padding: var(--fb-gap-xs) var(--fb-gap-sm);
+		padding: 4px 6px;
 	}
 
 	.fb-filter-control {
 		flex: 1 1 100%;
+	}
+
+	/* На мобільних date-range розтягується на всю ширину */
+	.fb-filter-date-range {
+		flex: 1 1 100%;
+	}
+
+	.fb-filter-date-range .fb-filter-control {
+		flex: 1 1 0;
+		min-width: 0;
 	}
 
 	.fb-modal-content {

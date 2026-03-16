@@ -640,12 +640,13 @@ function fb_ajax_filter_transactions(): void {
     $user_id = get_current_user_id();
 
     // Санітизація всіх вхідних фільтрів.
-    $search      = isset( $_POST['search'] )   ? sanitize_text_field( wp_unslash( $_POST['search'] ) )   : '';
-    $date_filter = isset( $_POST['date'] )     ? sanitize_text_field( wp_unslash( $_POST['date'] ) )     : '';
-    $type_filter = isset( $_POST['type'] )     ? absint( $_POST['type'] )                                : 0;
-    $acc_filter  = isset( $_POST['account'] )  ? absint( $_POST['account'] )                             : 0;
-    $cat_filter  = isset( $_POST['category'] ) ? absint( $_POST['category'] )                            : 0;
-    $page        = isset( $_POST['page'] )     ? max( 1, absint( $_POST['page'] ) )                      : 1;
+    $search      = isset( $_POST['search'] )    ? sanitize_text_field( wp_unslash( $_POST['search'] ) )    : '';
+    $date_from   = isset( $_POST['date_from'] ) ? sanitize_text_field( wp_unslash( $_POST['date_from'] ) ) : '';
+    $date_to     = isset( $_POST['date_to'] )   ? sanitize_text_field( wp_unslash( $_POST['date_to'] ) )   : '';
+    $type_filter = isset( $_POST['type'] )      ? absint( $_POST['type'] )                                 : 0;
+    $acc_filter  = isset( $_POST['account'] )   ? absint( $_POST['account'] )                              : 0;
+    $cat_filter  = isset( $_POST['category'] )  ? absint( $_POST['category'] )                             : 0;
+    $page        = isset( $_POST['page'] )      ? max( 1, absint( $_POST['page'] ) )                       : 1;
 
     $per_page = 10;
     $offset   = ( $page - 1 ) * $per_page;
@@ -663,8 +664,14 @@ function fb_ajax_filter_transactions(): void {
         $where_clauses[] = $wpdb->prepare( 'a.Note LIKE %s', '%' . $wpdb->esc_like( $search ) . '%' );
     }
 
-    if ( ! empty( $date_filter ) && preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date_filter ) ) {
-        $where_clauses[] = $wpdb->prepare( 'DATE(a.created_at) = %s', $date_filter );
+    if ( ! empty( $date_from ) && preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date_from ) &&
+         ! empty( $date_to )   && preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date_to ) ) {
+        // Обидві межі вказані — застосовуємо BETWEEN (включно).
+        $where_clauses[] = $wpdb->prepare( 'DATE(a.created_at) BETWEEN %s AND %s', $date_from, $date_to );
+    } elseif ( ! empty( $date_from ) && preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date_from ) ) {
+        $where_clauses[] = $wpdb->prepare( 'DATE(a.created_at) >= %s', $date_from );
+    } elseif ( ! empty( $date_to ) && preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date_to ) ) {
+        $where_clauses[] = $wpdb->prepare( 'DATE(a.created_at) <= %s', $date_to );
     }
 
     if ( $type_filter > 0 ) {
@@ -735,7 +742,7 @@ function fb_ajax_filter_transactions(): void {
             }
 
             echo '<tr class="' . esc_attr( $row_class ) . '">';
-            echo '<td><small>' . esc_html( gmdate( 'd.m', strtotime( $t->created_at ) ) ) . '</small></td>';
+            echo '<td><small>' . esc_html( gmdate( 'd.m.y', strtotime( $t->created_at ) ) ) . '</small></td>';
             echo '<td><span class="fb-type-badge" style="color:' . esc_attr( $color ) . ';">' . esc_html( $t->AmountType_Name ) . '</span></td>';
             echo '<td><small>' . esc_html( $t->Account_Name ) . '</small></td>';
             echo '<td><strong>' . esc_html( $t->Category_Name ) . '</strong></td>';
@@ -748,12 +755,18 @@ function fb_ajax_filter_transactions(): void {
 
             echo '<button type="button" class="fb-edit-btn" data-transaction-id="' . absint( $t->id ) . '" title="' . esc_attr__( 'Редагувати', 'family-budget' ) . '">📝</button>';
 
-            // Кнопка параметрів — лише для категорій, що мають параметри.
+            // [UI] Кнопка параметрів — завжди присутня для стабільності ширини колонки.
+            // Якщо категорія не має параметрів — рендеримо у disabled-стані (сіра, ненатискна).
             if ( $t->has_params > 0 ) {
                 echo '<button type="button" class="fb-edit-params-btn"'
                    . ' data-transaction-id="' . absint( $t->id ) . '"'
                    . ' data-category-id="' . absint( $t->Category_ID ) . '"'
                    . ' title="' . esc_attr__( 'Параметри', 'family-budget' ) . '">⚙️</button>';
+            } else {
+                echo '<button type="button" class="fb-edit-params-btn fb-params-btn--disabled"'
+                   . ' disabled'
+                   . ' aria-disabled="true"'
+                   . ' title="' . esc_attr__( 'Параметри відсутні', 'family-budget' ) . '">⚙️</button>';
             }
 
             echo '<a href="' . esc_url( wp_nonce_url(
@@ -1783,15 +1796,28 @@ function fb_render_budget_interface(): string {
             <main class="fb-budget-main">
 
                 <!-- Панель AJAX-фільтрів -->
+                <?php
+                // Дефолтний діапазон: (поточна дата − 30 днів) → поточна дата.
+                $fb_default_date_to   = current_time( 'Y-m-d' );
+                $fb_default_date_from = gmdate( 'Y-m-d', strtotime( '-30 days', current_time( 'timestamp' ) ) );
+                ?>
                 <div class="fb-filter-row" role="search"
                      aria-label="<?php esc_attr_e( 'Фільтри транзакцій', 'family-budget' ); ?>">
 
                     <input type="text" id="fb-search"
-                           placeholder="<?php esc_attr_e( '🔍 Пошук по примітці...', 'family-budget' ); ?>"
-                           class="fb-filter-control">
+                           placeholder="<?php esc_attr_e( '🔍 Примітка...', 'family-budget' ); ?>"
+                           class="fb-filter-control fb-filter-search">
 
-                    <input type="date" id="fb-filter-date" class="fb-filter-control"
-                           aria-label="<?php esc_attr_e( 'Фільтр по даті', 'family-budget' ); ?>">
+                    <?php /* Діапазон дат: початкова — кінцева */ ?>
+                    <div class="fb-filter-date-range">
+                        <input type="date" id="fb-filter-date-from" class="fb-filter-control"
+                               value="<?php echo esc_attr( $fb_default_date_from ); ?>"
+                               aria-label="<?php esc_attr_e( 'Дата від', 'family-budget' ); ?>">
+                        <span class="fb-filter-date-sep" aria-hidden="true">–</span>
+                        <input type="date" id="fb-filter-date-to" class="fb-filter-control"
+                               value="<?php echo esc_attr( $fb_default_date_to ); ?>"
+                               aria-label="<?php esc_attr_e( 'Дата до', 'family-budget' ); ?>">
+                    </div>
 
                     <select id="fb-filter-type" class="fb-filter-control">
                         <option value=""><?php esc_html_e( 'Всі типи', 'family-budget' ); ?></option>
@@ -1833,7 +1859,7 @@ function fb_render_budget_interface(): string {
                                 <th scope="col"><?php esc_html_e( 'Категорія', 'family-budget' ); ?></th>
                                 <th scope="col"><?php esc_html_e( 'Примітка', 'family-budget' ); ?></th>
                                 <th scope="col" class="fb-amount-col"><?php esc_html_e( 'Сума', 'family-budget' ); ?></th>
-                                <th scope="col"><?php esc_html_e( 'Дії', 'family-budget' ); ?></th>
+                                <th scope="col" class="fb-actions-col"><?php esc_html_e( 'Дії', 'family-budget' ); ?></th>
                             </tr>
                         </thead>
                         <tbody id="fb-transactions-body">
