@@ -107,7 +107,7 @@ function fb_check_db_updates(): void {
         }
     }
 
-    // -------------------------------------------------------------------------
+// -------------------------------------------------------------------------
     // Міграція v1.7.0: Account to Category Mapping
     // -------------------------------------------------------------------------
     if ( version_compare( $installed_version, '1.7.0', '<' ) ) {
@@ -116,8 +116,9 @@ function fb_check_db_updates(): void {
         if ( file_exists( $migration_v7 ) ) {
             require_once $migration_v7;
 
-            if ( function_exists( 'fb_migrate_account_mono_v7' ) ) {
-                fb_migrate_account_mono_v7();
+            // ВИПРАВЛЕНО: назва функції тепер збігається з файлом v7
+            if ( function_exists( 'fb_migrate_account_category_v7' ) ) {
+                fb_migrate_account_category_v7();
             }
         }
     }
