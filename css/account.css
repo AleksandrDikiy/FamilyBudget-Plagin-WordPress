@@ -1,165 +1,442 @@
 /**
- * UI/UX Оптимізація для модуля Рахунки
+ * Family Budget — Модуль «Рахунки» (account.css)
+ *
+ * Структура:
+ *  1. Обгортка та загальні стилі
+ *  2. Панель фільтрів + форма додавання
+ *  3. Таблиця рахунків
+ *  4. Колонка MonoID (account_id, v6)
+ *  5. Колонка Категорія (account_category, v7)
+ *  6. Модальне вікно прив'язки категорії
+ *  7. Допоміжні елементи (зірочки, кнопки дій, drag handle)
+ *  8. Адаптивний дизайн
+ *
+ * @package    FamilyBudget
+ * @subpackage Assets/CSS
+ * @version    1.7.0
  */
 
+/* ============================================================================
+   1. ОБГОРТКА ТА ЗАГАЛЬНІ СТИЛІ
+   ============================================================================ */
+
 .fb-accounts-wrapper {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-    max-width: 100%;
-    margin: 0 auto;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans,
+	             Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+	max-width: 100%;
+	margin: 0 auto;
 }
 
-/* Компактне розміщення фільтрів та форми додавання */
+/* ============================================================================
+   2. ПАНЕЛЬ ФІЛЬТРІВ + ФОРМА ДОДАВАННЯ
+   ============================================================================ */
+
 .fb-accounts-controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #f9f9f9;
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-    border-bottom: none;
-    gap: 20px;
-    flex-wrap: wrap;
+	display:     flex;
+	align-items: center;
+	flex-wrap:   nowrap;       /* ← весь рядок без переносу */
+	gap:         6px;
+	background:  #f9f9f9;
+	padding:     8px 12px;
+	border:      1px solid #ddd;
+	border-bottom: none;
+	overflow-x:  auto;         /* горизонтальний скрол якщо дуже вузько */
 }
 
-.fb-filter-group, .fb-add-group {
-    display: flex;
-    gap: 8px;
-    align-items: center;
+.fb-filter-group {
+	display:     flex;
+	gap:         6px;
+	align-items: center;
+	flex-shrink: 0;
 }
 
-/* ЖОРСТКА ФІКСАЦІЯ ВИСОТИ ДЛЯ ВСІХ ІНПУТІВ ТА СЕЛЕКТІВ */
+/* Вертикальний роздільник між фільтрами та формою */
+.fb-filter-group::after {
+	content:    '';
+	display:    block;
+	width:      1px;
+	height:     22px;
+	background: #ddd;
+	margin:     0 2px;
+}
+
+.fb-add-group {
+	display:     flex;
+	gap:         6px;
+	align-items: center;
+	flex:        1 1 auto;
+	flex-wrap:   nowrap;
+}
+
+/* ── Уніфіковані поля вводу та select ── */
 .fb-accounts-wrapper select.fb-compact-input,
 .fb-accounts-wrapper input[type="text"].fb-compact-input {
-    box-sizing: border-box !important;
-    height: 32px !important;
-    min-height: 32px !important; /* ВАЖЛИВО: перебиває стандартні стилі WP */
-    max-height: 32px !important; /* Блокує будь-які спроби розтягування */
-    padding: 0 10px !important;
-    font-size: 13px !important;
-    border: 1px solid #8c8f94 !important;
-    border-radius: 3px !important;
-    margin: 0 !important;
-    line-height: normal !important;
-    vertical-align: middle !important;
-    box-shadow: none !important;
-    background-color: #fff !important;
+	box-sizing:       border-box !important;
+	height:           32px !important;
+	min-height:       32px !important;
+	max-height:       32px !important;
+	padding:          0 10px !important;
+	font-size:        13px !important;
+	border:           1px solid #8c8f94 !important;
+	border-radius:    3px !important;
+	margin:           0 !important;
+	line-height:      normal !important;
+	vertical-align:   middle !important;
+	box-shadow:       none !important;
+	background-color: #fff !important;
 }
 
-/* Додатково фіксуємо ширину для текстового поля */
+/* Текстове поле — стандартна ширина */
 .fb-accounts-wrapper input[type="text"].fb-compact-input {
-    width: 180px !important;
+	width: 180px !important;
 }
 
-/* Кнопка ДОДАТИ */
+/* Поле MonoID у формі — коротше */
+.fb-accounts-wrapper input[type="text"].fb-compact-mono {
+	width: 150px !important;
+}
+
+/* ── Кнопка «Додати» ── */
 .fb-accounts-wrapper .fb-btn-primary {
-    box-sizing: border-box !important;
-    background: #2271b1 !important;
-    color: #fff !important;
-    border: 1px solid #2271b1 !important;
-    border-radius: 3px !important;
-    padding: 0 16px !important;
-    height: 32px !important;
-    min-height: 32px !important;
-    max-height: 32px !important;
-    font-size: 13px !important;
-    font-weight: 500 !important;
-    cursor: pointer;
-    transition: background 0.2s;
-    margin: 0 !important;
-    line-height: normal !important;
-    vertical-align: middle !important;
-    box-shadow: none !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+	box-sizing:      border-box !important;
+	display:         inline-flex !important;
+	align-items:     center !important;
+	justify-content: center !important;
+	height:          32px !important;
+	min-height:      32px !important;
+	max-height:      32px !important;
+	padding:         0 16px !important;
+	background:      #2271b1 !important;
+	color:           #fff !important;
+	border:          1px solid #2271b1 !important;
+	border-radius:   3px !important;
+	font-size:       13px !important;
+	font-weight:     500 !important;
+	line-height:     normal !important;
+	vertical-align:  middle !important;
+	box-shadow:      none !important;
+	margin:          0 !important;
+	cursor:          pointer;
+	white-space:     nowrap;
+	transition:      background 0.2s;
 }
 
 .fb-accounts-wrapper .fb-btn-primary:hover {
-    background: #135e96 !important;
+	background: #135e96 !important;
 }
 
-.fb-compact-input {
-    padding: 4px 8px;
-    font-size: 13px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    height: 30px;
-    margin: 0 !important; /* Overriding WP default margins */
+.fb-accounts-wrapper .fb-btn-primary:disabled {
+	opacity: 0.6;
+	cursor:  not-allowed;
 }
 
-.fb-btn-primary {
-    background: #2271b1;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    padding: 0 12px;
-    height: 30px;
-    font-size: 13px;
-    cursor: pointer;
-    transition: background 0.2s;
+/* ── Кнопка «Скасувати» у модалі ── */
+.fb-btn-cancel {
+	display:       inline-flex;
+	align-items:   center;
+	height:        32px;
+	padding:       0 14px;
+	background:    #e0e0e0;
+	color:         #333;
+	border:        1px solid #c8c8c8;
+	border-radius: 3px;
+	font-size:     13px;
+	cursor:        pointer;
+	transition:    background 0.15s;
 }
 
-.fb-btn-primary:hover {
-    background: #135e96;
+.fb-btn-cancel:hover {
+	background: #c8c8c8;
 }
 
-/* Таблиця */
+/* ============================================================================
+   3. ТАБЛИЦЯ РАХУНКІВ
+   ============================================================================ */
+
 .fb-accounts-table-container {
-    overflow-x: auto;
+	overflow-x: auto;
 }
 
 .fb-table {
-    width: 100%;
-    border-collapse: collapse;
-    border: 1px solid #ddd;
-    background: #fff;
+	width:           100%;
+	border-collapse: collapse;
+	border:          1px solid #ddd;
+	background:      #fff;
+	font-size:       13px;
 }
 
-.fb-table th, .fb-table td {
-    padding: 8px 12px;
-    border-bottom: 1px solid #eee;
-    font-size: 13px;
-    vertical-align: middle;
+.fb-table th,
+.fb-table td {
+	padding:        7px 10px;
+	border-bottom:  1px solid #eee;
+	vertical-align: middle;
 }
 
 .fb-table th {
-    background: #f1f1f1;
-    text-align: left;
-    font-weight: 600;
+	background:  #f1f1f1;
+	text-align:  left;
+	font-weight: 600;
+	font-size:   12px;
+	white-space: nowrap;
+}
+
+.fb-table tbody tr:hover {
+	background: #f5f8ff;
 }
 
 .text-center { text-align: center !important; }
 
-/* Елементи дій */
-.fb-drag-handle {
-    cursor: grab;
-    color: #999;
+/* Inline-edit поле в колонці «Назва» */
+.fb-acc-name-input {
+	width:     100%;
+	padding:   2px 6px;
+	font-size: 13px;
+	height:    26px;
+	box-sizing: border-box;
 }
-.fb-drag-handle:active {
-    cursor: grabbing;
-}
-
-.fb-actions span {
-    cursor: pointer;
-    margin: 0 4px;
-    font-size: 15px;
-    display: inline-block;
-}
-
-.fb-star { color: #ccc; transition: color 0.2s; }
-.fb-star:hover { color: #f1c40f; }
-.fb-star.is-default { color: gold; text-shadow: 0 0 2px rgba(200, 150, 0, 0.5); }
-
-.fb-edit-btn { color: #2271b1; }
-.fb-save-btn { color: #46b450; }
-.fb-delete-btn { color: #d63638; }
 
 .hidden { display: none !important; }
 
-/* Inline Edit Field */
-.fb-acc-name-input {
-    width: 100%;
-    padding: 2px 5px;
-    font-size: 13px;
-    height: 26px;
+/* ============================================================================
+   4. КОЛОНКА MONOID (account_id — migration v6)
+   ============================================================================ */
+
+/* Заголовок колонки */
+.fb-col-mono {
+	width:      120px;
+	min-width:  100px;
+	white-space: nowrap;
+}
+
+/* Клітинка з MonoID */
+.fb-mono-col {
+	width:      120px;
+	min-width:  100px;
+	max-width:  140px;
+}
+
+/* Бейдж відображення замаскованого ID */
+.fb-mono-badge {
+	display:       inline-block;
+	font-family:   monospace;
+	font-size:     12px;
+	letter-spacing: 0.03em;
+	color:         #444;
+	background:    #f0f4f8;
+	border:        1px solid #dce3eb;
+	border-radius: 3px;
+	padding:       1px 6px;
+	white-space:   nowrap;
+}
+
+/* Якщо MonoID порожній — бейдж прозоріший */
+.fb-mono-badge:empty,
+.fb-mono-col .fb-mono-badge:contains("—") {
+	background: transparent;
+	border-color: transparent;
+	color: #aaa;
+}
+
+/* Inline-edit поле MonoID */
+.fb-acc-mono-input {
+	width:       110px;
+	padding:     2px 6px;
+	font-size:   12px;
+	font-family: monospace;
+	height:      26px;
+	box-sizing:  border-box;
+	border:      1px solid #8c8f94;
+	border-radius: 3px;
+}
+
+/* ============================================================================
+   5. КОЛОНКА КАТЕГОРІЯ (account_category — migration v7)
+   ============================================================================ */
+
+/* Заголовок колонки */
+.fb-col-cat {
+	width:     140px;
+	min-width: 110px;
+}
+
+/* Клітинка з назвою категорії */
+.fb-cat-col {
+	width:     140px;
+	min-width: 110px;
+	max-width: 160px;
+}
+
+/* Текст категорії */
+.fb-acc-cat-name {
+	font-size: 12px;
+	color:     #333;
+}
+
+/* Пусте значення категорії */
+.fb-cat-empty {
+	color:     #bbb;
+	font-size: 12px;
+}
+
+/* ============================================================================
+   6. МОДАЛЬНЕ ВІКНО ПРИВ'ЯЗКИ КАТЕГОРІЇ
+   ============================================================================ */
+
+.fb-acc-modal {
+	display:  none;
+	position: fixed;
+	inset:    0;
+	z-index:  9999;
+}
+
+.fb-acc-modal-overlay {
+	position:   absolute;
+	inset:      0;
+	background: rgba(0, 0, 0, .52);
+}
+
+.fb-acc-modal-content {
+	position:      absolute;
+	top:           50%;
+	left:          50%;
+	transform:     translate(-50%, -50%);
+	background:    #fff;
+	border-radius: 4px;
+	box-shadow:    0 6px 28px rgba(0, 0, 0, .2);
+	padding:       20px 22px;
+	width:         min(340px, 92vw);
+	box-sizing:    border-box;
+	z-index:       1;
+}
+
+.fb-acc-modal-title {
+	margin:      0 0 14px;
+	font-size:   14px;
+	font-weight: 700;
+	color:       #1a1a1a;
+}
+
+.fb-acc-modal-field {
+	margin-bottom: 14px;
+}
+
+.fb-acc-modal-field label {
+	display:       block;
+	font-size:     11px;
+	font-weight:   600;
+	color:         #555;
+	margin-bottom: 4px;
+}
+
+/* Select у модалі — повна ширина */
+.fb-cat-modal-select {
+	width:      100% !important;
+	max-width:  100% !important;
+	height:     32px !important;
+	box-sizing: border-box !important;
+}
+
+.fb-acc-modal-actions {
+	display:         flex;
+	gap:             8px;
+	justify-content: flex-end;
+}
+
+/* ============================================================================
+   7. ДОПОМІЖНІ ЕЛЕМЕНТИ
+   ============================================================================ */
+
+/* Drag handle */
+.fb-drag-handle {
+	cursor: grab;
+	color:  #bbb;
+	font-size: 14px;
+	user-select: none;
+}
+
+.fb-drag-handle:active {
+	cursor: grabbing;
+}
+
+/* Кнопки дій у колонці «Дії» — завжди в один рядок */
+.fb-actions {
+	white-space: nowrap;
+	display:     flex;
+	align-items: center;
+	justify-content: center;
+	gap:         1px;
+	flex-wrap:   nowrap;
+}
+
+.fb-actions span {
+	cursor:        pointer;
+	font-size:     15px;
+	display:       inline-flex;
+	align-items:   center;
+	justify-content: center;
+	line-height:   1;
+	width:         26px;
+	height:        26px;
+	border-radius: 3px;
+	flex-shrink:   0;
+	transition:    background 0.15s;
+}
+
+.fb-actions span:hover {
+	background: rgba(0, 0, 0, .07);
+}
+
+/* Зірочка — статус «Головна» */
+.fb-star           { color: #ccc;   transition: color 0.2s; }
+.fb-star:hover     { color: #f1c40f; }
+.fb-star.is-default {
+	color:       gold;
+	text-shadow: 0 0 3px rgba(200, 150, 0, .5);
+}
+
+/* Кнопки inline-edit */
+.fb-edit-btn   { color: #2271b1; }
+.fb-save-btn   { color: #46b450; }
+.fb-delete-btn { color: #d63638; }
+.fb-cat-btn    { color: #555; }
+
+.fb-cat-btn:hover {
+	background: #fff3cd !important;
+}
+
+/* ============================================================================
+   8. АДАПТИВНИЙ ДИЗАЙН
+   ============================================================================ */
+
+@media screen and (max-width: 900px) {
+	/* Приховуємо MonoID та Категорію на вузьких екранах */
+	.fb-col-mono,
+	.fb-col-cat,
+	.fb-mono-col,
+	.fb-cat-col {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 640px) {
+	.fb-accounts-controls {
+		flex-direction: column;
+		align-items:    stretch;
+	}
+
+	.fb-filter-group,
+	.fb-add-group {
+		flex-wrap: wrap;
+	}
+
+	.fb-accounts-wrapper select.fb-compact-input,
+	.fb-accounts-wrapper input[type="text"].fb-compact-input,
+	.fb-accounts-wrapper input[type="text"].fb-compact-mono {
+		width: 100% !important;
+		flex:  1 1 100%;
+	}
+
+	.fb-accounts-wrapper .fb-btn-primary {
+		width: 100% !important;
+	}
 }

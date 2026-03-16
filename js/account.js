@@ -1,195 +1,466 @@
 /**
- * Скрипти для модуля "Рахунки"
- * Файл: js/account.js
+ * Family Budget — Модуль «Рахунки» (account.js)
+ *
+ * Містить всю JS-логіку для сторінки управління рахунками:
+ *  - AJAX-завантаження та фільтрація таблиці
+ *  - Додавання рахунку (форма)
+ *  - Inline-редагування назви та MonoID (account_id)
+ *  - Встановлення «Головного» рахунку (зірочка)
+ *  - Модальне вікно прив'язки категорії (⚙️)
+ *  - Видалення рахунку
+ *  - Drag & Drop сортування (jQuery UI Sortable)
+ *
+ * Залежності: jQuery, jQuery UI Sortable, fbAccountObj (ajax_url, nonce, categories, i18n).
+ *
+ * @package    FamilyBudget
+ * @subpackage Assets/JS
+ * @version    1.7.0
+ * @since      1.0.0
  */
-jQuery(document).ready(function($) {
 
-    // Ініціалізація: Завантаження даних при старті сторінки
-    loadTableData();
+/* global fbAccountObj */
+( function ( $ ) {
+	'use strict';
 
-    // 1. AJAX фільтрація: миттєва реакція на зміну будь-якого select
-    $('#fb-filter-family, #fb-filter-type').on('change', function() {
-        loadTableData();
-    });
+	// ─── Перевірка локалізованих даних ────────────────────────────────────────
+	if ( typeof fbAccountObj === 'undefined' ) {
+		console.error( '[FB Accounts] Відсутні локалізовані дані (fbAccountObj).' );
+		return;
+	}
 
-    // 2. Додавання запису (Inline form)
-    $('#fb-add-account-form').on('submit', function(e) {
-        e.preventDefault();
+	var i18n = fbAccountObj.i18n || {};
 
-        let form = $(this);
-        let submitBtn = form.find('button[type="submit"]');
-        submitBtn.prop('disabled', true).css('opacity', '0.6'); // Захист від подвійного кліку
+	// =========================================================================
+	// ІНІЦІАЛІЗАЦІЯ
+	// =========================================================================
 
-        let data = {
-            action: 'fb_add_account',
-            security: fbAccountObj.nonce,
-            family_id: form.find('[name="family_id"]').val(),
-            type_id: form.find('[name="type_id"]').val(),
-            account_name: form.find('[name="account_name"]').val()
-        };
+	$( document ).ready( function () {
+		loadTableData();
+	} );
 
-        $.post(fbAccountObj.ajax_url, data, function(response) {
-            submitBtn.prop('disabled', false).css('opacity', '1');
-            if (response.success) {
-                form[0].reset(); // Очищаємо форму після успішного додавання
-                loadTableData(); // Оновлюємо таблицю
-            } else {
-                alert(response.data.message || 'Сталася помилка при додаванні.');
-            }
-        }).fail(function() {
-            submitBtn.prop('disabled', false).css('opacity', '1');
-            alert('Помилка з\'єднання з сервером.');
-        });
-    });
+	// =========================================================================
+	// ФІЛЬТРАЦІЯ — миттєва реакція на зміну select-фільтрів
+	// =========================================================================
 
-    // 3. Таблиця: Встановити як Головну (клік по зірочці)
-    $('#fb-accounts-tbody').on('click', '.fb-star', function() {
-        let row = $(this).closest('tr');
-        let id = row.data('id');
+	$( '#fb-filter-family, #fb-filter-type' ).on( 'change', function () {
+		loadTableData();
+	} );
 
-        // Одразу візуально змінюємо для кращого UX
-        $('.fb-star').removeClass('is-default');
-        $(this).addClass('is-default');
+	// =========================================================================
+	// ФОРМА ДОДАВАННЯ РАХУНКУ
+	// =========================================================================
 
-        $.post(fbAccountObj.ajax_url, {
-            action: 'fb_set_default_account',
-            security: fbAccountObj.nonce,
-            id: id
-        }, function(response) {
-            if (!response.success) {
-                loadTableData(); // Відкочуємо зміни у разі помилки
-                alert(response.data.message || 'Помилка зміни статусу.');
-            } else {
-                // Якщо потрібно, можна зробити повне перезавантаження для правильного сортування:
-                loadTableData();
-            }
-        });
-    });
+	/**
+	 * Submit форми додавання: збирає поля, відправляє через AJAX.
+	 * Передає account_id (MonoID) якщо заповнений.
+	 */
+	$( '#fb-add-account-form' ).on( 'submit', function ( e ) {
+		e.preventDefault();
 
-    // 4. Таблиця: Видалення з модальним вікном (confirm)
-    $('#fb-accounts-tbody').on('click', '.fb-delete-btn', function() {
-        if (!confirm(fbAccountObj.confirm)) return;
+		var $form      = $( this );
+		var $submitBtn = $form.find( 'button[type="submit"]' );
 
-        let row = $(this).closest('tr');
-        let id = row.data('id');
+		$submitBtn.prop( 'disabled', true ).css( 'opacity', '0.6' );
 
-        row.css('opacity', '0.5'); // Індикація процесу видалення
+		$.post(
+			fbAccountObj.ajax_url,
+			{
+				action:       'fb_add_account',
+				security:     fbAccountObj.nonce,
+				family_id:    $form.find( '[name="family_id"]' ).val(),
+				type_id:      $form.find( '[name="type_id"]' ).val(),
+				account_name: $form.find( '[name="account_name"]' ).val(),
+				account_id:   $form.find( '[name="account_id"]' ).val(),
+			},
+			function ( response ) {
+				$submitBtn.prop( 'disabled', false ).css( 'opacity', '1' );
+				if ( response.success ) {
+					$form[ 0 ].reset();
+					loadTableData();
+				} else {
+					window.alert( ( response.data && response.data.message ) || i18n.addError );
+				}
+			}
+		).fail( function () {
+			$submitBtn.prop( 'disabled', false ).css( 'opacity', '1' );
+			window.alert( i18n.netError );
+		} );
+	} );
 
-        $.post(fbAccountObj.ajax_url, {
-            action: 'fb_delete_account',
-            security: fbAccountObj.nonce,
-            id: id
-        }, function(response) {
-            if (response.success) {
-                row.fadeOut(300, function() { $(this).remove(); });
-            } else {
-                row.css('opacity', '1');
-                alert(response.data.message || 'Помилка видалення.');
-            }
-        });
-    });
+	// =========================================================================
+	// ТАБЛИЦЯ: ЗІРОЧКА — встановлення «Головного» рахунку
+	// =========================================================================
 
-    // 5. Таблиця: Inline-редагування назви
-    $('#fb-accounts-tbody').on('click', '.fb-edit-btn', function() {
-        let row = $(this).closest('tr');
-        row.find('.fb-acc-name-text, .fb-edit-btn').addClass('hidden');
-        row.find('.fb-acc-name-input, .fb-save-btn').removeClass('hidden');
-        row.find('.fb-acc-name-input').focus();
-    });
+	$( '#fb-accounts-tbody' ).on( 'click', '.fb-star', function () {
+		var $star = $( this );
+		var id    = $star.closest( 'tr' ).data( 'id' );
 
-    // 5.1 Таблиця: Збереження inline-редагування
-    $('#fb-accounts-tbody').on('click', '.fb-save-btn', function() {
-        let row = $(this).closest('tr');
-        let id = row.data('id');
-        let inputField = row.find('.fb-acc-name-input');
-        let newName = inputField.val().trim();
+		// Оптимістичний UI: миттєво переносимо клас.
+		$( '.fb-star' ).removeClass( 'is-default' );
+		$star.addClass( 'is-default' );
 
-        if (newName === '') {
-            alert('Назва рахунку не може бути порожньою.');
-            inputField.focus();
-            return;
-        }
+		$.post(
+			fbAccountObj.ajax_url,
+			{
+				action:   'fb_set_default_account',
+				security: fbAccountObj.nonce,
+				id:       id,
+			},
+			function ( response ) {
+				if ( response.success ) {
+					loadTableData(); // перезавантажуємо для правильного сортування
+				} else {
+					loadTableData(); // відкочуємо UI у разі помилки
+					window.alert( ( response.data && response.data.message ) || i18n.saveError );
+				}
+			}
+		);
+	} );
 
-        row.css('opacity', '0.6');
+	// =========================================================================
+	// ТАБЛИЦЯ: ВИДАЛЕННЯ рахунку
+	// =========================================================================
 
-        $.post(fbAccountObj.ajax_url, {
-            action: 'fb_edit_account',
-            security: fbAccountObj.nonce,
-            id: id,
-            name: newName
-        }, function(response) {
-            row.css('opacity', '1');
-            if (response.success) {
-                row.find('.fb-acc-name-text').text(newName).removeClass('hidden');
-                row.find('.fb-edit-btn').removeClass('hidden');
-                row.find('.fb-acc-name-input, .fb-save-btn').addClass('hidden');
-            } else {
-                alert(response.data.message || 'Помилка збереження.');
-            }
-        });
-    });
+	$( '#fb-accounts-tbody' ).on( 'click', '.fb-delete-btn', function () {
+		if ( ! window.confirm( fbAccountObj.confirm ) ) {
+			return;
+		}
 
-    // 5.2 Таблиця: Збереження по Enter у полі вводу
-    $('#fb-accounts-tbody').on('keypress', '.fb-acc-name-input', function(e) {
-        if (e.which === 13) { // Клавіша Enter
-            $(this).closest('tr').find('.fb-save-btn').click();
-        }
-    });
+		var $row = $( this ).closest( 'tr' );
+		var id   = $row.data( 'id' );
 
-    // Функція завантаження даних
-    function loadTableData() {
-        let tbody = $('#fb-accounts-tbody');
-        tbody.css('opacity', '0.5'); // Візуальний фідбек завантаження
+		$row.css( 'opacity', '0.5' );
 
-        $.post(fbAccountObj.ajax_url, {
-            action: 'fb_load_accounts',
-            security: fbAccountObj.nonce,
-            family_id: $('#fb-filter-family').val(),
-            type_id: $('#fb-filter-type').val()
-        }, function(response) {
-            if (response.success) {
-                tbody.html(response.data.html).css('opacity', '1');
-                initSortable(); // Переініціалізація Drag & Drop після оновлення DOM
-            } else {
-                tbody.html('<tr><td colspan="5" class="text-center">Помилка завантаження даних</td></tr>').css('opacity', '1');
-            }
-        }).fail(function() {
-            tbody.html('<tr><td colspan="5" class="text-center">Помилка сервера</td></tr>').css('opacity', '1');
-        });
-    }
+		$.post(
+			fbAccountObj.ajax_url,
+			{
+				action:   'fb_delete_account',
+				security: fbAccountObj.nonce,
+				id:       id,
+			},
+			function ( response ) {
+				if ( response.success ) {
+					$row.fadeOut( 300, function () { $( this ).remove(); } );
+				} else {
+					$row.css( 'opacity', '1' );
+					window.alert( ( response.data && response.data.message ) || i18n.delError );
+				}
+			}
+		);
+	} );
 
-    // Ініціалізація jQuery UI Sortable (Drag and Drop)
-    function initSortable() {
-        $('#fb-accounts-tbody').sortable({
-            handle: '.fb-drag-handle', // Тягнемо тільки за іконку
-            helper: function(e, tr) {
-                // Фікс ширини колонок під час перетягування
-                var $originals = tr.children();
-                var $helper = tr.clone();
-                $helper.children().each(function(index) {
-                    $(this).width($originals.eq(index).width());
-                });
-                return $helper;
-            },
-            update: function(event, ui) {
-                let order = [];
-                $('#fb-accounts-tbody tr').each(function() {
-                    let rowId = $(this).data('id');
-                    if (rowId) order.push(rowId);
-                });
+	// =========================================================================
+	// ТАБЛИЦЯ: INLINE-РЕДАГУВАННЯ — назва + MonoID
+	// =========================================================================
 
-                // Візуально підсвічуємо таблицю під час збереження порядку
-                $('#fb-accounts-tbody').css('opacity', '0.7');
+	/**
+	 * Клік «✎» — вмикає режим редагування назви та MonoID рядка.
+	 */
+	$( '#fb-accounts-tbody' ).on( 'click', '.fb-edit-btn', function () {
+		var $row = $( this ).closest( 'tr' );
 
-                $.post(fbAccountObj.ajax_url, {
-                    action: 'fb_reorder_accounts',
-                    security: fbAccountObj.nonce,
-                    order: order
-                }, function(response) {
-                    $('#fb-accounts-tbody').css('opacity', '1');
-                    // Якщо треба зберігати суворе сортування (Головна зверху), можна викликати loadTableData();
-                });
-            }
-        }).disableSelection();
-    }
-});
+		// Перемикаємо текст ↔ input для обох полів.
+		$row.find( '.fb-acc-name-text, .fb-acc-mono-text, .fb-edit-btn' ).addClass( 'hidden' );
+		$row.find( '.fb-acc-name-input, .fb-acc-mono-input, .fb-save-btn' ).removeClass( 'hidden' );
+
+		$row.find( '.fb-acc-name-input' ).focus();
+	} );
+
+	/**
+	 * Клік «✔» — зберігає нові значення назви та MonoID через AJAX.
+	 */
+	$( '#fb-accounts-tbody' ).on( 'click', '.fb-save-btn', function () {
+		var $row      = $( this ).closest( 'tr' );
+		var id        = $row.data( 'id' );
+		var $nameInp  = $row.find( '.fb-acc-name-input' );
+		var $monoInp  = $row.find( '.fb-acc-mono-input' );
+		var newName   = $nameInp.val().trim();
+		var newMono   = $monoInp.val().trim();
+
+		if ( '' === newName ) {
+			window.alert( i18n.emptyName );
+			$nameInp.focus();
+			return;
+		}
+
+		$row.css( 'opacity', '0.6' );
+
+		$.post(
+			fbAccountObj.ajax_url,
+			{
+				action:     'fb_edit_account',
+				security:   fbAccountObj.nonce,
+				id:         id,
+				name:       newName,
+				account_id: newMono,
+			},
+			function ( response ) {
+				$row.css( 'opacity', '1' );
+
+				if ( response.success ) {
+					// Оновлюємо назву.
+					$row.find( '.fb-acc-name-text' ).text( newName ).removeClass( 'hidden' );
+
+					// Оновлюємо замаскований MonoID — сервер повертає masked_id.
+					var maskedId = ( response.data && null !== response.data.masked_id )
+						? response.data.masked_id
+						: $row.find( '.fb-acc-mono-text' ).text(); // fallback: без змін
+
+					$row.find( '.fb-acc-mono-text' ).text( maskedId ).removeClass( 'hidden' );
+
+					// Повертаємо кнопки у початковий стан.
+					$row.find( '.fb-acc-name-input, .fb-acc-mono-input, .fb-save-btn' ).addClass( 'hidden' );
+					$row.find( '.fb-edit-btn' ).removeClass( 'hidden' );
+				} else {
+					window.alert( ( response.data && response.data.message ) || i18n.saveError );
+				}
+			}
+		).fail( function () {
+			$row.css( 'opacity', '1' );
+			window.alert( i18n.netError );
+		} );
+	} );
+
+	/**
+	 * Збереження по натисканню Enter у будь-якому inline-інпуті рядка.
+	 */
+	$( '#fb-accounts-tbody' ).on( 'keydown', '.fb-acc-name-input, .fb-acc-mono-input', function ( e ) {
+		if ( 13 === e.which ) { // Enter
+			$( this ).closest( 'tr' ).find( '.fb-save-btn' ).trigger( 'click' );
+		}
+		if ( 27 === e.which ) { // Escape — скасовуємо редагування
+			cancelRowEdit( $( this ).closest( 'tr' ) );
+		}
+	} );
+
+	/**
+	 * Скасовує режим редагування рядка без збереження.
+	 *
+	 * @param {jQuery} $row Рядок таблиці.
+	 * @return {void}
+	 */
+	function cancelRowEdit( $row ) {
+		$row.find( '.fb-acc-name-text, .fb-acc-mono-text, .fb-edit-btn' ).removeClass( 'hidden' );
+		$row.find( '.fb-acc-name-input, .fb-acc-mono-input, .fb-save-btn' ).addClass( 'hidden' );
+	}
+
+	// =========================================================================
+	// МОДАЛЬНЕ ВІКНО: Прив'язка категорії (⚙️)
+	// =========================================================================
+
+	/**
+	 * Клік «⚙️» — заповнює та відкриває модальне вікно прив'язки категорії.
+	 */
+	$( '#fb-accounts-tbody' ).on( 'click', '.fb-cat-btn', function () {
+		var $row          = $( this ).closest( 'tr' );
+		var accountId     = $row.data( 'id' );
+		var currentCatId  = parseInt( $row.data( 'category-id' ), 10 ) || 0;
+		var $select       = $( '#fb-cat-modal-select' );
+
+		// Заповнюємо select категоріями з локалізованих даних.
+		$select.empty().append(
+			$( '<option>' ).val( '0' ).text( i18n.noCat )
+		);
+
+		$.each( fbAccountObj.categories || [], function ( _i, cat ) {
+			var $option = $( '<option>' ).val( cat.id ).text( cat.name );
+			if ( cat.id === currentCatId ) {
+				$option.prop( 'selected', true );
+			}
+			$select.append( $option );
+		} );
+
+		$( '#fb-cat-modal-account-id' ).val( accountId );
+		openAccModal();
+	} );
+
+	/**
+	 * Клік «Зберегти» у модалі — відправляє AJAX-запит на прив'язку категорії.
+	 */
+	$( '#fb-cat-modal-save' ).on( 'click', function () {
+		var $btn       = $( this );
+		var origText   = $btn.text();
+		var accountId  = $( '#fb-cat-modal-account-id' ).val();
+		var categoryId = $( '#fb-cat-modal-select' ).val();
+
+		$btn.prop( 'disabled', true ).text( i18n.saving );
+
+		$.post(
+			fbAccountObj.ajax_url,
+			{
+				action:      'fb_set_account_category',
+				security:    fbAccountObj.nonce,
+				id:          accountId,
+				category_id: categoryId,
+			},
+			function ( response ) {
+				$btn.prop( 'disabled', false ).text( origText );
+
+				if ( response.success ) {
+					// Оновлюємо клітинку категорії в рядку без перезавантаження таблиці.
+					var $row     = $( '#fb-accounts-tbody tr[data-id="' + accountId + '"]' );
+					var catName  = response.data.category_name || '';
+					var catId    = parseInt( response.data.category_id, 10 ) || 0;
+
+					$row.attr( 'data-category-id', catId );
+					$row.find( '.fb-acc-cat-name' ).html(
+						'' !== catName
+							? esc( catName )
+							: '<span class="fb-cat-empty">—</span>'
+					);
+
+					closeAccModal();
+				} else {
+					window.alert( ( response.data && response.data.message ) || i18n.catError );
+				}
+			}
+		).fail( function () {
+			$btn.prop( 'disabled', false ).text( origText );
+			window.alert( i18n.netError );
+		} );
+	} );
+
+	/**
+	 * Закриття модалі через кнопку «Скасувати».
+	 */
+	$( '#fb-cat-modal-close' ).on( 'click', closeAccModal );
+
+	/**
+	 * Закриття модалі кліком по overlay.
+	 */
+	$( document ).on( 'click', '.fb-acc-modal-overlay', closeAccModal );
+
+	/**
+	 * Закриття модалі клавішею Escape.
+	 */
+	$( document ).on( 'keydown', function ( e ) {
+		if ( 27 === e.which && $( '#fb-acc-cat-modal' ).is( ':visible' ) ) {
+			closeAccModal();
+		}
+	} );
+
+	/**
+	 * Відкриває модальне вікно прив'язки категорії.
+	 *
+	 * @return {void}
+	 */
+	function openAccModal() {
+		$( '#fb-acc-cat-modal' )
+			.fadeIn( 180 )
+			.attr( 'aria-hidden', 'false' );
+	}
+
+	/**
+	 * Закриває модальне вікно прив'язки категорії.
+	 *
+	 * @return {void}
+	 */
+	function closeAccModal() {
+		$( '#fb-acc-cat-modal' )
+			.fadeOut( 180 )
+			.attr( 'aria-hidden', 'true' );
+	}
+
+	// =========================================================================
+	// ЗАВАНТАЖЕННЯ ДАНИХ ТАБЛИЦІ
+	// =========================================================================
+
+	/**
+	 * Завантажує HTML-рядки таблиці через AJAX з поточними фільтрами.
+	 * Після отримання даних переініціалізує Sortable.
+	 *
+	 * @return {void}
+	 */
+	function loadTableData() {
+		var $tbody = $( '#fb-accounts-tbody' );
+		$tbody.css( 'opacity', '0.5' );
+
+		$.post(
+			fbAccountObj.ajax_url,
+			{
+				action:    'fb_load_accounts',
+				security:  fbAccountObj.nonce,
+				family_id: $( '#fb-filter-family' ).val(),
+				type_id:   $( '#fb-filter-type' ).val(),
+			},
+			function ( response ) {
+				if ( response.success ) {
+					$tbody.html( response.data.html ).css( 'opacity', '1' );
+					initSortable();
+				} else {
+					$tbody
+						.html( '<tr><td colspan="7" class="text-center">' + i18n.loadError + '</td></tr>' )
+						.css( 'opacity', '1' );
+				}
+			}
+		).fail( function () {
+			$tbody
+				.html( '<tr><td colspan="7" class="text-center">' + i18n.netError + '</td></tr>' )
+				.css( 'opacity', '1' );
+		} );
+	}
+
+	// =========================================================================
+	// DRAG & DROP СОРТУВАННЯ
+	// =========================================================================
+
+	/**
+	 * Ініціалізує jQuery UI Sortable на tbody.
+	 * Викликається після кожного оновлення DOM (loadTableData).
+	 *
+	 * @return {void}
+	 */
+	function initSortable() {
+		$( '#fb-accounts-tbody' ).sortable( {
+			handle: '.fb-drag-handle',
+			helper: function ( _e, tr ) {
+				// Фіксуємо ширини колонок під час перетягування.
+				var $originals = tr.children();
+				var $helper    = tr.clone();
+				$helper.children().each( function ( index ) {
+					$( this ).width( $originals.eq( index ).width() );
+				} );
+				return $helper;
+			},
+			update: function () {
+				var order = [];
+				$( '#fb-accounts-tbody tr' ).each( function () {
+					var rowId = $( this ).data( 'id' );
+					if ( rowId ) {
+						order.push( rowId );
+					}
+				} );
+
+				$( '#fb-accounts-tbody' ).css( 'opacity', '0.7' );
+
+				$.post(
+					fbAccountObj.ajax_url,
+					{
+						action:   'fb_reorder_accounts',
+						security: fbAccountObj.nonce,
+						order:    order,
+					},
+					function () {
+						$( '#fb-accounts-tbody' ).css( 'opacity', '1' );
+					}
+				);
+			},
+		} ).disableSelection();
+	}
+
+	// =========================================================================
+	// УТИЛІТИ
+	// =========================================================================
+
+	/**
+	 * Мінімальне екранування HTML для безпечного вставлення тексту в innerHTML.
+	 * Використовується лише для значень, що повертаються сервером.
+	 *
+	 * @param  {string} str Рядок для екранування.
+	 * @return {string} Екранований рядок.
+	 */
+	function esc( str ) {
+		return $( '<span>' ).text( str ).html();
+	}
+
+}( jQuery ) );
