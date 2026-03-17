@@ -1,12 +1,22 @@
 /**
  * Специфічні стилі для модуля Категорії та Параметрів
+ *
+ * @package FamilyBudget
+ * @since   1.5.0 Додано стилі для MCC-модалі та клікабельних бейджів
  */
+
+/* =========================================================
+   ОБГОРТКА
+   ========================================================= */
 .fb-category-wrapper {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
     max-width: 100%;
     margin: 0 auto;
 }
 
+/* =========================================================
+   ПАНЕЛЬ ФІЛЬТРІВ ТА ФОРМА ДОДАВАННЯ
+   ========================================================= */
 .fb-category-controls {
     display: flex;
     justify-content: space-between;
@@ -19,17 +29,22 @@
     flex-wrap: wrap;
 }
 
-.fb-filter-group, .fb-add-group {
+.fb-filter-group,
+.fb-add-group {
     display: flex;
     gap: 8px;
     align-items: center;
 }
 
-/* ФІКСАЦІЯ ВИСОТИ ДЛЯ ВВОДУ */
+/* =========================================================
+   УНІФІКОВАНІ ПОЛЯ ВВЕДЕННЯ — ФІКСОВАНА ВИСОТА 32px
+   ========================================================= */
 .fb-category-wrapper select.fb-compact-input,
 .fb-category-wrapper input[type="text"].fb-compact-input,
+.fb-category-wrapper input[type="number"].fb-compact-input,
 .fb-modal-body select.fb-compact-input,
-.fb-modal-body input[type="text"].fb-compact-input {
+.fb-modal-body input[type="text"].fb-compact-input,
+.fb-modal-body input[type="number"].fb-compact-input {
     box-sizing: border-box !important;
     height: 32px !important;
     min-height: 32px !important;
@@ -45,7 +60,9 @@
     background-color: #fff !important;
 }
 
-/* Кнопка ДОДАТИ */
+/* =========================================================
+   КНОПКА "ДОДАТИ" / PRIMARY
+   ========================================================= */
 .fb-category-wrapper .fb-btn-primary,
 .fb-modal-body .fb-btn-primary {
     box-sizing: border-box !important;
@@ -65,66 +82,263 @@
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
+    white-space: nowrap !important;
 }
-.fb-category-wrapper .fb-btn-primary:hover { background: #135e96 !important; }
 
-/* Таблиця */
+.fb-category-wrapper .fb-btn-primary:hover,
+.fb-modal-body .fb-btn-primary:hover {
+    background: #135e96 !important;
+}
+
+/* =========================================================
+   ТАБЛИЦЯ
+   ========================================================= */
 .fb-category-table-container { overflow-x: auto; }
-.fb-table { width: 100%; border-collapse: collapse; border: 1px solid #ddd; background: #fff; margin-bottom: 0; }
-.fb-table th, .fb-table td { padding: 8px 12px; border-bottom: 1px solid #eee; font-size: 13px; vertical-align: middle; }
-.fb-table th { background: #f1f1f1; text-align: left; font-weight: 600; }
+
+.fb-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+    background: #fff;
+    margin-bottom: 0;
+}
+
+.fb-table th,
+.fb-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #eee;
+    font-size: 13px;
+    vertical-align: middle;
+}
+
+.fb-table th {
+    background: #f1f1f1;
+    text-align: left;
+    font-weight: 600;
+}
+
 .text-center { text-align: center !important; }
 
-/* Елементи дій та UI */
-.fb-drag-handle, .fb-drag-handle-param { cursor: grab; color: #999; }
-.fb-drag-handle:active, .fb-drag-handle-param:active { cursor: grabbing; }
+/* =========================================================
+   DRAG-AND-DROP HANDLE
+   ========================================================= */
+.fb-drag-handle,
+.fb-drag-handle-param {
+    cursor: grab;
+    color: #999;
+}
 
-/* ЗАБОРОНЯЄМО ПЕРЕНЕСЕННЯ В КОЛОНЦІ "ДІЇ" */
+.fb-drag-handle:active,
+.fb-drag-handle-param:active {
+    cursor: grabbing;
+}
+
+/* =========================================================
+   КОЛОНКА ДІЙ — ЗАБОРОНА ПЕРЕНОСУ
+   ========================================================= */
 .fb-table td.fb-actions {
     white-space: nowrap !important;
-    min-width: 120px;
+    min-width: 110px;
 }
 
 .fb-actions span {
     cursor: pointer;
-    margin: 0 4px;
-    font-size: 16px;
+    margin: 0 3px;
+    font-size: 15px;
     display: inline-block;
     vertical-align: middle;
     filter: grayscale(100%);
-    transition: 0.2s;
+    transition: filter 0.2s, transform 0.2s;
 }
-.fb-actions span:hover { filter: grayscale(0%); transform: scale(1.1); }
+
+.fb-actions span:hover {
+    filter: grayscale(0%);
+    transform: scale(1.15);
+}
+
+/* =========================================================
+   ДОПОМІЖНІ КЛАСИ
+   ========================================================= */
 .hidden { display: none !important; }
 
-/* Кастомна ширина для інпутів під час inline-редагування */
+/* Ширина інпутів при inline-редагуванні */
 .fb-edit-col input { width: 100% !important; max-width: 100%; }
 
-/* Типи категорій кольором */
-.fb-color-red { color: #d63638; font-weight: 500; }
+/* Кольорові ярлики типів категорій */
+.fb-color-red   { color: #d63638; font-weight: 500; }
 .fb-color-green { color: #00a32a; font-weight: 500; }
 .fb-cat-name-val { font-size: 14px; }
 
-/* Бейдж кількості параметрів */
-.fb-badge { background: #e0e0e0; color: #333; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
-
-/* МОДАЛЬНЕ ВІКНО */
-.fb-modal {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.6); z-index: 99999;
-    display: flex; align-items: center; justify-content: center;
+/* =========================================================
+   БЕЙДЖІ — ЛІЧИЛЬНИКИ (Параметри / MCC)
+   ========================================================= */
+.fb-badge {
+    display: inline-block;
+    background: #e0e0e0;
+    color: #333;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: bold;
+    min-width: 20px;
+    text-align: center;
 }
+
+/* Клікабельний бейдж (MCC та Параметри) */
+.fb-param-badge,
+.fb-mcc-badge {
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, transform 0.15s;
+}
+
+.fb-param-badge:hover {
+    background: #b0c4de;
+    color: #23282d;
+    transform: scale(1.1);
+}
+
+/* MCC-бейдж: власний акцентний колір */
+.fb-mcc-badge:hover {
+    background: #c3d9f0;
+    color: #135e96;
+    transform: scale(1.1);
+}
+
+/* Бейдж з MCC > 0 — виділяємо синім */
+.fb-mcc-badge[data-count]:not([data-count="0"]) {
+    background: #ddeeff;
+    color: #2271b1;
+}
+
+/* =========================================================
+   МОДАЛЬНЕ ВІКНО — ЗАГАЛЬНІ СТИЛІ
+   ========================================================= */
+.fb-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .fb-modal-content {
-    background: #fff; width: 600px; max-width: 90%;
-    border-radius: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    background: #fff;
+    width: 600px;
+    max-width: 90%;
+    border-radius: 5px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     overflow: hidden;
 }
+
+/* Ширша модалка для MCC (більше колонок) */
+.fb-modal-content--wide {
+    width: 720px;
+}
+
 .fb-modal-header {
-    background: #f1f1f1; padding: 15px 20px;
-    display: flex; justify-content: space-between; align-items: center;
+    background: #f1f1f1;
+    padding: 12px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     border-bottom: 1px solid #ddd;
 }
-.fb-modal-header h3 { margin: 0; font-size: 16px; color: #23282d; }
-.fb-modal-close { font-size: 24px; cursor: pointer; color: #666; transition: 0.2s; line-height: 1; }
+
+.fb-modal-header h3 {
+    margin: 0;
+    font-size: 15px;
+    color: #23282d;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 85%;
+}
+
+.fb-modal-close {
+    font-size: 22px;
+    cursor: pointer;
+    color: #666;
+    transition: color 0.2s;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
 .fb-modal-close:hover { color: #d63638; }
-.fb-modal-body { padding: 20px; max-height: 70vh; overflow-y: auto; }
+
+.fb-modal-body {
+    padding: 16px 18px;
+    max-height: 72vh;
+    overflow-y: auto;
+}
+
+/* =========================================================
+   MCC-МОДАЛЬ — СПЕЦИФІЧНІ СТИЛІ
+   ========================================================= */
+
+/* Форма додавання MCC — компактний рядок */
+.fb-mcc-add-form {
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+/* Поле для MCC-коду */
+.fb-mcc-code-input,
+.fb-mcc-code-input-edit {
+    width: 90px !important;
+}
+
+/* Поле для опису MCC */
+.fb-mcc-desc-input {
+    flex: 1;
+    min-width: 160px;
+}
+
+.fb-mcc-desc-input-edit {
+    width: 100% !important;
+}
+
+/* Колонка коду MCC у таблиці */
+.fb-mcc-code-val strong {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 13px;
+    color: #2271b1;
+}
+
+/* Повідомлення про помилку всередині MCC-таблиці */
+.fb-mcc-error {
+    color: #d63638;
+    font-size: 13px;
+}
+
+/* =========================================================
+   АДАПТИВНІСТЬ (вузькі екрани)
+   ========================================================= */
+@media screen and (max-width: 600px) {
+    .fb-category-controls {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .fb-add-group,
+    .fb-filter-group {
+        flex-wrap: wrap;
+        width: 100%;
+    }
+
+    .fb-modal-content,
+    .fb-modal-content--wide {
+        width: 95% !important;
+    }
+
+    .fb-mcc-code-input,
+    .fb-mcc-desc-input {
+        width: 100% !important;
+    }
+}

@@ -37,6 +37,7 @@ function fb_migrate_mcc_mapping_v5(): void {
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             PRIMARY KEY (mcc),
+            UNIQUE KEY Unique_mcc (mcc),
             INDEX Idx_Category_ID (category_id),
             CONSTRAINT fk_mcc_category 
                 FOREIGN KEY (category_id) 
