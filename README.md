@@ -1,4 +1,4 @@
-# 💰 Family Budget — WordPress Plugin
+# ? Family Budget ? WordPress Plugin
 
 > A custom WordPress plugin for comprehensive family financial management, featuring multi-family support, categories, transactions, and analytics.
 
@@ -8,15 +8,14 @@
 
 ---
 
-## 📋 Table of Contents
+## ? Table of Contents
 
 - [About](#about)
 - [Features](#features)
 - [Requirements](#requirements)
 - [Installation](#installation)
+- [Project Roadmap](#-project-roadmap)
 - [Architecture & Security](#architecture--security)
-- [Development Standards](#development-standards)
-- [Changelog](#changelog)
 - [License](#license)
 
 ---
@@ -31,23 +30,23 @@ The plugin is developed with strict adherence to **WordPress Coding Standards (W
 
 ## Features
 
-### 👨�👩�👧�👦 Family Management
+### ??????? Family Management
 - Create and edit multiple independent "Families".
 - Bind WordPress users to specific families.
 - Complete data isolation between different family groups.
 
-### 💳 Accounts & Wallets
+### ? Accounts & Wallets
 - Unlimited accounts per family (Cash, Cards, Savings, etc.).
 - Real-time balance tracking.
 - Internal transfers between accounts.
 
-### 📊 Transactions & Analytics
+### ? Transactions & Analytics
 - Income and expense tracking with categorization.
 - Advanced filtering by date, account, and type.
 - Monthly/Quarterly/Annual reports with visual charts.
-- Automated currency rate updates (via NBU API integration).
+- Automated currency rate updates via NBU API integration.
 
-### 🔐 Security & Performance
+### ? Security & Performance
 - Two-layer access verification (User Roles + Nonces).
 - Full protection against CSRF and SQL injection.
 - Optimized MySQL schema with custom indexing for high-speed data retrieval.
@@ -64,6 +63,31 @@ The plugin is developed with strict adherence to **WordPress Coding Standards (W
 
 ---
 
+## ? Installation
+
+1. **Upload**: Upload the `family-budget` folder to the `/wp-content/plugins/` directory.
+2. **Activate**: Activate the plugin through the 'Plugins' menu in WordPress.
+3. **Setup**: Go to the 'Family Budget' menu in your dashboard to create your first family and accounts.
+
+---
+
+## ?? Project Roadmap
+
+### Phase 1: Core Enhancement (Current Focus)
+- [ ] **PHP 8.4 Support**: Refactoring legacy code to utilize union types, readonly properties, and constructor property promotion.
+- [ ] **NBU API Integration**: Finalizing the automated currency rate synchronization via WP-Cron.
+- [ ] **Advanced Indexing**: Implementing FULLTEXT search for transaction descriptions.
+
+### Phase 2: User Experience & UI
+- [ ] **Interactive Dashboards**: Transitioning from static tables to dynamic charts using Chart.js.
+- [ ] **Mobile-First Views**: Optimizing the admin interface for smartphones.
+
+### Phase 3: Advanced Features
+- [ ] **Import/Export Engine**: Tools to import data from CSV/Excel banking exports.
+- [ ] **REST API Endpoints**: Secure endpoints for future mobile app integrations.
+
+---
+
 ## Architecture & Security
 
 ### Secure Database Queries
@@ -76,3 +100,10 @@ $results = $wpdb->get_results(
         $family_id
     )
 );
+```
+---
+Data Access Layer
+The plugin implements a strict access control layer ensuring that users can only interact with data belonging to their assigned family ID.
+
+License
+This plugin is released under the GNU General Public License v2.0 or later.
