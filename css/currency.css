@@ -1,100 +1,281 @@
-/**
- * Специфічні стилі для модуля Валюти
- */
-.fb-currency-wrapper {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+.fb-currency-module {
+    display: grid;
+    gap: 14px;
     max-width: 100%;
-    margin: 0 auto;
+    color: #1f2933;
 }
 
-.fb-currency-controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #f9f9f9;
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-    border-bottom: none;
-    gap: 20px;
-    flex-wrap: wrap;
+.fb-currency-toolbar {
+    display: grid;
+    grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
+    gap: 12px;
+    align-items: end;
+    padding: 14px 16px;
+    border: 1px solid #d7dee7;
+    border-radius: 16px;
+    background:
+        linear-gradient(180deg, #fdfefe 0%, #f5f8fb 100%);
+    box-shadow: 0 10px 30px rgba(36, 58, 82, 0.07);
 }
 
-.fb-filter-group, .fb-add-group {
-    display: flex;
+.fb-currency-filter,
+.fb-currency-add {
+    display: grid;
     gap: 8px;
-    align-items: center;
 }
 
-/* ФІКСАЦІЯ ВИСОТИ ДЛЯ ВВОДУ */
-.fb-currency-wrapper select.fb-compact-input,
-.fb-currency-wrapper input[type="text"].fb-compact-input {
-    box-sizing: border-box !important;
-    height: 32px !important;
-    min-height: 32px !important;
-    max-height: 32px !important;
-    padding: 0 10px !important;
-    font-size: 13px !important;
-    border: 1px solid #8c8f94 !important;
-    border-radius: 3px !important;
-    margin: 0 !important;
-    line-height: normal !important;
-    vertical-align: middle !important;
-    box-shadow: none !important;
-    background-color: #fff !important;
+.fb-currency-add {
+    grid-template-columns: minmax(180px, 220px) minmax(220px, 1fr) auto;
+    align-items: end;
 }
 
-/* Індивідуальна ширина полів для кращого вигляду */
-.fb-currency-wrapper input[type="text"].fb-input-name { width: 140px !important; }
-.fb-currency-wrapper input[type="text"].fb-input-code { width: 80px !important; }
-.fb-currency-wrapper input[type="text"].fb-input-symbol { width: 60px !important; text-align: center; }
+.fb-currency-field {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+}
 
-/* Кнопка ДОДАТИ */
-.fb-currency-wrapper .fb-btn-primary {
-    box-sizing: border-box !important;
-    background: #2271b1 !important;
-    color: #fff !important;
-    border: 1px solid #2271b1 !important;
-    border-radius: 3px !important;
-    padding: 0 16px !important;
-    height: 32px !important;
-    min-height: 32px !important;
-    max-height: 32px !important;
-    font-size: 13px !important;
-    font-weight: 500 !important;
+.fb-currency-field--wide {
+    min-width: 220px;
+}
+
+.fb-currency-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #51606f;
+}
+
+.fb-currency-select,
+.fb-currency-submit,
+.fb-currency-action {
+    min-height: 42px;
+    border-radius: 12px;
+    transition:
+        border-color 0.18s ease,
+        box-shadow 0.18s ease,
+        background-color 0.18s ease,
+        color 0.18s ease,
+        transform 0.18s ease;
+}
+
+.fb-currency-select {
+    width: 100%;
+    padding: 0 14px;
+    border: 1px solid #c6d0db;
+    background: #ffffff;
+    color: #1f2933;
+    font-size: 14px;
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.fb-currency-select:focus {
+    border-color: #2f7ff0;
+    box-shadow: 0 0 0 3px rgba(47, 127, 240, 0.14);
+    outline: none;
+}
+
+.fb-currency-submit {
+    padding: 0 18px;
+    border: 1px solid #1768d0;
+    background: linear-gradient(180deg, #2888ff 0%, #1768d0 100%);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
     cursor: pointer;
-    transition: background 0.2s;
-    margin: 0 !important;
-    line-height: normal !important;
-    vertical-align: middle !important;
-    box-shadow: none !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    white-space: nowrap;
 }
 
-.fb-currency-wrapper .fb-btn-primary:hover {
-    background: #135e96 !important;
+.fb-currency-submit:hover,
+.fb-currency-submit:focus {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(23, 104, 208, 0.22);
+    outline: none;
 }
 
-/* Таблиця */
-.fb-currency-table-container { overflow-x: auto; }
-.fb-table { width: 100%; border-collapse: collapse; border: 1px solid #ddd; background: #fff; }
-.fb-table th, .fb-table td { padding: 8px 12px; border-bottom: 1px solid #eee; font-size: 13px; vertical-align: middle; }
-.fb-table th { background: #f1f1f1; text-align: left; font-weight: 600; }
-.text-center { text-align: center !important; }
+.fb-currency-submit:disabled,
+.fb-currency-action:disabled,
+.fb-currency-select:disabled {
+    cursor: not-allowed;
+    opacity: 0.66;
+    transform: none;
+    box-shadow: none;
+}
 
-/* Елементи дій */
-.fb-drag-handle { cursor: grab; color: #999; }
-.fb-drag-handle:active { cursor: grabbing; }
+.fb-currency-meta {
+    min-height: 24px;
+}
 
-.fb-actions span { cursor: pointer; margin: 0 4px; font-size: 15px; display: inline-block; }
-.fb-star { color: #ccc; transition: color 0.2s; }
-.fb-star:hover { color: #f1c40f; }
-.fb-star.is-primary { color: gold; text-shadow: 0 0 2px rgba(200, 150, 0, 0.5); }
-.fb-edit-btn { color: #2271b1; }
-.fb-save-btn { color: #46b450; }
-.fb-delete-btn { color: #d63638; }
-.hidden { display: none !important; }
+.fb-currency-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #eef3f8;
+    color: #405261;
+    font-size: 13px;
+    line-height: 1.4;
+}
 
-/* Кастомна ширина для інпутів під час inline-редагування в таблиці */
-.fb-edit-col input { width: 100% !important; max-width: 100%; padding: 0 5px !important; }
+.fb-currency-status.is-hidden {
+    display: none;
+}
+
+.fb-currency-status.is-error {
+    background: #ffe8e8;
+    color: #a12626;
+}
+
+.fb-currency-status.is-success {
+    background: #e7f7ec;
+    color: #1f7a43;
+}
+
+.fb-currency-table-wrap {
+    overflow-x: auto;
+    border: 1px solid #d7dee7;
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 12px 30px rgba(30, 48, 74, 0.06);
+}
+
+.fb-currency-table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.fb-currency-table thead th {
+    padding: 14px 12px;
+    border-bottom: 1px solid #d7dee7;
+    background: #f4f7fa;
+    color: #51606f;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+.fb-currency-table tbody td {
+    padding: 14px 12px;
+    border-bottom: 1px solid #edf1f5;
+    vertical-align: middle;
+    font-size: 14px;
+}
+
+.fb-currency-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.fb-currency-table tbody tr:hover {
+    background: #fbfdff;
+}
+
+.fb-currency-table tbody.is-loading {
+    opacity: 0.56;
+}
+
+.fb-currency-empty {
+    padding: 28px 16px;
+    text-align: center;
+    color: #6b7a88;
+}
+
+.fb-currency-drag {
+    width: 42px;
+    color: #90a0af;
+    font-size: 16px;
+    text-align: center;
+    cursor: grab;
+    user-select: none;
+}
+
+.fb-currency-drag.is-disabled {
+    cursor: default;
+    color: #c2cbd4;
+}
+
+.fb-currency-name {
+    font-weight: 700;
+    color: #1f2933;
+}
+
+.fb-currency-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 92px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.fb-currency-badge.is-primary {
+    background: #fff2d8;
+    color: #946200;
+}
+
+.fb-currency-badge.is-secondary {
+    background: #edf2f7;
+    color: #5d6a78;
+}
+
+.fb-currency-actions {
+    display: inline-flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.fb-currency-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    padding: 0;
+    border: 1px solid #d5dde6;
+    background: #ffffff;
+    color: #324558;
+    cursor: pointer;
+}
+
+.fb-currency-action:hover,
+.fb-currency-action:focus {
+    transform: translateY(-1px);
+    outline: none;
+}
+
+.fb-currency-primary:hover,
+.fb-currency-primary:focus {
+    border-color: #efc14d;
+    background: #fff8e7;
+    color: #9c6a00;
+}
+
+.fb-currency-delete:hover,
+.fb-currency-delete:focus {
+    border-color: #ef8f8f;
+    background: #fff1f1;
+    color: #bf2d2d;
+}
+
+.text-center {
+    text-align: center;
+}
+
+@media (max-width: 860px) {
+    .fb-currency-toolbar {
+        grid-template-columns: 1fr;
+    }
+
+    .fb-currency-add {
+        grid-template-columns: 1fr;
+    }
+
+    .fb-currency-submit {
+        width: 100%;
+    }
+}

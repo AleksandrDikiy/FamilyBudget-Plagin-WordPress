@@ -89,7 +89,7 @@ function fb_get_all_account_type() {
         "SELECT id, AccountType_Name
         FROM {$wpdb->prefix}AccountType
         ORDER BY AccountType_Order ASC",
-        ARRAY_A
+        'ARRAY_A'
     );
     return $types ?: false;
 }
@@ -146,7 +146,7 @@ function fb_get_categories( int $family_id ) {
             ORDER BY t.CategoryType_Order ASC, c.Category_Order ASC, c.Category_Name ASC",
             $family_id
         ),
-        ARRAY_A
+        'ARRAY_A'
     );
     return $results;
 }
@@ -165,29 +165,47 @@ function fb_get_accounts( int $family_id ) {
             ORDER BY a.Account_Order, a.Account_Name",
             $family_id
         ),
-        ARRAY_A
+        'ARRAY_A'
     );
     return $results;
 }
 
 /**
- * Отримання списку валют родини.
+ * Отримання списку валют.
+ *
+ * Якщо передано ID родини, повертає валюти, підключені до цієї родини.
+ * Якщо передано 0, повертає повний довідник валют для вибору під час додавання.
+ *
+ * @param int $family_id Ідентифікатор родини або 0 для повного довідника.
+ * @return array
  */
 function fb_get_currencies( int $family_id ) {
     global $wpdb;
-    $results = $wpdb->get_results(
-        $wpdb->prepare(
-            "SELECT c.id, c.Currency_Name as name, c.Currency_Symbol as symbol,
-                    cf.CurrencyFamily_Primary as Currency_Primary
-             FROM {$wpdb->prefix}Currency AS c
-             INNER JOIN {$wpdb->prefix}CurrencyFamily AS cf ON cf.Currency_ID = c.id
-             WHERE cf.Family_ID = %d
-             ORDER BY cf.CurrencyFamily_Primary DESC, c.Currency_Name ASC",
-            $family_id
-        ),
-        ARRAY_A
-    );
-    return $results;
+
+    if ( $family_id > 0 ) {
+        $results = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT c.id, c.Currency_Name as name, c.Currency_Symbol as symbol,
+                        c.Currency_Code as code, cf.CurrencyFamily_Primary as Currency_Primary
+                 FROM {$wpdb->prefix}Currency AS c
+                 INNER JOIN {$wpdb->prefix}CurrencyFamily AS cf ON cf.Currency_ID = c.id
+                 WHERE cf.Family_ID = %d
+                 ORDER BY cf.CurrencyFamily_Primary DESC, c.Currency_Name ASC",
+                $family_id
+            ),
+            'ARRAY_A'
+        );
+    } else {
+        $results = $wpdb->get_results(
+            "SELECT id, Currency_Name as name, Currency_Symbol as symbol, Currency_Code as code,
+                    0 as Currency_Primary
+             FROM {$wpdb->prefix}Currency
+             ORDER BY Currency_Name ASC, Currency_Code ASC",
+            'ARRAY_A'
+        );
+    }
+
+    return is_array( $results ) ? $results : array();
 }
 
 /**
@@ -233,7 +251,7 @@ function fb_get_all_category_types() {
               ORDER BY ct.CategoryType_Order ASC, ct.CategoryType_Name ASC",
             $uid
         ),
-        ARRAY_A
+        'ARRAY_A'
     );
     return $types ?: false;
 }
