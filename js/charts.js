@@ -98,31 +98,6 @@
 		} );
 	}
 
-	// ── DEBUG ────────────────────────────────────────────────
-
-	/**
-	 * Виводить SQL та параметри у debug-блок і консоль
-	 *
-	 * @param {object} data Поле data з AJAX-відповіді
-	 */
-	function showDebug( data ) {
-		if ( ! CFG.debug ) { return; }
-
-		const $block = $( '#fb-cht-debug' );
-		if ( ! $block.length ) { return; }
-
-		$block.show();
-		$( '#fb-debug-sql' ).text( data.debug_sql    || '—' );
-		$( '#fb-debug-error' ).text( data.debug_db_error || '—' );
-		$( '#fb-debug-params' ).text( data.debug_params ? JSON.stringify( data.debug_params, null, 2 ) : '—' );
-
-		console.group( '[FB Charts DEBUG]' );
-		console.log( 'SQL:', data.debug_sql || '—' );
-		console.log( 'DB Error:', data.debug_db_error || 'none' );
-		console.log( 'Params:', data.debug_params || {} );
-		console.groupEnd();
-	}
-
 	// ── PIVOT ────────────────────────────────────────────────
 
 	/**
@@ -371,8 +346,6 @@
 
 		ajax( 'fb_charts_get_data', filters )
 			.done( function ( r ) {
-				if ( r.data ) { showDebug( r.data ); }
-
 				if ( ! r.success ) {
 					overlay( ( r.data && r.data.message ) || CFG.i18n.errorLoad, false );
 					return;
@@ -396,7 +369,6 @@
 			} )
 			.fail( function ( xhr ) {
 				overlay( 'HTTP ' + xhr.status + ': ' + CFG.i18n.errorLoad, false );
-				if ( CFG.debug ) { console.error( '[FB Charts] AJAX fail:', xhr.status, xhr.responseText ); }
 			} );
 	}
 

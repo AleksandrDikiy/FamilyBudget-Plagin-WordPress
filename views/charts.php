@@ -25,23 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // ============================================================
-// РОЗДІЛ 1: РЕЖИМ НАЛАГОДЖЕННЯ
-// ============================================================
-
-/**
- * Режим налагодження SQL.
- * true — SQL та параметри повертаються у AJAX-відповідь та лог.
- * Встановіть false у production.
- *
- * @since 1.0.0
- */
-if ( ! defined( 'FB_CHARTS_DEBUG' ) ) {
-	define( 'FB_CHARTS_DEBUG', true );
-}
-
-
-// ============================================================
-// РОЗДІЛ 2: РЕЄСТРАЦІЯ AJAX-ОБРОБНИКІВ
+// РОЗДІЛ 1: РЕЄСТРАЦІЯ AJAX-ОБРОБНИКІВ
 // ============================================================
 
 add_action( 'wp_ajax_fb_charts_get_data',        'fb_charts_ajax_get_data' );
@@ -49,7 +33,7 @@ add_action( 'wp_ajax_fb_charts_get_filter_data', 'fb_charts_ajax_get_filter_data
 
 
 // ============================================================
-// РОЗДІЛ 3: AJAX-ОБРОБНИКИ
+// РОЗДІЛ 2: AJAX-ОБРОБНИКИ
 // ============================================================
 
 /**
@@ -158,7 +142,7 @@ function fb_charts_ajax_get_filter_data(): void {
 
 
 // ============================================================
-// РОЗДІЛ 4: БІЗНЕС-ЛОГІКА ТА ДОПОМІЖНІ ФУНКЦІЇ
+// РОЗДІЛ 3: БІЗНЕС-ЛОГІКА ТА ДОПОМІЖНІ ФУНКЦІЇ
 // ============================================================
 
 /**
@@ -372,8 +356,6 @@ function fb_charts_resolve_period_dates( string $period, string $date_begin = ''
  * Фільтр "Операції" → c.CategoryType_ID: категорія прив'язана до типу (Витрати/Доходи),
  * тому пряма умова `c.CategoryType_ID = %d` коректно розділяє потоки.
  *
- * При FB_CHARTS_DEBUG = true: повертає debug_sql, debug_db_error, debug_params.
- *
  * @since  1.0.0
  * @param  int    $family_id
  * @param  string $group_by         day|month|year
@@ -383,7 +365,7 @@ function fb_charts_resolve_period_dates( string $period, string $date_begin = ''
  * @param  string $date_start       Дата Y-m-d
  * @param  string $date_end         Дата Y-m-d
  * @param  int    $amount_type_id   ID з wp_AmountType (0 = не застосовувати фільтр) // ДОДАНО
- * @return array { rows, total, debug_sql?, debug_db_error?, debug_params? }
+ * @return array { rows, total }
  */
 function fb_charts_fetch_category_data(
 	int $family_id,
@@ -469,8 +451,6 @@ function fb_charts_fetch_category_data(
 	// phpcs:enable
 
 	$rows     = $wpdb->get_results( $sql );
-	$db_error = $wpdb->last_error;
-
 	$result = array();
 	$total  = 0.0;
 
@@ -487,38 +467,15 @@ function fb_charts_fetch_category_data(
 		}
 	}
 
-	$response = array(
+	return array(
 		'rows'  => $result,
 		'total' => round( $total, 2 ),
 	);
-
-	if ( FB_CHARTS_DEBUG ) {
-		$response['debug_sql']      = $sql;
-		$response['debug_db_error'] = $db_error ?: null;
-		$response['debug_params']   = array(
-			'family_id'        => $family_id,
-			'group_by'         => $group_by,
-			'category_type_id' => $category_type_id,
-			'amount_type_id'   => $amount_type_id, // ДОДАНО
-			'date_start'       => $date_start,
-			'date_end'         => $date_end,
-			'categories'       => $categories,
-			'accounts'         => $accounts,
-		);
-		// phpcs:ignore WordPress.PHP.DevelopmentFunctions
-		error_log( '[FB Charts SQL] ' . $sql );
-		if ( $db_error ) {
-			// phpcs:ignore WordPress.PHP.DevelopmentFunctions
-			error_log( '[FB Charts DB Error] ' . $db_error );
-		}
-	}
-
-	return $response;
 }
 
 
 // ============================================================
-// РОЗДІЛ 5: HTML-РЕНДЕРИНГ СТОРІНКИ
+// РОЗДІЛ 4: HTML-РЕНДЕРИНГ СТОРІНКИ
 // ============================================================
 
 /**
@@ -586,7 +543,6 @@ function fb_charts_render_page(): void {
 			'categoryTypes'     => $category_types,
 			'initialCategories' => $initial_categories,
 			'initialAccounts'   => $initial_accounts,
-			'debug'             => FB_CHARTS_DEBUG,
 			'i18n'              => array(
 				'loading'     => 'Завантаження...',
 				'noData'      => 'Дані за вказаний період відсутні',
@@ -729,16 +685,6 @@ function fb_charts_render_page(): void {
 				<span class="fb-cht-msg" id="fb-chart-msg"></span>
 			</div>
 		</div>
-
-		<?php /* ЗМІНЕНО: Блок SQL-налагодження (перенесено нижче графіка, додано колір та перевірку ролей) */ ?>
-		<?php if ( FB_CHARTS_DEBUG && ( current_user_can( 'administrator' ) || current_user_can( 'fb_admin' ) ) ) : ?>
-		<div class="fb-cht-debug" id="fb-cht-debug" style="display:none; color: #000;">
-			<strong>SQL:</strong><pre id="fb-debug-sql" style="color: #000;"></pre>
-			<strong>DB Error:</strong><pre id="fb-debug-error" style="color: #000;"></pre>
-			<strong>Params:</strong><pre id="fb-debug-params" style="color: #000;"></pre>
-		</div>
-		<?php endif; ?>
-
 	</div><?php /* .fb-cht-module */ ?>
 	<?php
 }

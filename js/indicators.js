@@ -288,7 +288,6 @@ jQuery( document ).ready( function ( $ ) {
     const $csvFileInput  = $( '#fb-ind-csv-file' );
     const $importTrigger = $( '#fb-ind-import-btn' );
     const $importBox     = $( '#fb-ind-import-box' );
-    const $debugPanel    = $( '#fb-ind-debug-panel' );
     const $addFormInputs = $( '#fb-ind-add-form :input' );
     const $filterInputs  = $( '#fb-ind-f-family, #fb-ind-f-account, #fb-ind-f-year, #fb-ind-f-month' );
 
@@ -375,8 +374,7 @@ jQuery( document ).ready( function ( $ ) {
     } );
 
     /**
-     * Рендерить фінальний звіт імпорту всередині Thickbox
-     * та debug-панель на сторінці нижче таблиці.
+     * Рендерить фінальний звіт імпорту всередині Thickbox.
      *
      * @param {Object} res Відповідь WordPress AJAX.
      */
@@ -425,102 +423,11 @@ jQuery( document ).ready( function ( $ ) {
 
         fbIndUpdateDisplay( html );
 
-        // Рендеримо debug-панель на сторінці
-        if ( d.debug_log && d.debug_log.length ) {
-            renderDebugPanel( d.debug_log );
-        }
-
         // Оновлюємо таблицю якщо є успішні рядки
         if ( parseInt( d.imported || 0 ) > 0 ) {
             loadIndicators( currentPage );
         }
     }
-
-    /**
-     * Рендерить debug-панель із SQL-запитами та параметрами під таблицею.
-     *
-     * @param {Array} log Масив записів відлагодження з PHP.
-     */
-    function renderDebugPanel( log ) {
-        let html = '<div class="fb-dbg-header">'
-                 + '<span class="fb-dbg-title">🐛 Debug: Імпорт CSV — ' + log.length + ' рядків</span>'
-                 + '<button type="button" class="fb-dbg-toggle" data-open="1">▲ Згорнути</button>'
-                 + '</div>'
-                 + '<div class="fb-dbg-body">';
-
-        log.forEach( function ( entry ) {
-            const isOk      = entry.action === 'insert' || entry.action === 'update';
-            const isSkip    = entry.action === 'skip';
-            const isError   = entry.action === 'error';
-            const rowClass  = isOk ? 'fb-dbg-row-ok' : ( isSkip ? 'fb-dbg-row-skip' : 'fb-dbg-row-err' );
-            const actionIcon = isOk ? '✔' : ( isSkip ? '⊘' : '✖' );
-
-            html += '<div class="fb-dbg-row ' + rowClass + '">';
-
-            // Заголовок рядка
-            html += '<div class="fb-dbg-row-head">'
-                  + '<span class="fb-dbg-row-num">#' + entry.row + '</span>'
-                  + '<span class="fb-dbg-action">' + actionIcon + ' ' + escHtml( entry.action ) + '</span>'
-                  + '<span class="fb-dbg-account">' + escHtml( entry.account || '—' ) + '</span>'
-                  + '<span class="fb-dbg-period">' + entry.month + '/' + entry.year + '</span>';
-
-            if ( entry.sum_str ) {
-                html += '<span class="fb-dbg-sum">sum: <b>' + escHtml( entry.sum_str ) + '</b></span>';
-            }
-            html += '</div>';
-
-            // SQL пошуку рахунку
-            if ( entry.pa_sql ) {
-                html += '<div class="fb-dbg-sql-block">'
-                      + '<span class="fb-dbg-label">PA SQL</span>'
-                      + '<span class="fb-dbg-sql-tag ' + ( entry.pa_id ? 'tag-ok' : 'tag-err' ) + '">'
-                      + 'pa_id=' + entry.pa_id + '</span>'
-                      + '<code class="fb-dbg-sql">' + escHtml( entry.pa_sql ) + '</code>'
-                      + '</div>';
-            }
-
-            // SQL пошуку суми
-            if ( entry.amount_sql ) {
-                const amtClass = entry.amount_id ? 'tag-ok' : 'tag-warn';
-                const amtLabel = entry.amount_id
-                    ? 'amount_id=' + entry.amount_id
-                    : 'matches=' + entry.matches + ' (пропущено)';
-                html += '<div class="fb-dbg-sql-block">'
-                      + '<span class="fb-dbg-label">AMOUNT SQL</span>'
-                      + '<span class="fb-dbg-sql-tag ' + amtClass + '">' + amtLabel + '</span>'
-                      + '<code class="fb-dbg-sql">' + escHtml( entry.amount_sql ) + '</code>'
-                      + '</div>';
-            } else if ( entry.sum_raw && ! entry.amount_sql ) {
-                html += '<div class="fb-dbg-sql-block">'
-                      + '<span class="fb-dbg-label">AMOUNT SQL</span>'
-                      + '<span class="fb-dbg-sql-tag tag-warn">sum порожній або 0 — пошук пропущено</span>'
-                      + '</div>';
-            }
-
-            // Помилка рядка
-            if ( entry.error ) {
-                html += '<div class="fb-dbg-error-line">⚠ ' + escHtml( entry.error ) + '</div>';
-            }
-
-            html += '</div>';
-        } );
-
-        html += '</div>'; // .fb-dbg-body
-        $debugPanel.html( html ).show();
-    }
-
-    // Toggle згорнути/розгорнути debug-панель
-    $( document ).on( 'click.fbind', '.fb-dbg-toggle', function () {
-        const $btn  = $( this );
-        const $body = $debugPanel.find( '.fb-dbg-body' );
-        if ( $btn.data( 'open' ) ) {
-            $body.hide();
-            $btn.text( '▼ Розгорнути' ).data( 'open', 0 );
-        } else {
-            $body.show();
-            $btn.text( '▲ Згорнути' ).data( 'open', 1 );
-        }
-    } );
 
     /**
      * Повертає HTML кнопки закриття Thickbox.

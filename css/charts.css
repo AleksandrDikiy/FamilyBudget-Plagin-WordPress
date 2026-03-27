@@ -274,32 +274,6 @@
 	accent-color : #3b82f6 !important;
 }
 
-/* ── DEBUG-БЛОК ────────────────────────────────────────────── */
-
-#fb-cht-module .fb-cht-debug {
-	flex-shrink   : 0 !important;
-	background    : #1e1e2e !important;
-	color         : #cdd6f4 !important;
-	padding       : 5px 10px !important;
-	font-size     : 11px !important;
-	border-bottom : 1px solid #313244 !important;
-	max-height    : 110px !important;
-	overflow-y    : auto !important;
-}
-
-#fb-cht-module .fb-cht-debug pre {
-	margin      : 2px 0 5px !important;
-	white-space : pre-wrap !important;
-	word-break  : break-all !important;
-	font-size   : 10px !important;
-	color       : #a6e3a1 !important;
-}
-
-#fb-cht-module .fb-cht-debug strong {
-	color     : #89b4fa !important;
-	font-size : 10px !important;
-}
-
 /* ── ОБЛАСТЬ ГРАФІКА ───────────────────────────────────────── */
 
 #fb-cht-module .fb-cht-area {

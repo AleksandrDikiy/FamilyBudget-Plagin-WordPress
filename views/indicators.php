@@ -315,10 +315,6 @@ function fb_shortcode_indicators_interface(): string {
         </div><!-- .fb-ind-table-container -->
 
     </div><!-- .fb-ind-wrapper -->
-
-    <!-- ═══ DEBUG ПАНЕЛЬ ІМПОРТУ ═══ -->
-    <div id="fb-ind-debug-panel" class="fb-ind-debug-panel" style="display:none;"></div>
-
     <!-- Модальне вікно прив'язки платежу -->
     <div id="fb-ind-modal" class="fb-ind-modal-overlay" style="display:none;">
         <div class="fb-ind-modal-box">

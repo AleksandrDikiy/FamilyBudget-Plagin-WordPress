@@ -123,6 +123,7 @@ $fb_modules = [
 	'views/currency-admin.php',
 	'views/parameter-type.php',
 	'views/charts.php',
+	'views/utility_analytics.php',
 	'views/communal.php',
     'views/home.php',
     'views/houses.php',
@@ -191,6 +192,28 @@ add_action( 'wp_footer', function() {
     }
 } );
 
+/**
+ * Безпечно рендерить шорткод аналітики комунальних платежів.
+ *
+ * Якщо файл модуля з будь-якої причини ще не підключений, підвантажує його
+ * безпосередньо перед викликом основної функції шорткоду.
+ *
+ * @return string
+ */
+function fb_render_utility_analytics_shortcode(): string {
+	$module_path = FB_PLUGIN_DIR . 'views/utility_analytics.php';
+
+	if ( ! function_exists( 'fb_shortcode_utility_analytics_interface' ) && file_exists( $module_path ) ) {
+		require_once $module_path;
+	}
+
+	if ( ! is_callable( 'fb_shortcode_utility_analytics_interface' ) ) {
+		return '<p>' . esc_html__( 'Модуль аналітики тимчасово недоступний.', 'family-budget' ) . '</p>';
+	}
+
+	return fb_shortcode_utility_analytics_interface();
+}
+
 
 /**
  * РЕГІСТРАЦІЯ ШОРТКОДІВ
@@ -201,7 +224,6 @@ add_shortcode( 'fb_accounts', 'fb_shortcode_accounts' );
 add_shortcode( 'fb_categories', 'fb_shortcode_categories_interface' );
 add_shortcode( 'fb_budget', 'fb_render_budget_interface' );
 add_shortcode( 'fb_analytics', 'fb_render_analytics_module' ); // аналітика
-//add_shortcode( 'fb_charts', 'fb_render_charts_module' ); // графіки
 add_shortcode( 'fb_charts', 'fb_charts_render_page' ); // графіки
 
 add_shortcode( 'fb_account_type', 'fb_render_account_type_interface' );
@@ -210,7 +232,7 @@ add_shortcode( 'fb_amount_type', 'fb_render_amount_type_interface' );
 add_shortcode( 'fb_parameter_type', 'fb_render_parameter_type_interface' );
 add_shortcode( 'fb_home', 'fb_shortcode_home_interface' );
 // комуналка
-//add_shortcode( 'fb_houses', 'fb_shortcode_houses_interface' );
+add_shortcode( 'fb_utility_analytics', 'fb_render_utility_analytics_shortcode' );
 
 
 /**
@@ -257,6 +279,7 @@ function fb_render_admin_page(): void {
 					'fb_categories' => array( __( 'Категорії доходів/витрат. Сортування ▲▼, AJAX редагування', 'family-budget' ), 'auth' ),
 					'fb_analytics'  => array( __( 'Аналітика витрат та доходів по категоріях', 'family-budget' ), 'auth' ),
 					'fb_charts'     => array( __( 'Графіки фінансових показників', 'family-budget' ), 'auth' ),
+					'fb_utility_analytics' => array( __( 'Аналітика споживання комунальних послуг', 'family-budget' ), 'auth' ),
 				);
 				foreach ( $fb_shortcodes as $sc => $info ) :
 					?>
