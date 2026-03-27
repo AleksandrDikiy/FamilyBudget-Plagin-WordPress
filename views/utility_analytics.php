@@ -384,14 +384,18 @@ function fb_utility_analytics_get_chart_rows(
 
 	$sql = "SELECT {$group_sql['label']} AS period_label,
 	               {$group_sql['order']} AS period_sort,
+	               h.id AS house_id,
+	               CONCAT(h.houses_city, ', ', h.houses_street, ' ', h.houses_number) AS house_name,
+	               t.id AS account_type_id,
+	               t.personal_accounts_type_name AS account_type_name,
 	               ROUND(SUM(s.indicators_consumed), 3) AS total_consumed
 	        FROM {$wpdb->prefix}indicators AS s
 	        INNER JOIN {$wpdb->prefix}personal_accounts AS p ON p.id = s.id_personal_accounts
 	        INNER JOIN {$wpdb->prefix}personal_accounts_type AS t ON t.id = p.id_personal_accounts_type
 	        INNER JOIN {$wpdb->prefix}houses AS h ON h.id = p.id_houses
 	        WHERE " . implode( ' AND ', $where ) . "
-	        GROUP BY period_label
-	        ORDER BY period_sort ASC";
+	        GROUP BY period_label, house_id, house_name, account_type_id, account_type_name
+	        ORDER BY period_sort ASC, house_name ASC, account_type_name ASC";
 
 	// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 	$prepared = $wpdb->prepare( $sql, $args );
@@ -480,20 +484,57 @@ function fb_utility_analytics_get_available_range(
  */
 function fb_utility_analytics_prepare_chart_payload( array $rows ): array {
 	$labels         = array();
-	$values         = array();
+	$series_map     = array();
 	$total_consumed = 0.0;
 
 	foreach ( $rows as $row ) {
-		$labels[]         = isset( $row->period_label ) ? (string) $row->period_label : '';
-		$values[]         = isset( $row->total_consumed ) ? (float) $row->total_consumed : 0.0;
-		$total_consumed  += isset( $row->total_consumed ) ? (float) $row->total_consumed : 0.0;
+		$period_label      = isset( $row->period_label ) ? (string) $row->period_label : '';
+		$house_name        = isset( $row->house_name ) ? (string) $row->house_name : '';
+		$account_type_name = isset( $row->account_type_name ) ? (string) $row->account_type_name : '';
+		$total_value       = isset( $row->total_consumed ) ? (float) $row->total_consumed : 0.0;
+		$series_key        = md5( $house_name . '|' . $account_type_name );
+		$series_label      = trim( $house_name . ' / ' . $account_type_name, ' /' );
+
+		if ( '' !== $period_label && ! in_array( $period_label, $labels, true ) ) {
+			$labels[] = $period_label;
+		}
+
+		if ( ! isset( $series_map[ $series_key ] ) ) {
+			$series_map[ $series_key ] = array(
+				'label'             => $series_label,
+				'house_name'        => $house_name,
+				'account_type_name' => $account_type_name,
+				'points'            => array(),
+			);
+		}
+
+		$series_map[ $series_key ]['points'][ $period_label ] = $total_value;
+		$total_consumed += $total_value;
+	}
+
+	$datasets = array();
+
+	foreach ( $series_map as $series ) {
+		$dataset_values = array();
+
+		foreach ( $labels as $label ) {
+			$dataset_values[] = isset( $series['points'][ $label ] ) ? (float) $series['points'][ $label ] : 0.0;
+		}
+
+		$datasets[] = array(
+			'label'             => $series['label'],
+			'house_name'        => $series['house_name'],
+			'account_type_name' => $series['account_type_name'],
+			'data'              => $dataset_values,
+		);
 	}
 
 	return array(
 		'labels'          => $labels,
-		'values'          => $values,
+		'datasets'        => $datasets,
 		'total_consumed'  => round( $total_consumed, 3 ),
 		'periods_count'   => count( $labels ),
+		'series_count'    => count( $datasets ),
 		'available_range' => null,
 	);
 }
@@ -693,7 +734,10 @@ function fb_shortcode_utility_analytics_interface(): string {
 			'requestedRange' => __( 'У вибраному діапазоні даних немає', 'family-budget' ),
 			'total'       => __( 'Загальне споживання', 'family-budget' ),
 			'periods'     => __( 'Кількість періодів', 'family-budget' ),
+			'series'      => __( 'Кількість серій', 'family-budget' ),
 			'consumed'    => __( 'Спожито', 'family-budget' ),
+			'house'       => __( 'Оселя', 'family-budget' ),
+			'accountType' => __( 'Тип рахунку', 'family-budget' ),
 			'update'      => __( 'Оновити', 'family-budget' ),
 			'allFamilies' => __( 'Всі родини', 'family-budget' ),
 			'allHouses'   => __( 'Всі оселі', 'family-budget' ),

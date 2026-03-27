@@ -3,10 +3,16 @@
 	'use strict';
 
 	const INSTANCES = window.fbUtilityAnalyticsInstances || {};
-	const COLORS = {
-		fill: 'rgba(37, 99, 235, 0.72)',
-		border: 'rgba(29, 78, 216, 1)',
-	};
+	const PALETTE = [
+		{ fill: 'rgba(37, 99, 235, 0.72)', border: 'rgba(29, 78, 216, 1)' },
+		{ fill: 'rgba(14, 165, 233, 0.72)', border: 'rgba(3, 105, 161, 1)' },
+		{ fill: 'rgba(16, 185, 129, 0.72)', border: 'rgba(4, 120, 87, 1)' },
+		{ fill: 'rgba(245, 158, 11, 0.72)', border: 'rgba(180, 83, 9, 1)' },
+		{ fill: 'rgba(239, 68, 68, 0.72)', border: 'rgba(185, 28, 28, 1)' },
+		{ fill: 'rgba(168, 85, 247, 0.72)', border: 'rgba(126, 34, 206, 1)' },
+		{ fill: 'rgba(236, 72, 153, 0.72)', border: 'rgba(190, 24, 93, 1)' },
+		{ fill: 'rgba(132, 204, 22, 0.72)', border: 'rgba(77, 124, 15, 1)' },
+	];
 
 	Object.keys( INSTANCES ).forEach( function ( key ) {
 		initModule( INSTANCES[ key ] );
@@ -158,16 +164,16 @@
 
 					const data = response.data || {};
 					const labels = data.labels || [];
-					const values = data.values || [];
+					const datasets = data.datasets || [];
 
-					if ( ! labels.length ) {
+					if ( ! labels.length || ! datasets.length ) {
 						showStatus( buildNoDataMessage( data ), false );
 						renderEmpty();
 						return;
 					}
 
 					hideStatus();
-					renderChart( labels, values );
+					renderChart( labels, datasets );
 					renderSummary( data );
 				} )
 				.fail( function ( xhr ) {
@@ -180,38 +186,66 @@
 				} );
 		}
 
-		function renderChart( labels, values ) {
+		function renderChart( labels, datasetRows ) {
 			if ( chart ) {
 				chart.destroy();
 			}
+
+			const datasets = datasetRows.map( function ( dataset, index ) {
+				const colors = PALETTE[ index % PALETTE.length ];
+
+				return {
+					label: dataset.label || cfg.i18n.consumed,
+					data: Array.isArray( dataset.data ) ? dataset.data : [],
+					backgroundColor: colors.fill,
+					borderColor: colors.border,
+					borderWidth: 1,
+					borderRadius: 4,
+					maxBarThickness: 42,
+					houseName: dataset.house_name || '',
+					accountTypeName: dataset.account_type_name || '',
+				};
+			} );
 
 			chart = new Chart( els.canvas.getContext( '2d' ), {
 				type: 'bar',
 				data: {
 					labels: labels,
-					datasets: [
-						{
-							label: cfg.i18n.consumed,
-							data: values,
-							backgroundColor: COLORS.fill,
-							borderColor: COLORS.border,
-							borderWidth: 1,
-							borderRadius: 4,
-							maxBarThickness: 42,
-						},
-					],
+					datasets: datasets,
 				},
 				options: {
 					responsive: true,
 					maintainAspectRatio: false,
 					plugins: {
 						legend: {
-							display: false,
+							display: true,
+							position: 'bottom',
+							labels: {
+								boxWidth: 14,
+								boxHeight: 14,
+								padding: 14,
+								color: '#334155',
+							},
 						},
 						tooltip: {
 							callbacks: {
 								label: function ( context ) {
-									return cfg.i18n.consumed + ': ' + formatNumber( context.parsed.y );
+									const dataset = context.dataset || {};
+									return ( dataset.label || cfg.i18n.consumed ) + ': ' + formatNumber( context.parsed.y );
+								},
+								afterLabel: function ( context ) {
+									const dataset = context.dataset || {};
+									const details = [];
+
+									if ( dataset.houseName ) {
+										details.push( cfg.i18n.house + ': ' + dataset.houseName );
+									}
+
+									if ( dataset.accountTypeName ) {
+										details.push( cfg.i18n.accountType + ': ' + dataset.accountTypeName );
+									}
+
+									return details;
 								},
 							},
 						},
@@ -250,10 +284,12 @@
 		function renderSummary( data ) {
 			const total = formatNumber( data.total_consumed || 0 );
 			const periodsCount = parseInt( data.periods_count, 10 ) || 0;
+			const seriesCount = parseInt( data.series_count, 10 ) || 0;
 
 			els.summary.innerHTML =
 				'<strong>' + escHtml( cfg.i18n.total ) + ':</strong> ' + total +
-				' <strong>' + escHtml( cfg.i18n.periods ) + ':</strong> ' + periodsCount;
+				' <strong>' + escHtml( cfg.i18n.periods ) + ':</strong> ' + periodsCount +
+				' <strong>' + escHtml( cfg.i18n.series ) + ':</strong> ' + seriesCount;
 		}
 
 		function showStatus( message, loading ) {
