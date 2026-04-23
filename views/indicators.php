@@ -2,6 +2,8 @@
 /**
  * Модуль Показників лічильників (Family Budget)
  * Шорткод: [fb_indicators]
+ * Version: 1.0.1
+ * Date_update: 2026-04-23
  *
  * @package FamilyBudget
  */
@@ -542,6 +544,56 @@ function fb_ajax_ind_add(): void {
         wp_send_json_success( [ 'message' => 'Показник додано.' ] );
     } else {
         wp_send_json_error( [ 'message' => 'Помилка запису: ' . $wpdb->last_error ] );
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * AJAX — ОТРИМАННЯ ПОПЕРЕДНІХ ПОКАЗНИКІВ (ДЛЯ АВТОПІДРАХУНКУ)
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+/**
+ * AJAX: Повертає значення лічильників за останній доступний період до вказаної дати.
+ *
+ * @return void
+ */
+add_action( 'wp_ajax_fb_ajax_ind_get_prev', 'fb_ajax_ind_get_prev' );
+function fb_ajax_ind_get_prev(): void {
+    fb_ind_verify_request();
+
+    $uid   = get_current_user_id();
+    $pa_id = absint( $_POST['pa_id'] ?? 0 );
+    $month = absint( $_POST['month'] ?? 0 );
+    $year  = absint( $_POST['year']  ?? 0 );
+
+    if ( ! $pa_id || ! $month || ! $year ) {
+        wp_send_json_error();
+    }
+
+    // Перевірка прав власності на рахунок (безпека)
+    if ( ! fb_ind_user_owns_pa( $pa_id, $uid ) ) {
+        wp_send_json_error( [ 'message' => 'Доступ заборонено.' ] );
+    }
+
+    global $wpdb;
+
+    // Шукаємо найсвіжіший запис до вибраної дати
+    $row = $wpdb->get_row( $wpdb->prepare(
+            "SELECT indicators_value1, indicators_value2
+         FROM {$wpdb->prefix}indicators
+         WHERE id_personal_accounts = %d
+           AND (indicators_year < %d OR (indicators_year = %d AND indicators_month < %d))
+         ORDER BY indicators_year DESC, indicators_month DESC
+         LIMIT 1",
+            $pa_id, $year, $year, $month
+    ) );
+
+    if ( $row ) {
+        wp_send_json_success( [
+                'val1' => $row->indicators_value1,
+                'val2' => $row->indicators_value2
+        ] );
+    } else {
+        wp_send_json_success( [ 'val1' => null, 'val2' => null ] );
     }
 }
 

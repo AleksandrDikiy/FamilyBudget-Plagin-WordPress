@@ -1,6 +1,8 @@
 /**
  * Family Budget — Модуль Показників лічильників
  * Версія з пагінацією (20 рядків на сторінку)
+ * * Version: 1.1.1
+ * Date_update: 2026-04-23
  */
 jQuery( document ).ready( function ( $ ) {
 
@@ -93,9 +95,75 @@ jQuery( document ).ready( function ( $ ) {
         if ( page ) loadIndicators( page );
     } );
 
-    /* ─── ФОРМА ДОДАВАННЯ ────────────────────────────────────────────────── */
+    /* ─── ФОРМА ДОДАВАННЯ ТА АВТОПІДРАХУНОК ──────────────────────────────── */
 
-    $( '#fb-ind-add-form' ).on( 'submit.fbind', function ( e ) {
+    const $addForm = $( '#fb-ind-add-form' );
+    const $addPa = $addForm.find( '[name="id_personal_accounts"]' );
+    const $addMonth = $addForm.find( '[name="indicators_month"]' );
+    const $addYear = $addForm.find( '[name="indicators_year"]' );
+    const $addVal1 = $addForm.find( '[name="indicators_value1"]' );
+    const $addVal2 = $addForm.find( '[name="indicators_value2"]' );
+    const $addConsumed = $addForm.find( '[name="indicators_consumed"]' );
+
+    // Запит попередніх показників із бази
+    function fetchPrevValuesForAdd() {
+        const pa_id = $addPa.val();
+        const month = $addMonth.val();
+        const year = $addYear.val();
+
+        if ( ! pa_id || ! month || ! year ) return;
+
+        $.post( fbIndObj.ajax_url, {
+            action:   'fb_ajax_ind_get_prev',
+            security: fbIndObj.nonce,
+            pa_id:    pa_id,
+            month:    month,
+            year:     year
+        }, function ( res ) {
+            if ( res.success ) {
+                $addForm.data( 'prev-val1', res.data.val1 !== null ? parseFloat( res.data.val1 ) : null );
+                $addForm.data( 'prev-val2', res.data.val2 !== null ? parseFloat( res.data.val2 ) : null );
+                calcAddConsumed(); // Перераховуємо якщо поля вже заповнені
+            }
+        });
+    }
+
+    // Тригеримо завантаження при зміні будь-якого параметра періоду чи рахунку
+    $addPa.on( 'change.fbind', fetchPrevValuesForAdd );
+    $addMonth.on( 'change.fbind', fetchPrevValuesForAdd );
+    $addYear.on( 'change.fbind', fetchPrevValuesForAdd );
+
+    // Безпосередній підрахунок споживання
+    function calcAddConsumed() {
+        const p1 = $addForm.data( 'prev-val1' );
+        const p2 = $addForm.data( 'prev-val2' );
+        const c1 = parseFloat( $addVal1.val() );
+        const c2 = parseFloat( $addVal2.val() );
+
+        let sum = 0;
+        let calculated = false;
+
+        // Рахуємо Значення 1
+        if ( p1 !== null && p1 !== undefined && !isNaN( c1 ) && c1 >= p1 ) {
+            sum += ( c1 - p1 );
+            calculated = true;
+        }
+        // Рахуємо Значення 2
+        if ( p2 !== null && p2 !== undefined && !isNaN( c2 ) && c2 >= p2 ) {
+            sum += ( c2 - p2 );
+            calculated = true;
+        }
+
+        // Вставляємо автоматично, залишаючи можливість ручної правки опісля
+        if ( calculated ) {
+            $addConsumed.val( sum.toFixed( 3 ) );
+        }
+    }
+
+    $addVal1.on( 'input.fbind', calcAddConsumed );
+    $addVal2.on( 'input.fbind', calcAddConsumed );
+
+    $addForm.on( 'submit.fbind', function ( e ) {
         e.preventDefault();
 
         const $btn = $( this ).find( '.fb-btn-primary' ).prop( 'disabled', true );
@@ -124,11 +192,57 @@ jQuery( document ).ready( function ( $ ) {
         $tr.find( '.fb-edit-mode' ).removeClass( 'hidden' );
         $tr.find( '.fb-save-btn' ).removeClass( 'hidden' );
         $tr.find( '.fb-ind-edit-consumed' ).trigger( 'focus' );
+
+        const pa_id = $tr.find( '.fb-ind-edit-pa' ).val();
+        const month = $tr.find( '.fb-ind-edit-month' ).val();
+        const year  = $tr.find( '.fb-ind-edit-year' ).val();
+
+        // Завантажуємо попередні показники для підрахунку у цьому рядку
+        $.post( fbIndObj.ajax_url, {
+            action:   'fb_ajax_ind_get_prev',
+            security: fbIndObj.nonce,
+            pa_id:    pa_id,
+            month:    month,
+            year:     year
+        }, function ( res ) {
+            if ( res.success ) {
+                $tr.data( 'prev-val1', res.data.val1 !== null ? parseFloat( res.data.val1 ) : null );
+                $tr.data( 'prev-val2', res.data.val2 !== null ? parseFloat( res.data.val2 ) : null );
+            }
+        });
+
+        // Біндимо підрахунок на зміну полів (через неймспейс fbcalc)
+        $tr.find( '.fb-ind-edit-val1, .fb-ind-edit-val2' ).off( 'input.fbcalc' ).on( 'input.fbcalc', function() {
+            const p1 = $tr.data( 'prev-val1' );
+            const p2 = $tr.data( 'prev-val2' );
+            const c1 = parseFloat( $tr.find( '.fb-ind-edit-val1' ).val() );
+            const c2 = parseFloat( $tr.find( '.fb-ind-edit-val2' ).val() );
+            const $cons = $tr.find( '.fb-ind-edit-consumed' );
+
+            let sum = 0;
+            let calculated = false;
+
+            if ( p1 !== null && p1 !== undefined && !isNaN( c1 ) && c1 >= p1 ) {
+                sum += ( c1 - p1 );
+                calculated = true;
+            }
+            if ( p2 !== null && p2 !== undefined && !isNaN( c2 ) && c2 >= p2 ) {
+                sum += ( c2 - p2 );
+                calculated = true;
+            }
+
+            if ( calculated ) {
+                $cons.val( sum.toFixed( 3 ) );
+            }
+        });
     } );
 
     $tbody.on( 'click.fbind', '.fb-save-btn', function () {
         const $btn = $( this ).prop( 'disabled', true );
         const $tr  = $btn.closest( 'tr' );
+
+        // Очищаємо слухачі калькулятора перед збереженням
+        $tr.find( '.fb-ind-edit-val1, .fb-ind-edit-val2' ).off( 'input.fbcalc' );
 
         $.post( fbIndObj.ajax_url, {
             action:   'fb_ajax_ind_edit',
