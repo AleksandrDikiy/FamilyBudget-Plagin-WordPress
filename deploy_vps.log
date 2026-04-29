@@ -1,0 +1,21 @@
+2026-04-29 16:36:24 - ==========================================
+2026-04-29 16:36:24 -  🚀 FamilyBudget – Deploy to VPS
+2026-04-29 16:36:24 - ==========================================
+2026-04-29 16:36:24 - [1/4] Перевірка локальної папки та SSH-з'єднання…
+2026-04-29 16:36:24 - ❌ ERROR: Source directory not found: /home/dav/PHP/FamilyBudget-Plagin-WordPress/plugin/
+2026-04-29 16:36:58 - ==========================================
+2026-04-29 16:36:58 -  🚀 FamilyBudget – Deploy to VPS
+2026-04-29 16:36:58 - ==========================================
+2026-04-29 16:36:58 - [1/4] Перевірка локальної папки та SSH-з'єднання…
+2026-04-29 16:36:59 - ❌ ERROR: Неможливо підключитися до сервера root@69.62.126.248!
+2026-04-29 16:37:25 - ==========================================
+2026-04-29 16:37:25 -  🚀 FamilyBudget – Deploy to VPS
+2026-04-29 16:37:25 - ==========================================
+2026-04-29 16:37:25 - [1/4] Перевірка локальної папки та SSH-з'єднання…
+2026-04-29 16:37:27 -       OK. (⏱ Зайняло: 2 сек.)
+2026-04-29 16:37:27 - [2/4] Створення бекапу попередньої версії на сервері…
+tar (child): /var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget_backup_2026-04-29_13-37-28.tar.gz: Cannot open: Permission denied
+tar (child): Error is not recoverable: exiting now
+tar: /var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget_backup_2026-04-29_13-37-28.tar.gz: Cannot write: Broken pipe
+tar: Child returned status 2
+tar: Error is not recoverable: exiting now
