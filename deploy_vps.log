@@ -19,3 +19,439 @@ tar (child): Error is not recoverable: exiting now
 tar: /var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget_backup_2026-04-29_13-37-28.tar.gz: Cannot write: Broken pipe
 tar: Child returned status 2
 tar: Error is not recoverable: exiting now
+
+
+
+2026-04-29 16:49:11 - ==========================================
+2026-04-29 16:49:11 -  🚀 FamilyBudget – Deploy to VPS
+2026-04-29 16:49:11 - ==========================================
+2026-04-29 16:49:11 - [1/4] Перевірка локальної папки та SSH-з'єднання…
+2026-04-29 16:49:11 - ❌ ERROR: Локальну папку не знайдено: /home/dav/PHP/FamilyBudget-Plagin-WordPress/plugin/
+2026-04-29 16:49:33 - ==========================================
+2026-04-29 16:49:33 -  🚀 FamilyBudget – Deploy to VPS
+2026-04-29 16:49:33 - ==========================================
+2026-04-29 16:49:33 - [1/4] Перевірка локальної папки та SSH-з'єднання…
+2026-04-29 16:49:34 -       OK. (⏱ Зайняло: 1 сек.)
+2026-04-29 16:49:34 - [2/4] Створення бекапу у /home/dav/FamilyBudget…
+✅ Бекап збережено: /home/dav/FamilyBudget/FamilyBudget_backup_2026-04-29_13-49-34.tar.gz
+2026-04-29 16:49:35 -       Бекап завершено. (⏱ Зайняло: 1 сек.)
+2026-04-29 16:49:35 - [3/4] Синхронізація файлів через rsync…
+sending incremental file list
+rsync: [generator] chgrp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/." failed: Operation not permitted (1)
+./
+AGENTS.md
+rsync: [generator] chgrp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/css" failed: Operation not permitted (1)
+LICENSE.md
+rsync: [generator] chgrp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/img" failed: Operation not permitted (1)
+rsync: [generator] chgrp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/includes" failed: Operation not permitted (1)
+rsync: [generator] chgrp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/js" failed: Operation not permitted (1)
+README.md
+README_UKR.md
+rsync: [generator] chgrp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker" failed: Operation not permitted (1)
+deploy_vps.log
+family-budget.php
+rsync: [generator] chgrp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc" failed: Operation not permitted (1)
+rsync: [generator] chgrp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5" failed: Operation not permitted (1)
+rsync: [generator] chgrp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6" failed: Operation not permitted (1)
+rsync: [generator] chgrp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/DebugBar" failed: Operation not permitted (1)
+rsync: [generator] chgrp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/Plugin" failed: Operation not permitted (1)
+rsync: [generator] chgrp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/Theme" failed: Operation not permitted (1)
+rsync: [generator] chgrp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/Vcs" failed: Operation not permitted (1)
+rsync: [generator] chgrp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/css" failed: Operation not permitted (1)
+rsync: [generator] chgrp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/js" failed: Operation not permitted (1)
+rsync: [generator] chgrp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages" failed: Operation not permitted (1)
+rsync: [generator] chgrp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/vendor" failed: Operation not permitted (1)
+rsync: [generator] chgrp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/views" failed: Operation not permitted (1)
+css/
+css/account.css
+css/amount.css
+css/category-type.css
+css/category.css
+css/charts.css
+css/communal.css
+css/currency-admin.css
+css/currency.css
+css/family-budget.css
+css/family.css
+css/fb-modules.css
+css/home.css
+css/houses.css
+css/indicators.css
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/.AGENTS.md.bKHo2M" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/.LICENSE.md.8yEIQF" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/.README.md.Rcjgtv" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/.README_UKR.md.NYCzI4" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/.deploy_vps.log.y4JEXs" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/.family-budget.php.rtMw0w" failed: Permission denied (13)
+css/personal-accounts.css
+css/utility_analytics.css
+img/
+img/icon-import.png
+includes/
+includes/class-fb-ajax.php
+includes/class-fb-crud.php
+includes/class-fb-currency-rates.php
+includes/class-fb-import-ind.php
+includes/class-fb-import.php
+includes/class-fb-migrations-v2.php
+includes/class-fb-migrations-v3.php
+includes/class-fb-migrations-v4.php
+includes/class-fb-migrations-v5.php
+includes/class-fb-migrations-v6.php
+includes/class-fb-migrations-v7.php
+includes/class-fb-migrations.php
+includes/class-fb-utilities-model.php
+includes/db-setup.php
+includes/fb-functions.php
+js/
+js/account.js
+js/amount.js
+js/category-type.js
+js/category.js
+js/charts.js
+js/communal.js
+js/currency-admin.js
+js/currency.js
+js/family-budget.js
+js/family.js
+js/home.js
+js/houses.js
+js/indicators.js
+js/personal-accounts.js
+js/utility_analytics.js
+plugin-update-checker/
+plugin-update-checker/README.md
+plugin-update-checker/composer.json
+plugin-update-checker/license.txt
+plugin-update-checker/load-v5p6.php
+plugin-update-checker/plugin-update-checker.php
+plugin-update-checker/Puc/
+plugin-update-checker/Puc/v5/
+plugin-update-checker/Puc/v5/PucFactory.php
+plugin-update-checker/Puc/v5p6/
+plugin-update-checker/Puc/v5p6/Autoloader.php
+plugin-update-checker/Puc/v5p6/InstalledPackage.php
+plugin-update-checker/Puc/v5p6/Metadata.php
+plugin-update-checker/Puc/v5p6/OAuthSignature.php
+plugin-update-checker/Puc/v5p6/PucFactory.php
+plugin-update-checker/Puc/v5p6/Scheduler.php
+plugin-update-checker/Puc/v5p6/StateStore.php
+plugin-update-checker/Puc/v5p6/Update.php
+plugin-update-checker/Puc/v5p6/UpdateChecker.php
+plugin-update-checker/Puc/v5p6/UpgraderStatus.php
+plugin-update-checker/Puc/v5p6/Utils.php
+plugin-update-checker/Puc/v5p6/WpCliCheckTrigger.php
+plugin-update-checker/Puc/v5p6/DebugBar/
+plugin-update-checker/Puc/v5p6/DebugBar/Extension.php
+plugin-update-checker/Puc/v5p6/DebugBar/Panel.php
+plugin-update-checker/Puc/v5p6/DebugBar/PluginExtension.php
+plugin-update-checker/Puc/v5p6/DebugBar/PluginPanel.php
+plugin-update-checker/Puc/v5p6/DebugBar/ThemePanel.php
+plugin-update-checker/Puc/v5p6/Plugin/
+plugin-update-checker/Puc/v5p6/Plugin/Package.php
+plugin-update-checker/Puc/v5p6/Plugin/PluginInfo.php
+plugin-update-checker/Puc/v5p6/Plugin/Ui.php
+plugin-update-checker/Puc/v5p6/Plugin/Update.php
+plugin-update-checker/Puc/v5p6/Plugin/UpdateChecker.php
+plugin-update-checker/Puc/v5p6/Theme/
+plugin-update-checker/Puc/v5p6/Theme/Package.php
+plugin-update-checker/Puc/v5p6/Theme/Update.php
+plugin-update-checker/Puc/v5p6/Theme/UpdateChecker.php
+plugin-update-checker/Puc/v5p6/Vcs/
+plugin-update-checker/Puc/v5p6/Vcs/Api.php
+plugin-update-checker/Puc/v5p6/Vcs/BaseChecker.php
+plugin-update-checker/Puc/v5p6/Vcs/BitBucketApi.php
+plugin-update-checker/Puc/v5p6/Vcs/GitHubApi.php
+plugin-update-checker/Puc/v5p6/Vcs/GitLabApi.php
+plugin-update-checker/Puc/v5p6/Vcs/PluginUpdateChecker.php
+plugin-update-checker/Puc/v5p6/Vcs/Reference.php
+plugin-update-checker/Puc/v5p6/Vcs/ReleaseAssetSupport.php
+plugin-update-checker/Puc/v5p6/Vcs/ReleaseFilteringFeature.php
+plugin-update-checker/Puc/v5p6/Vcs/ThemeUpdateChecker.php
+plugin-update-checker/Puc/v5p6/Vcs/VcsCheckerMethods.php
+plugin-update-checker/css/
+plugin-update-checker/css/puc-debug-bar.css
+plugin-update-checker/js/
+plugin-update-checker/js/debug-bar.js
+plugin-update-checker/languages/
+plugin-update-checker/languages/plugin-update-checker-ca.mo
+plugin-update-checker/languages/plugin-update-checker-ca.po
+plugin-update-checker/languages/plugin-update-checker-cs_CZ.mo
+plugin-update-checker/languages/plugin-update-checker-cs_CZ.po
+plugin-update-checker/languages/plugin-update-checker-da_DK.mo
+plugin-update-checker/languages/plugin-update-checker-da_DK.po
+plugin-update-checker/languages/plugin-update-checker-de_DE.mo
+plugin-update-checker/languages/plugin-update-checker-de_DE.po
+plugin-update-checker/languages/plugin-update-checker-el.mo
+plugin-update-checker/languages/plugin-update-checker-el.po
+plugin-update-checker/languages/plugin-update-checker-es_AR.mo
+plugin-update-checker/languages/plugin-update-checker-es_AR.po
+plugin-update-checker/languages/plugin-update-checker-es_CL.mo
+plugin-update-checker/languages/plugin-update-checker-es_CL.po
+plugin-update-checker/languages/plugin-update-checker-es_CO.mo
+plugin-update-checker/languages/plugin-update-checker-es_CO.po
+plugin-update-checker/languages/plugin-update-checker-es_CR.mo
+plugin-update-checker/languages/plugin-update-checker-es_CR.po
+plugin-update-checker/languages/plugin-update-checker-es_DO.mo
+plugin-update-checker/languages/plugin-update-checker-es_DO.po
+plugin-update-checker/languages/plugin-update-checker-es_ES.mo
+plugin-update-checker/languages/plugin-update-checker-es_ES.po
+plugin-update-checker/languages/plugin-update-checker-es_GT.mo
+plugin-update-checker/languages/plugin-update-checker-es_GT.po
+plugin-update-checker/languages/plugin-update-checker-es_HN.mo
+plugin-update-checker/languages/plugin-update-checker-es_HN.po
+plugin-update-checker/languages/plugin-update-checker-es_MX.mo
+plugin-update-checker/languages/plugin-update-checker-es_MX.po
+plugin-update-checker/languages/plugin-update-checker-es_PE.mo
+plugin-update-checker/languages/plugin-update-checker-es_PE.po
+plugin-update-checker/languages/plugin-update-checker-es_PR.mo
+plugin-update-checker/languages/plugin-update-checker-es_PR.po
+plugin-update-checker/languages/plugin-update-checker-es_UY.mo
+plugin-update-checker/languages/plugin-update-checker-es_UY.po
+plugin-update-checker/languages/plugin-update-checker-es_VE.mo
+plugin-update-checker/languages/plugin-update-checker-es_VE.po
+plugin-update-checker/languages/plugin-update-checker-fa_IR.mo
+plugin-update-checker/languages/plugin-update-checker-fa_IR.po
+plugin-update-checker/languages/plugin-update-checker-fr_CA.mo
+plugin-update-checker/languages/plugin-update-checker-fr_CA.po
+plugin-update-checker/languages/plugin-update-checker-fr_FR.mo
+plugin-update-checker/languages/plugin-update-checker-fr_FR.po
+plugin-update-checker/languages/plugin-update-checker-hu_HU.mo
+plugin-update-checker/languages/plugin-update-checker-hu_HU.po
+plugin-update-checker/languages/plugin-update-checker-it_IT.mo
+plugin-update-checker/languages/plugin-update-checker-it_IT.po
+plugin-update-checker/languages/plugin-update-checker-ja.mo
+plugin-update-checker/languages/plugin-update-checker-ja.po
+plugin-update-checker/languages/plugin-update-checker-nl_BE.mo
+plugin-update-checker/languages/plugin-update-checker-nl_BE.po
+plugin-update-checker/languages/plugin-update-checker-nl_NL.mo
+plugin-update-checker/languages/plugin-update-checker-nl_NL.po
+plugin-update-checker/languages/plugin-update-checker-pt_BR.mo
+plugin-update-checker/languages/plugin-update-checker-pt_BR.po
+plugin-update-checker/languages/plugin-update-checker-ru_RU.mo
+plugin-update-checker/languages/plugin-update-checker-ru_RU.po
+plugin-update-checker/languages/plugin-update-checker-sl_SI.mo
+plugin-update-checker/languages/plugin-update-checker-sl_SI.po
+plugin-update-checker/languages/plugin-update-checker-sr_RS.mo
+plugin-update-checker/languages/plugin-update-checker-sr_RS.po
+plugin-update-checker/languages/plugin-update-checker-sv_SE.mo
+plugin-update-checker/languages/plugin-update-checker-sv_SE.po
+plugin-update-checker/languages/plugin-update-checker-tr_TR.mo
+plugin-update-checker/languages/plugin-update-checker-tr_TR.po
+plugin-update-checker/languages/plugin-update-checker-uk_UA.mo
+plugin-update-checker/languages/plugin-update-checker-uk_UA.po
+plugin-update-checker/languages/plugin-update-checker-zh_CN.mo
+plugin-update-checker/languages/plugin-update-checker-zh_CN.po
+plugin-update-checker/languages/plugin-update-checker-zh_TW.mo
+plugin-update-checker/languages/plugin-update-checker-zh_TW.po
+plugin-update-checker/languages/plugin-update-checker.pot
+plugin-update-checker/vendor/
+plugin-update-checker/vendor/Parsedown.php
+plugin-update-checker/vendor/ParsedownModern.php
+plugin-update-checker/vendor/PucReadmeParser.php
+views/
+views/account-type.php
+views/account.php
+views/amount-type.php
+views/amount.php
+views/category-params.php
+views/category-type.php
+views/category.php
+views/charts.php
+views/communal.php
+views/currency-admin.php
+views/currency.php
+views/family.php
+views/home.php
+views/houses.php
+views/indicators.php
+views/parameter-type.php
+views/personal-accounts.php
+views/utility_analytics.php
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/css/.account.css.JnHHzJ" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/css/.amount.css.ViKJ7R" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/css/.category-type.css.Q2N763" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/css/.category.css.gBe9ia" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/css/.charts.css.vewwZX" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/css/.communal.css.qzj21g" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/css/.currency-admin.css.RGdi0S" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/css/.currency.css.yjWJzY" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/css/.family-budget.css.cPkz2f" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/css/.family.css.Y67hrV" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/css/.fb-modules.css.mibue4" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/css/.home.css.cXoELr" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/css/.houses.css.XhFzm9" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/css/.indicators.css.VJg5Jv" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/css/.personal-accounts.css.mJKR75" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/css/.utility_analytics.css.AtHROT" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/img/.icon-import.png.R3yYG5" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/includes/.class-fb-ajax.php.0CGj8b" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/includes/.class-fb-crud.php.ai0nt3" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/includes/.class-fb-currency-rates.php.SgP588" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/includes/.class-fb-import-ind.php.m7crCI" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/includes/.class-fb-import.php.H9Zl1m" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/includes/.class-fb-migrations-v2.php.sTeOt6" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/includes/.class-fb-migrations-v3.php.hRXBTa" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/includes/.class-fb-migrations-v4.php.Qb4WMv" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/includes/.class-fb-migrations-v5.php.NtZXmi" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/includes/.class-fb-migrations-v6.php.1LDU5V" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/includes/.class-fb-migrations-v7.php.Z8GzhK" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/includes/.class-fb-migrations.php.xViPEs" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/includes/.class-fb-utilities-model.php.lLQcMT" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/includes/.db-setup.php.FOSj02" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/includes/.fb-functions.php.AbamDi" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/js/.account.js.konRmX" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/js/.amount.js.bF2vJF" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/js/.category-type.js.RV84q0" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/js/.category.js.O6APNQ" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/js/.charts.js.wZVIaB" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/js/.communal.js.tKrPYh" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/js/.currency-admin.js.QHm6yI" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/js/.currency.js.2E7Pqw" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/js/.family-budget.js.2hGjXe" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/js/.family.js.9DQrW6" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/js/.home.js.Zmyhq8" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/js/.houses.js.G4HBjX" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/js/.indicators.js.hCfef4" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/js/.personal-accounts.js.io76fq" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/js/.utility_analytics.js.oyOjNJ" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/.README.md.3HCDRI" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/.composer.json.MCdyr1" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/.license.txt.aZ5mjs" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/.load-v5p6.php.UzAi5o" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/.plugin-update-checker.php.JPee1e" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5/.PucFactory.php.W3zCk0" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/.Autoloader.php.MSBOrK" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/.InstalledPackage.php.mWuoBx" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/.Metadata.php.KiqNdX" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/.OAuthSignature.php.xUg9y7" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/.PucFactory.php.E8V4CE" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/.Scheduler.php.mSHAP9" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/.StateStore.php.rNMXM8" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/.Update.php.oVG0j8" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/.UpdateChecker.php.i69bFZ" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/.UpgraderStatus.php.eZqfjV" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/.Utils.php.gHWrOf" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/.WpCliCheckTrigger.php.6A0RlN" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/DebugBar/.Extension.php.lMUyGi" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/DebugBar/.Panel.php.EXuGhg" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/DebugBar/.PluginExtension.php.7vbIga" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/DebugBar/.PluginPanel.php.x4w07W" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/DebugBar/.ThemePanel.php.fgQJFu" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/Plugin/.Package.php.AP3o4w" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/Plugin/.PluginInfo.php.tk9bZu" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/Plugin/.Ui.php.9kiQDX" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/Plugin/.Update.php.Zy90g9" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/Plugin/.UpdateChecker.php.L9Fdzn" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/Theme/.Package.php.PpuW5J" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/Theme/.Update.php.wzO0Rq" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/Theme/.UpdateChecker.php.8cxdob" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/Vcs/.Api.php.PeVbO5" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/Vcs/.BaseChecker.php.MFAXL9" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/Vcs/.BitBucketApi.php.4xxNLE" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/Vcs/.GitHubApi.php.A6yySF" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/Vcs/.GitLabApi.php.Bw6FpD" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/Vcs/.PluginUpdateChecker.php.CMuWtz" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/Vcs/.Reference.php.kuREqr" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/Vcs/.ReleaseAssetSupport.php.kKvFph" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/Vcs/.ReleaseFilteringFeature.php.C815WN" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/Vcs/.ThemeUpdateChecker.php.S5kXZL" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/Puc/v5p6/Vcs/.VcsCheckerMethods.php.PFutKW" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/css/.puc-debug-bar.css.r1TrLZ" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/js/.debug-bar.js.ldrOlL" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-ca.mo.ZyhFo6" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-ca.po.gzqo3c" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-cs_CZ.mo.ecmfXz" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-cs_CZ.po.ANBShn" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-da_DK.mo.Av5YTj" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-da_DK.po.qB5Mv2" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-de_DE.mo.ZtkFdX" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-de_DE.po.Kynzdr" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-el.mo.rBllE0" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-el.po.97MmYN" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-es_AR.mo.NnVgn0" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-es_AR.po.zcrAQ5" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-es_CL.mo.Qtmbp7" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-es_CL.po.fxBWyd" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-es_CO.mo.T6RKEB" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-es_CO.po.iLrZXS" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-es_CR.mo.tArE3u" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-es_CR.po.GSMk5E" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-es_DO.mo.7wpb8G" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-es_DO.po.78sGVe" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-es_ES.mo.Ry2O7V" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-es_ES.po.2FUOhO" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-es_GT.mo.Uz355B" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-es_GT.po.MfOHMN" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-es_HN.mo.pTjEbs" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-es_HN.po.zWZXQ5" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-es_MX.mo.R6iqcV" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-es_MX.po.eoZclu" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-es_PE.mo.KnevXh" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-es_PE.po.wRhxZK" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-es_PR.mo.ecisNE" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-es_PR.po.oyedl5" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-es_UY.mo.TcuUTA" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-es_UY.po.5rWhUJ" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-es_VE.mo.o4ezv1" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-es_VE.po.mdq5nN" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-fa_IR.mo.Jr4Msg" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-fa_IR.po.MJx399" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-fr_CA.mo.3xKlma" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-fr_CA.po.QLdd7f" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-fr_FR.mo.BQKulZ" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-fr_FR.po.NmeYDU" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-hu_HU.mo.ArQ68T" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-hu_HU.po.jiZAj4" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-it_IT.mo.F7Camy" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-it_IT.po.kEzVV2" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-ja.mo.GoeLlx" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-ja.po.Eiz7ak" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-nl_BE.mo.GkXN6B" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-nl_BE.po.sF8LFv" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-nl_NL.mo.FufxzT" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-nl_NL.po.QF2Z9F" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-pt_BR.mo.ghnThL" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-pt_BR.po.K8GcS7" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-ru_RU.mo.VRKUXE" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-ru_RU.po.Ru7wmw" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-sl_SI.mo.UbU3QV" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-sl_SI.po.z4ipRf" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-sr_RS.mo.cEUfih" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-sr_RS.po.sMJ93n" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-sv_SE.mo.FwRalM" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-sv_SE.po.jq1N4A" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-tr_TR.mo.DfAqTD" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-tr_TR.po.B9oaXF" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-uk_UA.mo.yIzeNf" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-uk_UA.po.FxVN65" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-zh_CN.mo.bIHnIk" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-zh_CN.po.HOvU8F" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-zh_TW.mo.3UjI9s" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker-zh_TW.po.RIQHEU" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/languages/.plugin-update-checker.pot.L7iUds" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/vendor/.Parsedown.php.VAGGrj" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/vendor/.ParsedownModern.php.NHF4Tz" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/plugin-update-checker/vendor/.PucReadmeParser.php.L8Fr3N" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/views/.account-type.php.kRYa0p" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/views/.account.php.FMOrXS" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/views/.amount-type.php.Zp0Sdu" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/views/.amount.php.2qItTP" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/views/.category-params.php.XQY6Mn" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/views/.category-type.php.n90dyZ" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/views/.category.php.7E7KN0" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/views/.charts.php.u0NPEY" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/views/.communal.php.pVgivu" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/views/.currency-admin.php.Uv2j7l" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/views/.currency.php.Ip4mbr" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/views/.family.php.3rlFOk" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/views/.home.php.ugswVV" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/views/.houses.php.fAoWXF" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/views/.indicators.php.TaHMID" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/views/.parameter-type.php.YqD40y" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/views/.personal-accounts.php.yjdERO" failed: Permission denied (13)
+rsync: [receiver] mkstemp "/var/www/fbudget.pp.ua/html/wp-content/plugins/FamilyBudget/views/.utility_analytics.php.FJRrNk" failed: Permission denied (13)
+
+sent 21.322 bytes  received 16.350 bytes  75.344,00 bytes/sec
+total size is 1.432.427  speedup is 38,02
+rsync error: some files/attrs were not transferred (see previous errors) (code 23) at main.c(1338) [sender=3.2.7]
