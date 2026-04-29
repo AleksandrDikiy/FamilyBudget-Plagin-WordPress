@@ -158,13 +158,20 @@ function fb_shortcode_indicators_interface(): string {
     ) );
 
     // Підключення активів
-    $plugin_url = defined( 'FB_PLUGIN_URL' )     ? FB_PLUGIN_URL     : plugin_dir_url( dirname( __FILE__ ) );
-    $plugin_ver = defined( 'FB_PLUGIN_VERSION' ) ? FB_PLUGIN_VERSION : '1.0.0';
+    $plugin_url = defined( 'FB_PLUGIN_URL' ) ? FB_PLUGIN_URL : plugin_dir_url( dirname( __FILE__ ) );
+    $base_ver   = defined( 'FB_VERSION' )    ? FB_VERSION    : '1.0.0';
+    
+    $css_path = FB_PLUGIN_DIR . 'css/indicators.css';
+    $js_path  = FB_PLUGIN_DIR . 'js/indicators.js';
+    
+    // Формуємо версію: ВерсіяПлагіна.ЧасМодифікаціїФайлу (напр. 1.5.2.1714402088)
+    $css_ver = file_exists( $css_path ) ? $base_ver . '.' . filemtime( $css_path ) : $base_ver;
+    $js_ver  = file_exists( $js_path )  ? $base_ver . '.' . filemtime( $js_path )  : $base_ver;
 
     add_thickbox(); // Thickbox для відображення результатів імпорту CSV
 
-    wp_enqueue_style( 'fb-indicators-css', $plugin_url . 'css/indicators.css', [], $plugin_ver );
-    wp_enqueue_script( 'fb-indicators-js', $plugin_url . 'js/indicators.js', [ 'jquery', 'thickbox' ], $plugin_ver, true );
+    wp_enqueue_style( 'fb-indicators-css', $plugin_url . 'css/indicators.css', [], $css_ver );
+    wp_enqueue_script( 'fb-indicators-js', $plugin_url . 'js/indicators.js', [ 'jquery', 'thickbox' ], $js_ver, true );
     wp_localize_script( 'fb-indicators-js', 'fbIndObj', [
         'ajax_url'       => admin_url( 'admin-ajax.php' ),
         'nonce'          => wp_create_nonce( 'fb_ind_nonce' ),

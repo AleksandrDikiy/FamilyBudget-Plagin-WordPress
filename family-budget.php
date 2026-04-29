@@ -3,7 +3,7 @@
  * Plugin Name: Family Budget
  * Plugin URI: https://fbudget.pp.ua/
  * Description: Професійна система керування сімейними фінансами, інтеграцією курсів НБУ, аналітичними графіками та універсальною AJAX-системою. Повна підтримка мультивалютності та динамічних параметрів.
- * Version: 1.5.2
+ * Version: 1.5.3
  * Author: Alex Wild
  * Author URI: https://wildwind.org.ua/
  * License: GPL v2 or later
@@ -13,7 +13,6 @@
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * @package FamilyBudget
- * @version    1.5.2
  * @since 1.0.0
  * кількість таблиць: 21
  */
@@ -24,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 // Головний файл: family-budget.php
 // Константи плагіна
-define( 'FB_VERSION', '1.5.2' );
+define( 'FB_VERSION', '1.5.3' );
 define( 'FB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FB_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'FB_PLUGIN_FILE', __FILE__ );
@@ -72,12 +71,15 @@ require_once plugin_dir_path( __FILE__ ) . 'includes/class-fb-ajax.php';
 add_action( 'wp_enqueue_scripts', 'fb_enqueue_scripts' );
 function fb_enqueue_scripts() {
 
+    $js_path = plugin_dir_path( __FILE__ ) . 'js/family-budget.js';
+    $js_ver  = file_exists( $js_path ) ? FB_VERSION . '.' . filemtime( $js_path ) : FB_VERSION;
+
     // Шлях до вашого JS-файлу
     wp_enqueue_script(
         'family-budget-js',
         plugin_dir_url( __FILE__ ) . 'js/family-budget.js',
         array( 'jquery' ), // Залежність від jQuery
-        '1.1.0',
+        $js_ver,
         true // Підключити у футері
     );
 
@@ -146,7 +148,10 @@ unset( $fb_modules, $fb_module, $fb_path );
  */
 add_action( 'wp_enqueue_scripts', 'fb_enqueue_styles' );
 function fb_enqueue_styles() {
-    wp_enqueue_style( 'family-budget-styles', FB_PLUGIN_URL . 'css/family-budget.css', array(), FB_VERSION );
+    $css_path = FB_PLUGIN_DIR . 'css/family-budget.css';
+    $css_ver  = file_exists( $css_path ) ? FB_VERSION . '.' . filemtime( $css_path ) : FB_VERSION;
+    
+    wp_enqueue_style( 'family-budget-styles', FB_PLUGIN_URL . 'css/family-budget.css', array(), $css_ver );
 }
 
 /**
