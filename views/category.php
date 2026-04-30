@@ -2,6 +2,9 @@
 /**
  * Модуль Категорій — Family Budget Plugin
  * Файл: category.php
+ * 
+ * Version:     1.0.1
+ * Date_update: 2026-04-30
  *
  * Відповідає за управління категоріями бюджету:
  * перегляд, додавання, редагування (назва + тип), видалення,
@@ -149,13 +152,20 @@ function fb_shortcode_categories_interface(): string {
     $param_types  = function_exists( 'fb_get_parameter_types' )    ? fb_get_parameter_types()    : [];
 
     // Підключаємо стилі та скрипти.
-    wp_enqueue_style( 'fb-category-css', FB_PLUGIN_URL . 'css/category.css', [], FB_VERSION );
+    $base_ver = defined( 'FB_VERSION' ) ? FB_VERSION : '1.0.0';
+    $css_path = FB_PLUGIN_DIR . 'css/category.css';
+    $js_path  = FB_PLUGIN_DIR . 'js/category.js';
+    
+    $css_ver = file_exists( $css_path ) ? $base_ver . '.' . filemtime( $css_path ) : $base_ver;
+    $js_ver  = file_exists( $js_path )  ? $base_ver . '.' . filemtime( $js_path )  : $base_ver;
+
+    wp_enqueue_style( 'fb-category-css', FB_PLUGIN_URL . 'css/category.css', [], $css_ver );
     wp_enqueue_script( 'jquery-ui-sortable' );
     wp_enqueue_script(
         'fb-category-js',
         FB_PLUGIN_URL . 'js/category.js',
         [ 'jquery', 'jquery-ui-sortable' ],
-        FB_VERSION,
+        $js_ver,
         true
     );
 

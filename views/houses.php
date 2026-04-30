@@ -2,6 +2,9 @@
 /**
  * Модуль Осель (Family Budget)
  * Рефакторинг UI: повна відповідність дизайну модуля Рахунки.
+ * 
+ * Version:     1.0.1
+ * Date_update: 2026-04-30
  *
  * @package FamilyBudget
  */
@@ -45,11 +48,17 @@ function fb_shortcode_houses_interface(): string {
         "SELECT id, house_type_name FROM {$wpdb->prefix}house_type ORDER BY house_type_order ASC"
     );
 
-    $plugin_url = defined( 'FB_PLUGIN_URL' )     ? FB_PLUGIN_URL     : plugin_dir_url( dirname( __FILE__ ) );
-    $plugin_ver = defined( 'FB_PLUGIN_VERSION' ) ? FB_PLUGIN_VERSION : '1.0.0';
+    $plugin_url = defined( 'FB_PLUGIN_URL' ) ? FB_PLUGIN_URL : plugin_dir_url( dirname( __FILE__ ) );
+    $base_ver   = defined( 'FB_VERSION' )    ? FB_VERSION    : '1.0.0';
+    
+    $css_path = FB_PLUGIN_DIR . 'css/houses.css';
+    $js_path  = FB_PLUGIN_DIR . 'js/houses.js';
+    
+    $css_ver = file_exists( $css_path ) ? $base_ver . '.' . filemtime( $css_path ) : $base_ver;
+    $js_ver  = file_exists( $js_path )  ? $base_ver . '.' . filemtime( $js_path )  : $base_ver;
 
-    wp_enqueue_style( 'fb-houses-css', $plugin_url . 'css/houses.css', [], $plugin_ver );
-    wp_enqueue_script( 'fb-houses-js', $plugin_url . 'js/houses.js', [ 'jquery' ], $plugin_ver, true );
+    wp_enqueue_style( 'fb-houses-css', $plugin_url . 'css/houses.css', [], $css_ver );
+    wp_enqueue_script( 'fb-houses-js', $plugin_url . 'js/houses.js', [ 'jquery' ], $js_ver, true );
     wp_localize_script( 'fb-houses-js', 'fbHousesObj', [
         'ajax_url' => admin_url( 'admin-ajax.php' ),
         'nonce'    => wp_create_nonce( 'fb_house_nonce' ),

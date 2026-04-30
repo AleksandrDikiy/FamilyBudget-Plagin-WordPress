@@ -2,12 +2,14 @@
 /**
  * Communal Services Module – "Комуналка"
  *
+ * Version:     1.3.4
+ * Date_update: 2026-04-30
+ * 
  * Registers the [fb_communal] shortcode, AJAX endpoints, and all
  * backend helper functions for the Family Budget plugin.
  *
  * @package    FamilyBudget
  * @subpackage Communal
- * @version    1.3.4.0
  * @since      1.3.4.0
  */
 
@@ -416,11 +418,21 @@ function fb_render_communal_module( array $atts = [] ): string {
 
     $plugin_url = FB_PLUGIN_URL;
 
+    $base_ver = defined( 'FB_VERSION' ) ? FB_VERSION : '1.0.0';
+    $css_path = FB_PLUGIN_DIR . 'css/communal.css';
+    $js_path  = FB_PLUGIN_DIR . 'js/communal.js';
+    
+    $css_ver = file_exists( $css_path ) ? $base_ver . '.' . filemtime( $css_path ) : $base_ver;
+    $js_ver  = file_exists( $js_path )  ? $base_ver . '.' . filemtime( $js_path )  : $base_ver;
+
+    $chartjs_path = FB_PLUGIN_DIR . 'js/chart.umd.min.js';
+    $chartjs_ver  = file_exists( $chartjs_path ) ? $base_ver . '.' . filemtime( $chartjs_path ) : $base_ver;
+
     wp_enqueue_script(
         'chartjs',
-        'https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js',
+        $plugin_url . 'js/chart.umd.min.js',
         [],
-        '4.4.3',
+        $chartjs_ver,
         true
     );
 
@@ -428,7 +440,7 @@ function fb_render_communal_module( array $atts = [] ): string {
         'fb-communal-js',
         $plugin_url . 'js/communal.js',
         [ 'jquery', 'chartjs' ],
-        '1.0.27.3',
+        $js_ver,
         true
     );
 
@@ -436,7 +448,7 @@ function fb_render_communal_module( array $atts = [] ): string {
         'fb-communal-css',
         $plugin_url . 'css/communal.css',
         [],
-        '1.0.27.3'
+        $css_ver
     );
 
     // Pass runtime config to JS (nonce, ajaxUrl, familyId)

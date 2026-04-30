@@ -2,6 +2,9 @@
 /**
  * Модуль Особових рахунків (Family Budget)
  *
+ * Version:     1.0.1
+ * Date_update: 2026-04-30
+ * 
  * Забезпечує повний CRUD для управління особовими рахунками комунальних послуг.
  * Шорткод: [fb_personal_accounts]
  *
@@ -102,22 +105,29 @@ function fb_shortcode_personal_accounts(): string {
     );
 
     // --- Підключення активів ---
-    $plugin_url = defined( 'FB_PLUGIN_URL' )     ? FB_PLUGIN_URL     : plugin_dir_url( dirname( __FILE__ ) );
-    $plugin_ver = defined( 'FB_PLUGIN_VERSION' ) ? FB_PLUGIN_VERSION : '1.0.0';
+    $plugin_url = defined( 'FB_PLUGIN_URL' ) ? FB_PLUGIN_URL : plugin_dir_url( dirname( __FILE__ ) );
+    $base_ver   = defined( 'FB_VERSION' )    ? FB_VERSION    : '1.0.0';
+    
+    $css_path = FB_PLUGIN_DIR . 'css/personal-accounts.css';
+    $js_path  = FB_PLUGIN_DIR . 'js/personal-accounts.js';
+    
+    $css_ver = file_exists( $css_path ) ? $base_ver . '.' . filemtime( $css_path ) : $base_ver;
+    $js_ver  = file_exists( $js_path )  ? $base_ver . '.' . filemtime( $js_path )  : $base_ver;
 
     wp_enqueue_style(
         'fb-personal-accounts-css',
         $plugin_url . 'css/personal-accounts.css',
         [],
-        $plugin_ver
+        $css_ver
     );
     wp_enqueue_script(
         'fb-personal-accounts-js',
         $plugin_url . 'js/personal-accounts.js',
         [ 'jquery' ],
-        $plugin_ver,
+        $js_ver,
         true
     );
+
     wp_localize_script( 'fb-personal-accounts-js', 'fbPaObj', [
         'ajax_url' => admin_url( 'admin-ajax.php' ),
         'nonce'    => wp_create_nonce( 'fb_pa_nonce' ),

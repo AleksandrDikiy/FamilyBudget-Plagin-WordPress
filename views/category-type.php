@@ -2,8 +2,11 @@
 /**
  * Модуль Типів Категорій (Family Budget)
  * Назва файлу: category-type.php
- * * Відповідає за управління довідником "Типи категорій":
+ * Відповідає за управління довідником "Типи категорій":
  * додавання, редагування, видалення та сортування (drag & drop).
+ * 
+ * Version:     1.0.1
+ * Date_update: 2026-04-30
  *
  * @package FamilyBudget
  * @since   1.5.0
@@ -76,13 +79,20 @@ function fb_render_category_type_interface(): string {
     $families = function_exists( 'fb_get_families' ) ? fb_get_families() : [];
 
     // Підключаємо стилі та скрипти
-    wp_enqueue_style( 'fb-category-type-css', FB_PLUGIN_URL . 'css/category-type.css', [], FB_VERSION );
+    $base_ver = defined( 'FB_VERSION' ) ? FB_VERSION : '1.0.0';
+    $css_path = FB_PLUGIN_DIR . 'css/category-type.css';
+    $js_path  = FB_PLUGIN_DIR . 'js/category-type.js';
+    
+    $css_ver = file_exists( $css_path ) ? $base_ver . '.' . filemtime( $css_path ) : $base_ver;
+    $js_ver  = file_exists( $js_path )  ? $base_ver . '.' . filemtime( $js_path )  : $base_ver;
+
+    wp_enqueue_style( 'fb-category-type-css', FB_PLUGIN_URL . 'css/category-type.css', [], $css_ver );
     wp_enqueue_script( 'jquery-ui-sortable' );
     wp_enqueue_script(
         'fb-category-type-js',
         FB_PLUGIN_URL . 'js/category-type.js',
         [ 'jquery', 'jquery-ui-sortable' ],
-        FB_VERSION,
+        $js_ver,
         true
     );
 

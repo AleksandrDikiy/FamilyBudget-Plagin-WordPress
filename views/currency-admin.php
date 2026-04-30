@@ -2,6 +2,9 @@
 /**
  * Модуль управління валютами — Family Budget (Admin)
  *
+ * Version:     1.0.1
+ * Date_update: 2026-04-30
+ * 
  * Реалізує AJAX-CRUD довідник системних валют (USD, EUR, UAH тощо).
  * Доступний виключно адміністраторам WordPress (capability: manage_options).
  *
@@ -14,7 +17,6 @@
  *
  * @package    FamilyBudget
  * @subpackage Modules
- * @version    1.0.0
  * @since      1.3.7
  */
 
@@ -311,21 +313,25 @@ add_shortcode( 'fb_currency_admin', 'fb_render_currency_admin_interface' );
  */
 function fb_currency_admin_enqueue_assets(): void {
 	// CSS.
-	// Залежність 'family-budget-styles' не підключається в адмінці (лише wp_enqueue_scripts),
-	// тому передаємо порожній масив, щоб уникнути помилки "not registered".
+	$base_ver = defined( 'FB_VERSION' ) ? FB_VERSION : '1.0.0';
+	$css_path = FB_PLUGIN_DIR . 'css/currency-admin.css';
+	$js_path  = FB_PLUGIN_DIR . 'js/currency-admin.js';
+	
+	$css_ver = file_exists( $css_path ) ? $base_ver . '.' . filemtime( $css_path ) : $base_ver;
+	$js_ver  = file_exists( $js_path )  ? $base_ver . '.' . filemtime( $js_path )  : $base_ver;
+
 	wp_enqueue_style(
 		'fb-currency-admin-css',
 		FB_PLUGIN_URL . 'css/currency-admin.css',
 		array(),
-		FB_VERSION
+		$css_ver
 	);
 
-	// JS (в footer, щоб не блокувати рендеринг).
 	wp_enqueue_script(
 		'fb-currency-admin-js',
 		FB_PLUGIN_URL . 'js/currency-admin.js',
 		array( 'jquery' ),
-		FB_VERSION,
-		true // in_footer = true.
+		$js_ver,
+		true
 	);
 }

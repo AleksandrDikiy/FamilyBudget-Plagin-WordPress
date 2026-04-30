@@ -1,6 +1,9 @@
 /**
  * Family Budget — Модуль «Баланс» (amount.js)
  *
+ * Version:     1.0.1
+ * Date_update: 2026-04-30
+ * 
  * Містить всю JS-логіку для сторінки управління транзакціями:
  *  - Завантаження балансу через AJAX
  *  - Фільтрація та пагінація таблиці транзакцій
@@ -13,7 +16,6 @@
  *
  * @package    FamilyBudget
  * @subpackage Assets/JS
- * @version    1.1.1.0
  * @since      1.0.0
  */
 
@@ -398,3 +400,171 @@
 	} );
 
 }( jQuery ) );
+/* =========================================================================
+ * FB Import v3.2 — чанковий AJAX-імпорт транзакцій
+ * ========================================================================= */
+;(function ($) {
+	'use strict';
+
+	if ( typeof fbAmountData === 'undefined' ) {
+		console.error('[FB Import] CRITICAL: fbAmountData not found.');
+		return;
+	}
+
+	var FBImport = {
+		ajaxUrl  : fbAmountData.ajax_url,
+		nonce    : fbAmountData.nonce,
+		token    : null,
+		total    : 0,
+		offset   : 0,
+		inserted : 0,
+		errors   : 0,
+
+		init: function () {
+			$(document).on( 'click', '#fb-import-btn', function (e) {
+				e.preventDefault();
+				e.stopPropagation();
+				FBImport.start();
+			});
+		},
+
+		showOverlay: function ( text ) {
+			$('#fb-import-overlay-text').text( text );
+			$('#fb-import-overlay').addClass( 'fb-overlay-visible' );
+			$('body').css( 'overflow', 'hidden' );
+		},
+
+		hideOverlay: function () {
+			$('#fb-import-overlay').removeClass( 'fb-overlay-visible' );
+			$('body').css( 'overflow', '' );
+		},
+
+		updateProgress: function ( processed ) {
+			var pct = FBImport.total > 0 ? Math.round( processed / FBImport.total * 100 ) : 0;
+			$('#fb-import-bar').css( 'width', pct + '%' );
+			$('#fb-import-status').text(
+				'Оброблено: ' + processed + ' / ' + FBImport.total +
+				' (' + pct + '%)  |  Додано: ' + FBImport.inserted +
+				'  |  Помилок: ' + FBImport.errors
+			);
+			FBImport.showOverlay( 'Імпорт... ' + pct + '% (' + processed + ' / ' + FBImport.total + ')' );
+		},
+
+		start: function () {
+			var fileInput = document.getElementById('fb-import-file');
+
+			if ( ! fileInput || ! fileInput.files || ! fileInput.files.length ) {
+				alert( 'Оберіть CSV-файл для імпорту.' );
+				return;
+			}
+
+			FBImport.token    = null;
+			FBImport.total    = 0;
+			FBImport.offset   = 0;
+			FBImport.inserted = 0;
+			FBImport.errors   = 0;
+
+			var fd = new FormData();
+			fd.append( 'action',   'fb_import_upload' );
+			fd.append( 'security', FBImport.nonce );
+			fd.append( 'xls_file', fileInput.files[0] );
+
+			$('#fb-import-progress').show();
+			$('#fb-import-bar').css({ 'width': '0%', 'background': '#0073aa' });
+			$('#fb-import-status').text( 'Завантаження файлу...' );
+			FBImport.showOverlay( 'Завантаження файлу на сервер...' );
+
+			$.ajax({
+				url         : FBImport.ajaxUrl,
+				method      : 'POST',
+				data        : fd,
+				processData : false,
+				contentType : false,
+				success: function ( resp ) {
+					if ( ! resp.success ) {
+						FBImport.hideOverlay();
+						alert( 'Помилка завантаження: ' + ( resp.data ? resp.data.message : JSON.stringify(resp) ) );
+						return;
+					}
+					FBImport.token  = resp.data.token;
+					FBImport.total  = resp.data.total_rows;
+					FBImport.offset = 0;
+					FBImport.processChunk();
+				},
+				error: function ( xhr, status, err ) {
+					FBImport.hideOverlay();
+					alert( 'Помилка підключення до сервера: ' + status );
+				}
+			});
+		},
+
+		processChunk: function () {
+			$.post(
+				FBImport.ajaxUrl,
+				{
+					action   : 'fb_import_chunk',
+					security : FBImport.nonce,
+					token    : FBImport.token,
+					offset   : FBImport.offset,
+				},
+				function ( resp ) {
+					if ( ! resp.success ) {
+						FBImport.hideOverlay();
+						alert( 'Помилка чанку: ' + ( resp.data ? resp.data.message : JSON.stringify(resp) ) );
+						return; 
+					}
+					var d = resp.data;
+					FBImport.offset   = d.next_offset;
+					FBImport.inserted = d.total_imported;
+					FBImport.errors   = d.total_errors;
+					FBImport.updateProgress( d.processed );
+
+					if ( d.is_done ) {
+						FBImport.onDone();
+					} else {
+						setTimeout( function() { FBImport.processChunk(); }, 100 );
+					}
+				}
+			).fail(function ( xhr ) {
+				var isLastChunk = ( FBImport.offset >= FBImport.total );
+				FBImport.hideOverlay();
+
+				if ( isLastChunk ) {
+					$( '#fb-import-bar' ).css({ 'width': '100%', 'background': '#46b450' });
+					$( '#fb-import-status' ).html(
+						'✅ <strong>Імпорт завершено!</strong> ' +
+						'Додано: ' + FBImport.inserted + ' | ' +
+						'Помилок: ' + FBImport.errors +
+						' <span style="color:#e67e22">(курси валют синхронізуються у фоні)</span>'
+					);
+				} else {
+					$( '#fb-import-bar' ).css('background', '#dc3545');
+					$( '#fb-import-status' ).html(
+						'❌ <strong>Помилка сервера</strong> (offset ' + FBImport.offset + '). ' +
+						'Додано: ' + FBImport.inserted + '. Перевірте error_log.'
+					);
+				}
+
+				var fi = document.getElementById('fb-import-file');
+				if ( fi ) { fi.value = ''; }
+			});
+		},
+
+		onDone: function () {
+			FBImport.hideOverlay();
+			$('#fb-import-bar').css({ 'width': '100%', 'background': '#46b450' });
+			$('#fb-import-status').html(
+				'✅ <strong>Імпорт завершено!</strong> ' +
+				'Додано: ' + FBImport.inserted + ' | ' +
+				'Помилок: ' + FBImport.errors
+			);
+			var fi = document.getElementById('fb-import-file');
+			if ( fi ) { fi.value = ''; }
+		}
+	};
+
+	$( document ).ready(function () {
+		FBImport.init();
+	});
+
+}(jQuery));

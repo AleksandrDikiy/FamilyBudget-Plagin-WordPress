@@ -1,6 +1,9 @@
 <?php
 /**
  * Модуль "Головна" — плагін Family Budget.
+ * 
+ * Version:     1.0.1
+ * Date_update: 2026-04-30
  *
  * @package FamilyBudget
  */
@@ -32,15 +35,21 @@ function fb_home_enqueue_assets(): void {
 		return;
 	}
 
-	$base = FB_PLUGIN_URL;
-	$ver  = defined( 'FB_VERSION' ) ? FB_VERSION : '1.0.0';
+	$base     = FB_PLUGIN_URL;
+	$base_ver = defined( 'FB_VERSION' ) ? FB_VERSION : '1.0.0';
+	
+	$css_path = FB_PLUGIN_DIR . 'css/home.css';
+	$js_path  = FB_PLUGIN_DIR . 'js/home.js';
+	
+	$css_ver = file_exists( $css_path ) ? $base_ver . '.' . filemtime( $css_path ) : $base_ver;
+	$js_ver  = file_exists( $js_path )  ? $base_ver . '.' . filemtime( $js_path )  : $base_ver;
 
-	wp_enqueue_style( 'fb-home', $base . 'css/home.css', [], $ver );
+	wp_enqueue_style( 'fb-home', $base . 'css/home.css', [], $css_ver );
 
 	// CSS що скидає layout БАТЬКІВСЬКИХ елементів через :has() (сучасні браузери).
 	wp_add_inline_style( 'fb-home', fb_home_get_parent_reset_css() );
 
-	wp_enqueue_script( 'fb-home', $base . 'js/home.js', [ 'jquery' ], $ver, true );
+	wp_enqueue_script( 'fb-home', $base . 'js/home.js', [ 'jquery' ], $js_ver, true );
 
 	wp_localize_script(
 		'fb-home',
@@ -282,35 +291,6 @@ function fb_home_render_form(): string {
 		grid-column:1/-1;-ms-grid-column-span:99;
 		column-span:all;-webkit-column-span:all;
 		contain:layout style;isolation:isolate;position:relative;">
-
-	<?php /* Scoped CSS: лише :focus / .is-invalid / :hover */ ?>
-	<style id="fb-home-scoped">
-		#fb-home-wrap { all: initial; display: block !important; max-width: 600px !important; margin: 0 auto !important; }
-		#fb-home-wrap * { box-sizing: border-box; }
-		#fb-home-wrap h2,
-		#fb-home-wrap p,
-		#fb-home-wrap form,
-		#fb-home-wrap form > div { display: block !important; float: none !important; clear: both !important; width: 100% !important; column-count: 1 !important; grid-template-columns: unset !important; }
-		#fb-home-wrap label { display: block !important; float: none !important; clear: both !important; width: 100% !important; text-align: left !important; }
-		#fb-home-wrap input[type="text"].fb-inp { display: block !important; float: none !important; clear: both !important; width: 100% !important; }
-		#fb-home-wrap .fb-cur-row { display: flex !important; flex-flow: row nowrap !important; align-items: stretch !important; }
-		#fb-home-wrap .fb-cur-row input[type="text"].fb-inp { flex: 1 1 auto; width: auto !important; clear: none !important; }
-		#fb-home-wrap .fb-cur-row .fb-inp-code { flex: 0 0 74px !important; width: 74px !important; min-width: 74px !important; max-width: 74px !important; }
-		#fb-home-wrap .fb-cur-row .fb-inp-sym  { flex: 0 0 52px !important; width: 52px !important; min-width: 52px !important; max-width: 52px !important; }
-		#fb-home-wrap input.fb-inp:focus { border-color: #4f6bf4 !important; box-shadow: 0 0 0 3px rgba(79,107,244,.18) !important; background: #fff !important; }
-		#fb-home-wrap input.fb-inp.is-invalid { border-color: #e53e3e !important; background: #fff5f5 !important; }
-		#fb-home-wrap input.fb-inp.is-invalid:focus { box-shadow: 0 0 0 3px rgba(229,62,62,.18) !important; }
-		#fb-notice.err { display:block !important; background:#fff5f5; border:1px solid #feb2b2; border-radius:7px; color:#c53030; padding:9px 14px; margin:0 0 16px; font-size:14px; line-height:1.5; }
-		#fb-notice.ok  { display:block !important; background:#f0fff4; border:1px solid #9ae6b4; border-radius:7px; color:#276749; padding:9px 14px; margin:0 0 16px; font-size:14px; line-height:1.5; }
-		#fb-save:hover:not(:disabled) { background:#3b56e8 !important; }
-		#fb-save:active:not(:disabled) { transform:translateY(1px); }
-		#fb-save:disabled { opacity:.65 !important; cursor:not-allowed !important; }
-		@media(max-width:480px) {
-			#fb-home-wrap .fb-cur-row { flex-wrap:wrap !important; }
-			#fb-home-wrap .fb-cur-row .fb-inp-code,
-			#fb-home-wrap .fb-cur-row .fb-inp-sym { flex:1 1 calc(50% - 4px) !important; width:auto !important; min-width:0 !important; max-width:none !important; }
-		}
-	</style>
 
 	<?php /* ── Заголовок ── */ ?>
 	<h2 style="<?php echo esc_attr( $blk ); ?>margin:0 0 8px;padding:0;font-size:26px;font-weight:800;color:#1a202c;line-height:1.25;text-align:left;">

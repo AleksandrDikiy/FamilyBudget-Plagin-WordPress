@@ -1,6 +1,9 @@
 <?php
 /**
  * Модуль Баланс — Управління бюджетними транзакціями
+ * 
+ * Version:     1.0.1
+ * Date_update: 2026-04-30
  *
  * Комплексні CRUD операції для сімейних бюджетних транзакцій включаючи:
  *  - Створення транзакцій з динамічними параметрами категорії
@@ -15,7 +18,6 @@
  *
  * @package    FamilyBudget
  * @subpackage Modules
- * @version    1.3.8
  * @since      1.0.0
  *
  * CHANGELOG v1.1.1.0:
@@ -73,14 +75,20 @@ function fb_amount_enqueue_scripts(): void {
     }
 
     $plugin_url = FB_PLUGIN_URL;
-    $version    = '1.1.1.0';
+    $base_ver   = defined( 'FB_VERSION' ) ? FB_VERSION : '1.1.1.0';
+    
+    $css_path = FB_PLUGIN_DIR . 'css/amount.css';
+    $js_path  = FB_PLUGIN_DIR . 'js/amount.js';
+    
+    $css_ver = file_exists( $css_path ) ? $base_ver . '.' . filemtime( $css_path ) : $base_ver;
+    $js_ver  = file_exists( $js_path )  ? $base_ver . '.' . filemtime( $js_path )  : $base_ver;
 
     // Стилі модуля.
     wp_enqueue_style(
         'fb-amount-style',
         $plugin_url . 'css/amount.css',
         array(),
-        $version
+        $css_ver
     );
 
     // Основний скрипт модуля (залежить від jQuery, підключається у футері).
@@ -88,7 +96,7 @@ function fb_amount_enqueue_scripts(): void {
         'fb-amount-script',
         $plugin_url . 'js/amount.js',
         array( 'jquery' ),
-        $version,
+        $js_ver,
         true
     );
 
@@ -1345,211 +1353,7 @@ function fb_render_budget_interface(): string {
 
     ob_start();
 
-    /*
-     * [FIX] Priority 99 — виводимо JS ПІСЛЯ wp_print_footer_scripts (priority 20).
-     * wp_localize_script виводить fbAmountData разом зі скриптом на priority 20.
-     * При priority 10 (default) наш <script> виконувався ДО визначення fbAmountData
-     * → "fbAmountData не знайдено" → повна тиша.
-     */
-    add_action(
-        'wp_footer',
-        static function () {
-            if ( ! is_user_logged_in() ) {
-                return;
-            }
-            ?>
-            <script>
-            /* FB Import v3.2 — чанковий AJAX-імпорт транзакцій */
-            ;(function ($) {
-                'use strict';
-
-                if ( typeof fbAmountData === 'undefined' ) {
-                    console.error('[FB Import] CRITICAL: fbAmountData not found. Script loaded before wp_localize_script?');
-                    return;
-                }
-
-                console.log('[FB Import] fbAmountData OK:', fbAmountData.ajax_url);
-
-                var FBImport = {
-                    ajaxUrl  : fbAmountData.ajax_url,
-                    nonce    : fbAmountData.nonce,
-                    token    : null,
-                    total    : 0,
-                    offset   : 0,
-                    inserted : 0,
-                    errors   : 0,
-
-                    init: function () {
-                        $(document).on( 'click', '#fb-import-btn', function (e) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            FBImport.start();
-                        });
-                    },
-
-                    showOverlay: function ( text ) {
-                        $('#fb-import-overlay-text').text( text );
-                        $('#fb-import-overlay').addClass( 'fb-overlay-visible' );
-                        $('body').css( 'overflow', 'hidden' );
-                    },
-
-                    hideOverlay: function () {
-                        $('#fb-import-overlay').removeClass( 'fb-overlay-visible' );
-                        $('body').css( 'overflow', '' );
-                    },
-
-                    updateProgress: function ( processed ) {
-                        var pct = FBImport.total > 0 ? Math.round( processed / FBImport.total * 100 ) : 0;
-                        $('#fb-import-bar').css( 'width', pct + '%' );
-                        $('#fb-import-status').text(
-                            'Оброблено: ' + processed + ' / ' + FBImport.total +
-                            ' (' + pct + '%)  |  Додано: ' + FBImport.inserted +
-                            '  |  Помилок: ' + FBImport.errors
-                        );
-                        FBImport.showOverlay( 'Імпорт... ' + pct + '% (' + processed + ' / ' + FBImport.total + ')' );
-                    },
-
-                    start: function () {
-                        var fileInput = document.getElementById('fb-import-file');
-
-                        if ( ! fileInput || ! fileInput.files || ! fileInput.files.length ) {
-                            alert( 'Оберіть CSV-файл для імпорту.' );
-                            return;
-                        }
-
-                        FBImport.token    = null;
-                        FBImport.total    = 0;
-                        FBImport.offset   = 0;
-                        FBImport.inserted = 0;
-                        FBImport.errors   = 0;
-
-                        var fd = new FormData();
-                        fd.append( 'action',   'fb_import_upload' );
-                        fd.append( 'security', FBImport.nonce );
-                        fd.append( 'xls_file', fileInput.files[0] );
-
-                        $('#fb-import-progress').show();
-                        $('#fb-import-bar').css({ 'width': '0%', 'background': '#0073aa' });
-                        $('#fb-import-status').text( 'Завантаження файлу...' );
-                        FBImport.showOverlay( 'Завантаження файлу на сервер...' );
-
-                        console.log('[FB Import] Uploading file...');
-
-                        $.ajax({
-                            url         : FBImport.ajaxUrl,
-                            method      : 'POST',
-                            data        : fd,
-                            processData : false,
-                            contentType : false,
-                            success: function ( resp ) {
-                                console.log('[FB Import] Upload response:', resp);
-                                if ( ! resp.success ) {
-                                    FBImport.hideOverlay();
-                                    alert( 'Помилка завантаження: ' + ( resp.data ? resp.data.message : JSON.stringify(resp) ) );
-                                    return;
-                                }
-                                FBImport.token  = resp.data.token;
-                                FBImport.total  = resp.data.total_rows;
-                                FBImport.offset = 0;
-                                console.log('[FB Import] Upload OK. Token:', FBImport.token, 'Rows:', FBImport.total);
-                                FBImport.processChunk();
-                            },
-                            error: function ( xhr, status, err ) {
-                                FBImport.hideOverlay();
-                                console.error('[FB Import] Upload AJAX error:', status, err, xhr.responseText);
-                                alert( 'Помилка підключення до сервера: ' + status );
-                            }
-                        });
-                    },
-
-                    processChunk: function () {
-                        console.log('[FB Import] Processing chunk at offset:', FBImport.offset);
-                        $.post(
-                            FBImport.ajaxUrl,
-                            {
-                                action   : 'fb_import_chunk',
-                                security : FBImport.nonce,
-                                token    : FBImport.token,
-                                offset   : FBImport.offset,
-                            },
-                            function ( resp ) {
-                                console.log('[FB Import] Chunk response:', resp);
-                                if ( ! resp.success ) {
-                                    FBImport.hideOverlay();
-                                    alert( 'Помилка чанку: ' + ( resp.data ? resp.data.message : JSON.stringify(resp) ) );
-                                    return; // зупиняємо петлю
-                                }
-                                var d = resp.data;
-                                FBImport.offset   = d.next_offset;
-                                FBImport.inserted = d.total_imported;
-                                FBImport.errors   = d.total_errors;
-                                FBImport.updateProgress( d.processed );
-
-                                if ( d.is_done ) {
-                                    FBImport.onDone();
-                                } else {
-                                    setTimeout( function() { FBImport.processChunk(); }, 100 );
-                                }
-                            }
-                        ).fail(function ( xhr ) {
-                            /*
-                             * [FIX-LOOP] 500 на останньому чанку (sync_rates timeout).
-                             * Дані вже в БД — показуємо успіх з попередженням.
-                             * НЕ робимо retry — це зупиняє нескінченну петлю.
-                             */
-                            var isLastChunk = ( FBImport.offset >= FBImport.total );
-                            console.error('[FB Import] Chunk error. isLastChunk:', isLastChunk, xhr.status, xhr.responseText.substring(0,200));
-
-                            FBImport.hideOverlay();
-
-                            if ( isLastChunk ) {
-                                // Всі дані вставлено, 500 через фонову синхронізацію курсів.
-                                $( '#fb-import-bar' ).css({ 'width': '100%', 'background': '#46b450' });
-                                $( '#fb-import-status' ).html(
-                                    '✅ <strong>Імпорт завершено!</strong> ' +
-                                    'Додано: ' + FBImport.inserted + ' | ' +
-                                    'Помилок: ' + FBImport.errors +
-                                    ' <span style="color:#e67e22">(курси валют синхронізуються у фоні)</span>'
-                                );
-                            } else {
-                                // Справжня помилка в середині імпорту.
-                                $( '#fb-import-bar' ).css('background', '#dc3545');
-                                $( '#fb-import-status' ).html(
-                                    '❌ <strong>Помилка сервера</strong> (offset ' + FBImport.offset + '). ' +
-                                    'Додано: ' + FBImport.inserted + '. Перевірте error_log.'
-                                );
-                            }
-
-                            var fi = document.getElementById('fb-import-file');
-                            if ( fi ) { fi.value = ''; }
-                        });
-                    },
-
-                    onDone: function () {
-                        FBImport.hideOverlay();
-                        $('#fb-import-bar').css({ 'width': '100%', 'background': '#46b450' });
-                        $('#fb-import-status').html(
-                            '✅ <strong>Імпорт завершено!</strong> ' +
-                            'Додано: ' + FBImport.inserted + ' | ' +
-                            'Помилок: ' + FBImport.errors
-                        );
-                        var fi = document.getElementById('fb-import-file');
-                        if ( fi ) { fi.value = ''; }
-                        console.log('[FB Import] DONE. Inserted:', FBImport.inserted, 'Errors:', FBImport.errors);
-                    }
-                };
-
-                $( document ).ready(function () {
-                    FBImport.init();
-                    console.log('[FB Import] Initialized. ajaxUrl:', FBImport.ajaxUrl);
-                });
-
-            }(jQuery));
-            </script>
-            <?php
-        },
-        99  // Priority 99: виконується після wp_print_footer_scripts (priority 20).
-    );
+    // Логіка імпорту перенесена у зовнішній файл js/amount.js
 
     if ( function_exists( 'fb_render_nav' ) ) {
         fb_render_nav();

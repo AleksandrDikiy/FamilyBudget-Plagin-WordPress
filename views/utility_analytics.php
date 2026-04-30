@@ -2,6 +2,9 @@
 /**
  * Модуль аналітики комунальних платежів.
  *
+ * Version:     1.3.4
+ * Date_update: 2026-04-30
+ * 
  * @package FamilyBudget
  */
 
@@ -672,7 +675,8 @@ function fb_utility_analytics_print_footer_assets(): void {
 	}
 
 	$printed = true;
-	$js_version = file_exists( FB_PLUGIN_DIR . 'js/utility_analytics.js' ) ? (string) filemtime( FB_PLUGIN_DIR . 'js/utility_analytics.js' ) : FB_VERSION;
+	$base_ver = defined( 'FB_VERSION' ) ? FB_VERSION : '1.0.0';
+	$js_version = file_exists( FB_PLUGIN_DIR . 'js/utility_analytics.js' ) ? $base_ver . '.' . filemtime( FB_PLUGIN_DIR . 'js/utility_analytics.js' ) : $base_ver;
 	?>
 	<script>
 		window.fbUtilityAnalyticsInstances = <?php echo wp_json_encode( $GLOBALS['fb_utility_analytics_instances'] ); ?>;
@@ -704,7 +708,8 @@ function fb_shortcode_utility_analytics_interface(): string {
 	$default_dates = fb_utility_analytics_get_default_period_config();
 	$instance_id   = 'fb-ua-module-' . wp_generate_uuid4();
 	$canvas_id     = 'fb-ua-chart-' . wp_generate_uuid4();
-	$css_version   = file_exists( FB_PLUGIN_DIR . 'css/utility_analytics.css' ) ? (string) filemtime( FB_PLUGIN_DIR . 'css/utility_analytics.css' ) : FB_VERSION;
+	$base_ver      = defined( 'FB_VERSION' ) ? FB_VERSION : '1.0.0';
+	$css_version   = file_exists( FB_PLUGIN_DIR . 'css/utility_analytics.css' ) ? $base_ver . '.' . filemtime( FB_PLUGIN_DIR . 'css/utility_analytics.css' ) : $base_ver;
 
 	wp_enqueue_style(
 		'fb-utility-analytics-css',
@@ -713,11 +718,14 @@ function fb_shortcode_utility_analytics_interface(): string {
 		$css_version
 	);
 
+	$chartjs_path = FB_PLUGIN_DIR . 'js/chart.umd.min.js';
+	$chartjs_ver  = file_exists( $chartjs_path ) ? $base_ver . '.' . filemtime( $chartjs_path ) : $base_ver;
+
 	wp_enqueue_script(
 		'chartjs',
-		'https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js',
+		FB_PLUGIN_URL . 'js/chart.umd.min.js',
 		array(),
-		'4.4.4',
+		$chartjs_ver,
 		true
 	);
 

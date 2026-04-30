@@ -2,6 +2,9 @@
 /**
  * Модуль Рахунків (Family Budget)
  *
+ * Version:     1.7.1
+ * Date_update: 2026-04-30
+ * 
  * Реалізує повний CRUD для рахунків родини, включаючи:
  *  - Відображення та AJAX-фільтрацію рахунків
  *  - Прив'язку зовнішнього Monobank ID (account_id, міграція v6)
@@ -11,7 +14,6 @@
  *
  * @package    FamilyBudget
  * @subpackage Modules
- * @version    1.7.0
  * @since      1.0.0
  *
  * CHANGELOG v1.7.0:
@@ -176,11 +178,18 @@ function fb_shortcode_accounts(): string {
 		)
 	);
 
+	$base_ver = defined( 'FB_VERSION' ) ? FB_VERSION : '1.0.0';
+	$css_path = FB_PLUGIN_DIR . 'css/account.css';
+	$js_path  = FB_PLUGIN_DIR . 'js/account.js';
+	
+	$css_ver = file_exists( $css_path ) ? $base_ver . '.' . filemtime( $css_path ) : $base_ver;
+	$js_ver  = file_exists( $js_path )  ? $base_ver . '.' . filemtime( $js_path )  : $base_ver;
+
 	wp_enqueue_style(
 		'fb-account-css',
 		FB_PLUGIN_URL . 'css/account.css',
 		[],
-		'1.7.0'
+		$css_ver
 	);
 
 	wp_enqueue_script( 'jquery-ui-sortable' );
@@ -189,7 +198,7 @@ function fb_shortcode_accounts(): string {
 		'fb-account-js',
 		FB_PLUGIN_URL . 'js/account.js',
 		[ 'jquery', 'jquery-ui-sortable' ],
-		'1.7.0',
+		$js_ver,
 		true
 	);
 

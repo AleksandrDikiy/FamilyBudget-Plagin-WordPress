@@ -1,7 +1,10 @@
 <?php
 /**
  * Модуль валют родини.
- * update: 2026-03-27
+ * 
+ * Version:     1.0.1
+ * Date_update: 2026-04-30
+ * 
  * @package FamilyBudget
  */
 
@@ -241,8 +244,12 @@ function fb_shortcode_currency_interface(): string {
 
 	$families  = function_exists( 'fb_get_families' ) ? fb_get_families() : array();
 	$catalog   = function_exists( 'fb_get_currencies' ) ? fb_get_currencies( 0 ) : array();
-	$css_ver   = file_exists( FB_PLUGIN_DIR . 'css/currency.css' ) ? (string) filemtime( FB_PLUGIN_DIR . 'css/currency.css' ) : FB_VERSION;
-	$js_ver    = file_exists( FB_PLUGIN_DIR . 'js/currency.js' ) ? (string) filemtime( FB_PLUGIN_DIR . 'js/currency.js' ) : FB_VERSION;
+	$base_ver = defined( 'FB_VERSION' ) ? FB_VERSION : '1.0.0';
+	$css_path = FB_PLUGIN_DIR . 'css/currency.css';
+	$js_path  = FB_PLUGIN_DIR . 'js/currency.js';
+	
+	$css_ver = file_exists( $css_path ) ? $base_ver . '.' . filemtime( $css_path ) : $base_ver;
+	$js_ver  = file_exists( $js_path )  ? $base_ver . '.' . filemtime( $js_path )  : $base_ver;
 
 	wp_enqueue_style(
 		'fb-currency-css',

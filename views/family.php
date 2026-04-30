@@ -36,6 +36,9 @@ add_action( 'wp_enqueue_scripts', 'fb_family_enqueue_scripts' );
  * Підключає css/family.css та js/family.js лише для авторизованих.
  * Рядки UI передаються через fbFamilyI18n, конфіг — через fbFamilyData.
  *
+ * Version:     1.0.1
+ * Date_update: 2026-04-30
+ *
  * @since  1.0.0
  * @return void
  */
@@ -45,20 +48,26 @@ function fb_family_enqueue_scripts(): void {
 	}
 
 	$plugin_url = FB_PLUGIN_URL;
-	$version    = '1.0.0';
+	$base_ver   = defined( 'FB_VERSION' ) ? FB_VERSION : '1.0.0';
+	
+	$css_path = FB_PLUGIN_DIR . 'css/family.css';
+	$js_path  = FB_PLUGIN_DIR . 'js/family.js';
+	
+	$css_ver = file_exists( $css_path ) ? $base_ver . '.' . filemtime( $css_path ) : $base_ver;
+	$js_ver  = file_exists( $js_path )  ? $base_ver . '.' . filemtime( $js_path )  : $base_ver;
 
 	wp_enqueue_style(
 		'fb-family-style',
 		$plugin_url . 'css/family.css',
 		array(),
-		$version
+		$css_ver
 	);
 
 	wp_enqueue_script(
 		'fb-family-script',
 		$plugin_url . 'js/family.js',
 		array( 'jquery' ),
-		$version,
+		$js_ver,
 		true
 	);
 

@@ -526,11 +526,21 @@ function fb_charts_render_page(): void {
 		}
 	}
 
-	wp_enqueue_style( 'fb-charts-css', FB_PLUGIN_URL . 'css/charts.css', array(), FB_VERSION );
+	$base_ver = defined( 'FB_VERSION' ) ? FB_VERSION : '1.0.0';
+	$css_path = FB_PLUGIN_DIR . 'css/charts.css';
+	$js_path  = FB_PLUGIN_DIR . 'js/charts.js';
+	
+	$css_ver = file_exists( $css_path ) ? $base_ver . '.' . filemtime( $css_path ) : $base_ver;
+	$js_ver  = file_exists( $js_path )  ? $base_ver . '.' . filemtime( $js_path )  : $base_ver;
 
-	wp_enqueue_script( 'chartjs', 'https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js', array(), '4.4.4', true );
+	wp_enqueue_style( 'fb-charts-css', FB_PLUGIN_URL . 'css/charts.css', array(), $css_ver );
 
-	wp_enqueue_script( 'fb-charts-js', FB_PLUGIN_URL . 'js/charts.js', array( 'jquery', 'chartjs' ), FB_VERSION, true );
+	$chartjs_path = FB_PLUGIN_DIR . 'js/chart.umd.min.js';
+	$chartjs_ver  = file_exists( $chartjs_path ) ? $base_ver . '.' . filemtime( $chartjs_path ) : $base_ver;
+
+	wp_enqueue_script( 'chartjs', FB_PLUGIN_URL . 'js/chart.umd.min.js', array(), $chartjs_ver, true );
+
+	wp_enqueue_script( 'fb-charts-js', FB_PLUGIN_URL . 'js/charts.js', array( 'jquery', 'chartjs' ), $js_ver, true );
 
 	wp_localize_script(
 		'fb-charts-js',
